@@ -60,18 +60,21 @@ def main():
     print("\n--- Phase 3: Scoring ---")
     scored_listings = []
     for listing in new_listings:
-        loc_key = listing.get('location_key', '')
-        result = score_listing(listing, loc_key, config)
+        try:
+            loc_key = listing.get('location_key', '')
+            result = score_listing(listing, loc_key, config)
 
-        listing['score'] = result['final_score']
-        listing['score_components'] = result['component_scores']
-        listing['parsed_data'] = result['parsed']
+            listing['score'] = result['final_score']
+            listing['score_components'] = result['component_scores']
+            listing['parsed_data'] = result['parsed']
 
-        scored_listings.append(listing)
+            scored_listings.append(listing)
 
-        score_display = f"{result['final_score']:.1f}/7"
-        budget_flag = " [OVER BUDGET]" if result['parsed'].get('over_budget') else ""
-        print(f"  {score_display}{budget_flag} | {listing.get('title', '')[:60]}")
+            score_display = f"{result['final_score']:.1f}/7"
+            budget_flag = " [OVER BUDGET]" if result['parsed'].get('over_budget') else ""
+            print(f"  {score_display}{budget_flag} | {listing.get('title', '')[:60]}")
+        except Exception as e:
+            print(f"  WARNING: Failed to score listing '{listing.get('title', '')[:40]}': {e}")
 
     # Phase 4: Filter to threshold
     threshold = config.get('score_threshold', 5)
@@ -113,12 +116,15 @@ def main():
 
     # Phase 6: Generate website
     print("\n--- Phase 6: Generating website ---")
-    output_dir = Path(__file__).parent / "docs"  # GitHub Pages serves from /docs
-    generate_site(published, config, str(output_dir))
-
-    print(f"\n{'#'*60}")
-    print(f"  Done! Site generated at: {output_dir}/index.html")
-    print(f"{'#'*60}\n")
+    try:
+        output_dir = Path(__file__).parent / "docs"  # GitHub Pages serves from /docs
+        generate_site(published, config, str(output_dir))
+        print(f"\n{'#'*60}")
+        print(f"  Done! Site generated at: {output_dir}/index.html")
+        print(f"{'#'*60}\n")
+    except Exception as e:
+        print(f"  WARNING: Site generation failed: {e}")
+        print(f"  Data was still saved successfully.")
 
     return 0
 

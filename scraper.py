@@ -435,28 +435,35 @@ def run_search_round(config):
 
         for portal in config['portals']:
             for keyword in loc_config['search_keywords'][:2]:
-                query = portal['search_pattern'].format(
-                    keyword=keyword,
-                    budget_vnd=budget_vnd_str
-                )
-                print(f"\n  Portal: {portal['name']} | Query: {query[:80]}...")
-                results = web_search(query, num_results=5)
-                print(f"  Found {len(results)} results")
-
-                for result in results:
-                    if not is_relevant_result(result, loc_key, config):
-                        continue
-                    listing = extract_listing_from_search_result(
-                        result, portal['name'], loc_key, config
+                try:
+                    query = portal['search_pattern'].format(
+                        keyword=keyword,
+                        budget_vnd=budget_vnd_str
                     )
-                    # Only keep specific listings with prices
-                    if not is_specific_listing(listing):
-                        print(f"    Skipped (no price or generic): {listing.get('title_original', '')[:50]}")
-                        continue
-                    listing['listing_id'] = generate_listing_id(listing)
-                    all_listings.append(listing)
+                    print(f"\n  Portal: {portal['name']} | Query: {query[:80]}...")
+                    results = web_search(query, num_results=5)
+                    print(f"  Found {len(results)} results")
 
-                time.sleep(1)
+                    for result in results:
+                        try:
+                            if not is_relevant_result(result, loc_key, config):
+                                continue
+                            listing = extract_listing_from_search_result(
+                                result, portal['name'], loc_key, config
+                            )
+                            if not is_specific_listing(listing):
+                                print(f"    Skipped (no price or generic): {listing.get('title_original', '')[:50]}")
+                                continue
+                            listing['listing_id'] = generate_listing_id(listing)
+                            all_listings.append(listing)
+                        except Exception as e:
+                            print(f"    WARNING: Error processing result: {e}")
+                            continue
+
+                    time.sleep(1)
+                except Exception as e:
+                    print(f"  WARNING: Portal {portal['name']} query failed: {e}")
+                    continue
 
     return all_listings
 
