@@ -407,15 +407,45 @@ def is_specific_listing(listing):
         'property-for-sale', 'condos-for-sale',
         'properties-for-sale', 'bat-dong-san-ban',
         'real-estate-for-sale', '/gia-tu-', '/gia-duoi-',
-        '/ban-can-ho-chung-cu-', '/ban-nha-',
     ]
     for pattern in generic_patterns:
         if pattern in url:
             return False
 
+    # batdongsan.com.vn: individual listings have /ban-*.html or /pr* with IDs
+    # Generic area pages look like /nha-dat-ban-phu-quoc-kg (no .html, no ID)
+    if 'batdongsan.com.vn' in url:
+        # Individual listings end in .html or have a numeric ID like -pr12345
+        if not re.search(r'\.html|pr\d+|-\d{5,}', url):
+            return False
+
+    # dotproperty: individual listings have /apartment/ or /property/ with a numeric slug
+    if 'dotproperty' in url:
+        if not re.search(r'/\d+$|id-\d+', url):
+            return False
+
+    # fazwaz: individual listings have numeric IDs in the URL
+    if 'fazwaz.com' in url:
+        if not re.search(r'/\d+$|-\d{4,}', url):
+            return False
+
+    # General heuristic: if URL path has only 1-2 segments and no ID, it's likely a directory
+    url_path = re.sub(r'https?://[^/]+', '', url).strip('/')
+    path_segments = [s for s in url_path.split('/') if s]
+    if len(path_segments) <= 1 and not re.search(r'\d{4,}', url):
+        return False
+
     # Skip if title looks like a category page
     title = listing.get('title_original', listing.get('title', '')).lower()
-    if any(t in title for t in ['- tags', '- b\u00e1n - tags', 'danh s\u00e1ch']):
+    generic_title_patterns = [
+        '- tags', '- b\u00e1n - tags', 'danh s\u00e1ch',
+        'mua b\u00e1n c\u0103n h\u1ed9 chung c\u01b0', 'b\u00e1n c\u0103n h\u1ed9 chung c\u01b0',
+        'best houses for sale', 'properties for sale in',
+        'real estate for sale and for rent',
+        'b\u00e1n chung c\u01b0 c\u0103n h\u1ed9 t\u1ea1i',
+        '\u043f\u043e\u043a\u0443\u043f\u043a\u0430 \u0438 \u043f\u0440\u043e\u0434\u0430\u0436\u0430 \u043d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u0438 \u0432 \u0433\u043e\u0440\u043e\u0434\u0435',
+    ]
+    if any(t in title.lower() for t in generic_title_patterns):
         return False
 
     return True
