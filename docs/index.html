@@ -76,7 +76,10 @@
     .badge-warn { background: var(--red); color: white; }
     .badge-info { background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }
     .badge-dev { background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }
-    .card-details { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .specs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border-radius: 8px; }
+    .spec-item { display: flex; flex-direction: column; }
+    .spec-label { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .spec-value { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
     .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
     .card-snippet { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
     .methodology { background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }
@@ -100,10 +103,10 @@
   <div class="container">
     <header>
       <h1>Недвижимость Вьетнама</h1>
-      <p class="subtitle">Ежедневный поиск · Бюджет: €138,000 · Фукуок, Куиньон / Биньдинь, Далат, Кондао</p>
+      <p class="subtitle">Ежедневный поиск · Бюджет: €150,000 · Фукуок, Куиньон / Биньдинь, Далат, Кондао</p>
       <div class="stats-bar">
         <div class="stat">
-          <div class="stat-num">1</div>
+          <div class="stat-num">2</div>
           <div class="stat-label">Поисков</div>
         </div>
         <div class="stat">
@@ -111,7 +114,7 @@
           <div class="stat-label">Найдено</div>
         </div>
         <div class="stat">
-          <div class="stat-num">5.0+/7</div>
+          <div class="stat-num">5.5+/7</div>
           <div class="stat-label">Мин. рейтинг</div>
         </div>
         <div class="stat">
@@ -144,8 +147,7 @@
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 2 сп. · 30 м² · €1,235/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Базовая</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
       <p class="card-snippet">Сохранено успешно.
 
 Несохраненное сообщение
@@ -182,8 +184,7 @@
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 2 сп. · 30 м² · €1,235/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Базовая</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
       <p class="card-snippet">Сохранено успешно.
 
 Несохраненное сообщение
@@ -220,8 +221,7 @@
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 56 м² · €661/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">56 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€661/м²</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2025/12/19/20251219150446-c3fe_wm.jpg)\\
 \\
 7\\
@@ -243,8 +243,7 @@
           </div>
         </div>
       </div>
-      <div class="card-details">€99,360 · 2 сп. · 2 ван. · 77 м² · €1,290/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€99,360</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">2 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">77 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,290/м²</span></div></div>
       <p class="card-snippet">[![2-bedroom apartment 77 m² in Da Nang for $108,000](https://tranio.com/photos/adt/c6b7ce06/32909203/275x176.jpg)](https://tranio.com/vietnam/adt/apartment-in-da-nang-2239008/)
 
 [2-bedroom apartment </p>
@@ -264,8 +263,7 @@
           </div>
         </div>
       </div>
-      <div class="card-details">€3,148</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-dev">Meyland</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€3,148</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Застройщик</span><span class="spec-value">Meyland</span></div></div>
       <p class="card-snippet">### Lịch sử giá Bán căn hộ chung cư tại Meypearl Harmony Phú Quốc
 
 Tổng hợp và xử lý bởi Batdongsan.com.vn
@@ -301,8 +299,7 @@ Giá đang cập nhật
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 2 сп. · 30 м² · €1,235/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Базовая</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
       <p class="card-snippet">Сохранено успешно.
 
 Несохраненное сообщение
@@ -339,8 +336,7 @@ Giá đang cập nhật
           </div>
         </div>
       </div>
-      <div class="card-details">€70,370 · 1 сп.</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-dev">Artus</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€70,370</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Застройщик</span><span class="spec-value">Artus</span></div></div>
       <p class="card-snippet">[![](https://images.proppit.com/publisher/99965b8e-a78b-4872-9a29-a5af47703ed6/logo.jpeg)\\
 \\
 Artus Real Estate - Preferred Partner\\
@@ -362,8 +358,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€74,074 · Студия · 45 м² · €1,646/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Иностр. квота</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">45 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,646/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Иностр. квота</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/01/05/20260105095317-5924_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/11/14/20251114151105-17c4_wm.</p>
     </div>
     
@@ -381,8 +376,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€14,259</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€14,259</span></div></div>
       <p class="card-snippet">[![Chung cư NOXH LA Home, tổng giá trị từ 385 triệu/căn, vốn chỉ 100 triệu](https://tpc.googlesyndication.com/pimgad/7609403466909576896?)\\
 \\
 **![](https://staticfile.batdongsan.com.vn/images/Produc</p>
@@ -402,8 +396,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€3,148</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€3,148</span></div></div>
       <p class="card-snippet">### История цен на квартиры на продажу в городе Фукуок
 
 Составлено и обработано Batdongsan.com.vn.
@@ -438,8 +431,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · Студия</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Без мебели</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Без мебели</span></div></div>
       <p class="card-snippet">[![DotPropertyIcon](https://build.dotproperty.com.vn/assets/dotproperty-default-67d34143.svg)](https://www.dotproperty.com.vn/en)
 
 - [Buy](https://www.dotproperty.com.vn/en/properties-for-sale)
@@ -464,8 +456,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€101,200 · 2 сп. · 2 ван. · 69 м² · €1,467/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€101,200</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">2 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">69 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,467/м²</span></div></div>
       <p class="card-snippet">[![2-bedroom apartment 69 m² in Nha Trang for $110,000](https://tranio.com/photos/adt/50485387/32804163/275x176.jpg)](https://tranio.com/vietnam/adt/apartment-in-nha-trang-2233934/)
 
 [2-bedroom apartm</p>
@@ -485,8 +476,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€124,200 · 2 сп. · 2 ван. · 71 м² · €1,749/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€124,200</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">2 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">71 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,749/м²</span></div></div>
       <p class="card-snippet">[![2-bedroom apartments in condo 71 m² in Nha Trang for $135,000](https://tranio.com/photos/adt/99f3d5ee/31505426/275x176.jpg)](https://tranio.com/vietnam/adt/condo-in-nha-trang-2233268/)
 
 [2-bedroom </p>
@@ -506,8 +496,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€115,000 · 2 сп. · 2 ван. · 65 м² · €1,769/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€115,000</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">2 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">65 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,769/м²</span></div></div>
       <p class="card-snippet">[![2-bedroom apartment in new building 65 m² in Nha Trang for $125,000](https://tranio.com/photos/adt/83ca44bb/33238325/275x176.jpg)](https://tranio.com/vietnam/adt/new-home-in-nha-trang-2252894/)
 
 [2</p>
@@ -527,8 +516,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€105,800 · 1 сп. · 1 ван. · 54 м² · €1,959/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€105,800</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">54 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,959/м²</span></div></div>
       <p class="card-snippet">[![1-bedroom apartments in condo 54 m² in Nha Trang for $115,000](https://tranio.com/photos/adt/beaeb62d/31505403/275x176.jpg)](https://tranio.com/vietnam/adt/condo-in-nha-trang-2239010/)
 
 [1-bedroom </p>
@@ -548,8 +536,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€106,720 · 1 сп. · 1 ван. · 51 м² · €2,093/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€106,720</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">51 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,093/м²</span></div></div>
       <p class="card-snippet">[![1-bedroom apartment in new building 51 m² in Ba Ria - Vung Tau for $116,000](https://tranio.com/photos/adt/b6f96757/32395609/275x176.jpg)](https://tranio.com/vietnam/adt/new-home-in-ba-ria-vung-tau</p>
     </div>
     
@@ -567,8 +554,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€55,200 · 1 сп. · 1 ван. · 30 м² · €1,840/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€55,200</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,840/м²</span></div></div>
       <p class="card-snippet">[![1-bedroom apartment in new building 30 m² in Nha Trang for $60,000](https://tranio.com/photos/adt/d13b72c1/38259248/275x176.jpg)](https://tranio.com/vietnam/adt/new-home-in-nha-trang-2444989/)
 
 [1-</p>
@@ -588,8 +574,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€74,074 · 34 м² · €2,179/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Полная меблировка</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">34 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,179/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/21/20260321112127-dba0_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x64/2026/03/21/20260321112127-3b29_wm.</p>
     </div>
     
@@ -607,8 +592,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€74,074 · Студия · 32 м² · €2,315/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">32 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,315/м²</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2025/12/19/20251219143341-2061_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/12/19/20251219143342-5bf4_wm.</p>
     </div>
     
@@ -626,8 +610,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€81,481 · Студия · 1 ван. · 30 м² · €2,716/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€81,481</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,716/м²</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/03/07/20260307180030-37d7_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2026/03/13/20260313161341-9bfb_wm.</p>
     </div>
     
@@ -645,8 +628,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€74,074 · Студия · 32 м² · €2,315/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">32 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,315/м²</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/13/20260313151118-1308_wm.jpg)\\
 \\
 8\\
@@ -670,8 +652,7 @@ Artus Real Estate - Preferred Partner\\
           </div>
         </div>
       </div>
-      <div class="card-details">€129,116</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€129,116</span></div></div>
       <p class="card-snippet">### How affordable are condos in Phu Quoc?
 
 ![The median sales price for a condo in Phu Quoc is approximately $140,344](https://www.fazwaz.vn/images/icon/for-price-blue.svg)
@@ -692,8 +673,7 @@ The median sales price for</p>
           </div>
         </div>
       </div>
-      <div class="card-details">€85,185 · 30 м² · €2,840/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€85,185</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,840/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/12/20260312105315-0aee_wm.jpg)\\
 \\
 5\\
@@ -715,8 +695,7 @@ The median sales price for</p>
           </div>
         </div>
       </div>
-      <div class="card-details">€127,641 · 1 сп. · 1 ван. · 35 м² · €3,647/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Полная меблировка</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€127,641</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">35 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€3,647/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
       <p class="card-snippet">## 267 Condos available on FazWaz.vn
 
 Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (high to low)Sort: Best Value for MoneySort: Biggest Price Reduction (%)Sort: Highes</p>
@@ -742,8 +721,7 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
           </div>
         </div>
       </div>
-      <div class="card-details">€92,593 · 28 м² · €3,307/м²</div>
-      
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€92,593</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">28 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€3,307/м²</span></div></div>
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/17/20260317160335-9e26_wm.jpg)\\
 \\
 24\\
@@ -772,8 +750,7 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 2 сп. · 30 м² · €1,235/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Базовая</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
       <p class="card-snippet">Сохранено успешно.
 
 Несохраненное сообщение
@@ -810,8 +787,7 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
           </div>
         </div>
       </div>
-      <div class="card-details">€37,037 · 2 сп. · 30 м² · €1,235/м²</div>
-      <div class="card-tags"><span class="badge badge-info">Собственность</span><span class="badge badge-info">Базовая</span></div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
       <p class="card-snippet">Сохранено успешно.
 
 Несохраненное сообщение
@@ -838,6 +814,11 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
             
         </section>
         
+            <section class="round-section">
+              <h2 class="round-date">2026-03-21</h2>
+              <p class="round-meta">Проверено 72 результатов · 0 новых · Нет предложений с рейтингом 5.5+</p>
+            </section>
+            
     </main>
 
     <div class="methodology">
@@ -846,7 +827,7 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
         <tr><td>Цена за м²</td><td>20%</td></tr><tr><td>Локация</td><td>15%</td></tr><tr><td>Близость к морю</td><td>15%</td></tr><tr><td>Потенциал роста</td><td>15%</td></tr><tr><td>Развитие региона</td><td>10%</td></tr><tr><td>Качество воздуха</td><td>5%</td></tr><tr><td>Репутация застройщика</td><td>10%</td></tr><tr><td>Права собственности</td><td>5%</td></tr><tr><td>Спальни</td><td>5%</td></tr>
       </table>
       <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
-        Публикуются только объявления с рейтингом 5.0+. Сверх бюджета = штраф 50%.
+        Публикуются только объявления с рейтингом 5.5+. Сверх бюджета = штраф 50%.
       </p>
     </div>
 

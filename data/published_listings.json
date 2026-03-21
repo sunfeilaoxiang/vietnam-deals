@@ -1088,6 +1088,14 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-21",
+      "timestamp": "2026-03-21T20:16:57.082784",
+      "total_searched": 72,
+      "new_found": 0,
+      "published_count": 0,
+      "listings": []
     }
   ]
 }
