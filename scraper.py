@@ -329,7 +329,7 @@ def load_seen_listings(data_dir="data"):
     """Load previously seen listing IDs."""
     seen_file = Path(data_dir) / "seen_listings.json"
     if seen_file.exists():
-        with open(seen_file) as f:
+        with open(seen_file, encoding='utf-8-sig') as f:
             return json.load(f)
     return {}
 
@@ -338,7 +338,7 @@ def save_seen_listings(seen, data_dir="data"):
     """Save seen listing IDs."""
     Path(data_dir).mkdir(exist_ok=True)
     seen_file = Path(data_dir) / "seen_listings.json"
-    with open(seen_file, 'w') as f:
+    with open(seen_file, 'w', encoding='utf-8') as f:
         json.dump(seen, f, indent=2)
 
 
@@ -346,7 +346,7 @@ def load_published_listings(data_dir="data"):
     """Load all published listings (the full history)."""
     pub_file = Path(data_dir) / "published_listings.json"
     if pub_file.exists():
-        with open(pub_file) as f:
+        with open(pub_file, encoding='utf-8-sig') as f:
             return json.load(f)
     return {"rounds": []}
 
@@ -355,7 +355,7 @@ def save_published_listings(published, data_dir="data"):
     """Save published listings."""
     Path(data_dir).mkdir(exist_ok=True)
     pub_file = Path(data_dir) / "published_listings.json"
-    with open(pub_file, 'w') as f:
+    with open(pub_file, 'w', encoding='utf-8') as f:
         json.dump(published, f, indent=2, ensure_ascii=False)
 
 
