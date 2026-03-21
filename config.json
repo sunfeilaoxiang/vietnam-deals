@@ -152,5 +152,79 @@
     "/lich-su-gia", "/apartments-for-sale", "/property-for-sale",
     "/condos-for-sale", "/properties-for-sale", "/bat-dong-san-ban",
     "/real-estate-for-sale", "/apartments-for-rent", "/for-rent"
+  ],
+  "scrape_targets": [
+    {
+      "location_key": "phu_quoc",
+      "portal": "batdongsan",
+      "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-phu-quoc-t",
+      "base_url": "https://batdongsan.com.vn"
+    },
+    {
+      "location_key": "phu_quoc",
+      "portal": "dotproperty",
+      "url": "https://www.dotproperty.com.vn/en/phu-quoc-kien-giang/condominiums-for-sale",
+      "base_url": "https://www.dotproperty.com.vn"
+    },
+    {
+      "location_key": "phu_quoc",
+      "portal": "fazwaz",
+      "url": "https://www.fazwaz.vn/en/condo-for-sale/vietnam/kien-giang/phu-quoc",
+      "base_url": "https://www.fazwaz.vn"
+    },
+    {
+      "location_key": "phu_quoc",
+      "portal": "sunset-town",
+      "url": "https://sunset-town.com/real-estate/",
+      "base_url": "https://sunset-town.com"
+    },
+    {
+      "location_key": "quy_nhon",
+      "portal": "batdongsan",
+      "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon",
+      "base_url": "https://batdongsan.com.vn"
+    },
+    {
+      "location_key": "quy_nhon",
+      "portal": "dotproperty",
+      "url": "https://www.dotproperty.com.vn/en/binh-dinh/condominiums-for-sale",
+      "base_url": "https://www.dotproperty.com.vn"
+    },
+    {
+      "location_key": "quy_nhon",
+      "portal": "fazwaz",
+      "url": "https://www.fazwaz.vn/en/condo-for-sale/vietnam/binh-dinh/quy-nhon",
+      "base_url": "https://www.fazwaz.vn"
+    },
+    {
+      "location_key": "da_lat",
+      "portal": "batdongsan",
+      "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat",
+      "base_url": "https://batdongsan.com.vn"
+    },
+    {
+      "location_key": "da_lat",
+      "portal": "dotproperty",
+      "url": "https://www.dotproperty.com.vn/en/da-lat-lam-dong/condominiums-for-sale",
+      "base_url": "https://www.dotproperty.com.vn"
+    },
+    {
+      "location_key": "da_lat",
+      "portal": "fazwaz",
+      "url": "https://www.fazwaz.vn/en/condo-for-sale/vietnam/lam-dong/da-lat",
+      "base_url": "https://www.fazwaz.vn"
+    },
+    {
+      "location_key": "con_dao",
+      "portal": "batdongsan",
+      "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-con-dao",
+      "base_url": "https://batdongsan.com.vn"
+    },
+    {
+      "location_key": "con_dao",
+      "portal": "dotproperty",
+      "url": "https://www.dotproperty.com.vn/en/con-dao-ba-ria-vung-tau/condominiums-for-sale",
+      "base_url": "https://www.dotproperty.com.vn"
+    }
   ]
 }

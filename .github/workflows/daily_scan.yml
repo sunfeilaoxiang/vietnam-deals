@@ -26,7 +26,7 @@ jobs:
 
       - name: Run property scanner
         env:
-          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
           cd ${{ github.workspace }}
           python main.py

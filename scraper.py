@@ -1,7 +1,7 @@
 """
-Vietnam Property Scraper
-Searches property portals via web search APIs, extracts listing data,
-and returns structured results for scoring.
+Vietnam Property Scraper — Firecrawl Edition
+Scrapes property portals directly using Firecrawl API to extract
+individual listing data with real URLs, prices, and property details.
 """
 
 import json
@@ -13,12 +13,13 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import ssl
+from datetime import datetime
+from pathlib import Path
 
 
 def _clean_number(s):
     """Clean a number string that may use dots or commas as thousand separators."""
     s = s.strip()
-    # Remove any non-numeric chars except dots, commas, minus
     s = re.sub(r'[^\d.,-]', '', s)
     if not s or not re.search(r'\d', s):
         return 0.0
@@ -34,8 +35,6 @@ def _clean_number(s):
         return float(s.replace(',', ''))
     except ValueError:
         return 0.0
-from datetime import datetime
-from pathlib import Path
 
 
 def load_config(config_path="config.json"):
@@ -43,75 +42,241 @@ def load_config(config_path="config.json"):
         return json.load(f)
 
 
-def web_search(query, num_results=10):
-    """
-    Search the web using SerpAPI (free tier: 100 searches/month)
-    or fallback to DuckDuckGo HTML scraping.
-    """
-    serpapi_key = os.environ.get('SERPAPI_KEY', '')
-    if serpapi_key:
-        return _search_serpapi(query, serpapi_key, num_results)
-    else:
-        return _search_duckduckgo(query, num_results)
+# ---------------------------------------------------------------------------
+# Firecrawl API
+# ---------------------------------------------------------------------------
 
+def firecrawl_scrape(url, api_key, formats=None, timeout=60):
+    """
+    Scrape a single URL via Firecrawl and return the response data.
+    Default format: markdown + links.  Costs 1 credit per call.
+    """
+    if formats is None:
+        formats = ["markdown", "links"]
 
-def _search_serpapi(query, api_key, num_results):
-    """Search via SerpAPI (Google results)."""
-    params = urllib.parse.urlencode({
-        'q': query,
-        'api_key': api_key,
-        'engine': 'google',
-        'num': num_results,
-        'gl': 'vn',
-        'hl': 'en'
-    })
-    url = f"https://serpapi.com/search.json?{params}"
+    payload = json.dumps({
+        "url": url,
+        "formats": formats,
+        "timeout": 30000,
+        "waitFor": 3000,
+    }).encode()
+
     ctx = ssl.create_default_context()
+    req = urllib.request.Request(
+        "https://api.firecrawl.dev/v1/scrape",
+        data=payload,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+    )
     try:
-        req = urllib.request.Request(url, headers={'User-Agent': 'VietnamPropertyBot/1.0'})
-        with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
+        with urllib.request.urlopen(req, context=ctx, timeout=timeout) as resp:
             data = json.loads(resp.read().decode())
-            results = []
-            for r in data.get('organic_results', [])[:num_results]:
-                results.append({
-                    'title': r.get('title', ''),
-                    'url': r.get('link', ''),
-                    'snippet': r.get('snippet', '')
-                })
-            return results
+            if data.get("success"):
+                return data.get("data", {})
+            else:
+                print(f"    Firecrawl error: {data.get('error', 'unknown')}")
+                return {}
     except Exception as e:
-        print(f"  SerpAPI error: {e}")
+        print(f"    Firecrawl request failed for {url}: {e}")
+        return {}
+
+
+def parse_listings_from_page(page_data, portal_name, location_key, base_url, config):
+    """
+    Parse individual property listings from Firecrawl markdown + links output.
+    Returns a list of listing dicts.
+    """
+    markdown = page_data.get("markdown", "")
+    links = page_data.get("links", [])
+    metadata = page_data.get("metadata", {})
+
+    if not markdown:
         return []
 
+    vnd_per_eur = config.get("vnd_per_eur", 27000)
+    listings = []
 
-def _search_duckduckgo(query, num_results):
-    """Search via DuckDuckGo Lite (no API key needed)."""
-    params = urllib.parse.urlencode({'q': query, 'kl': 'vn-en'})
-    url = f"https://lite.duckduckgo.com/lite/?{params}"
-    ctx = ssl.create_default_context()
-    try:
-        req = urllib.request.Request(url, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        })
-        with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
-            html = resp.read().decode('utf-8', errors='replace')
-            results = []
-            link_pattern = re.findall(r'<a[^>]+href="(https?://[^"]+)"[^>]*class="result-link"[^>]*>([^<]+)</a>', html)
-            snippet_pattern = re.findall(r'<td class="result-snippet">([^<]+)</td>', html)
-            if not link_pattern:
-                link_pattern = re.findall(r'<a[^>]+rel="nofollow"[^>]+href="(https?://[^"]+)"[^>]*>([^<]+)</a>', html)
-            for i, (url_match, title) in enumerate(link_pattern[:num_results]):
-                snippet = snippet_pattern[i] if i < len(snippet_pattern) else ''
-                results.append({
-                    'title': title.strip(),
-                    'url': url_match.strip(),
-                    'snippet': snippet.strip()
-                })
-            return results
-    except Exception as e:
-        print(f"  DuckDuckGo error: {e}")
-        return []
+    # Strategy: split the markdown into chunks per listing.
+    # Most portal pages list properties as repeated blocks separated by
+    # headings, horizontal rules, or link+price combos.
 
+    # Collect all links that look like individual listing pages
+    listing_links = []
+    for link in links:
+        url = link if isinstance(link, str) else link.get("url", link.get("href", ""))
+        if not url:
+            continue
+        url_lower = url.lower()
+        # Skip generic/category links
+        if any(skip in url_lower for skip in [
+            '/tag/', '/tags/', '/category/', '/search', '/tim-kiem',
+            'apartments-for-sale', 'condos-for-sale', 'property-for-sale',
+            '/for-rent', '/cho-thue', '/login', '/register', '/about',
+            'facebook.com', 'youtube.com', 'twitter.com', 'instagram.com',
+            'javascript:', 'mailto:', '#',
+        ]):
+            continue
+        # Must look like an individual listing URL
+        if _is_individual_listing_url(url_lower, portal_name):
+            listing_links.append(url)
+
+    # Now parse the markdown for listing blocks
+    # Split on patterns that typically separate listings
+    blocks = re.split(r'\n(?=#{1,3}\s|\*\*\[|\[\!\[|---\n|___\n|\* \*\*)', markdown)
+
+    for block in blocks:
+        try:
+            if len(block.strip()) < 30:
+                continue
+
+            price_eur = extract_price(block, vnd_per_eur)
+            if not price_eur:
+                continue
+
+            # Try to find a listing link in or near this block
+            listing_url = _find_listing_url_in_block(block, listing_links, base_url)
+            if not listing_url:
+                continue
+
+            title = _extract_title_from_block(block)
+            if not title:
+                continue
+
+            size_sqm = extract_size(block)
+            bedrooms = extract_bedrooms(block)
+            bathrooms = extract_bathrooms(block)
+            developer = extract_developer(block, config.get('known_developers', {}))
+            legal_status = extract_legal_status(block)
+            furnishing = extract_furnishing(block)
+
+            # Translate title to Russian
+            title_ru = translate_to_russian(title) if not is_mostly_ascii(title) else title
+            desc_snippet = block[:300].strip()
+            desc_ru = translate_to_russian(desc_snippet) if not is_mostly_ascii(desc_snippet) else desc_snippet
+
+            listing = {
+                'title': title_ru,
+                'title_original': title,
+                'url': listing_url,
+                'portal': portal_name,
+                'location_key': location_key,
+                'price_eur': price_eur,
+                'price_raw': extract_raw_price(block),
+                'size_sqm': size_sqm,
+                'bedrooms': bedrooms,
+                'bathrooms': bathrooms,
+                'developer': developer,
+                'legal_status': legal_status,
+                'furnishing': furnishing,
+                'description': desc_ru,
+                'description_original': desc_snippet,
+                'sea_proximity': None,
+                'found_date': datetime.now().strftime('%Y-%m-%d'),
+                'source_snippet': desc_ru[:300],
+            }
+            listing['listing_id'] = generate_listing_id(listing)
+            listings.append(listing)
+        except Exception as e:
+            print(f"    WARNING: Error parsing block: {e}")
+            continue
+
+    return listings
+
+
+def _is_individual_listing_url(url_lower, portal_name):
+    """Check if a URL looks like an individual property listing."""
+    # batdongsan: individual listings end in .html or have prXXXXX
+    if 'batdongsan.com.vn' in url_lower:
+        return bool(re.search(r'pr\d{5,}|\.html', url_lower))
+    # dotproperty: listings have /property/ or numeric ID at end
+    if 'dotproperty' in url_lower:
+        return bool(re.search(r'/\d{4,}$|/property/|id-\d+', url_lower))
+    # fazwaz: listings have numeric IDs
+    if 'fazwaz' in url_lower:
+        return bool(re.search(r'/\d{4,}$|-\d{5,}|/listing/', url_lower))
+    # vietnam-real.estate: listings typically have /property/ or IDs
+    if 'vietnam-real.estate' in url_lower:
+        return bool(re.search(r'/property/|/listing/|\d{4,}', url_lower))
+    # sunset-town: property pages have specific slugs
+    if 'sunset-town' in url_lower:
+        return bool(re.search(r'/apartment|/villa|/property|/the-sky|/hillside', url_lower))
+    # houseinhanoi: listing pages
+    if 'houseinhanoi' in url_lower:
+        return bool(re.search(r'/property/|/listing/|\d{4,}', url_lower))
+    # Generic: must have some numeric ID or specific path depth
+    path = re.sub(r'https?://[^/]+', '', url_lower).strip('/')
+    segments = [s for s in path.split('/') if s]
+    return len(segments) >= 2 and bool(re.search(r'\d{4,}', url_lower))
+
+
+def _find_listing_url_in_block(block, listing_links, base_url):
+    """Find the most relevant individual listing URL for a markdown block."""
+    # Look for markdown links in the block: [text](url)
+    md_links = re.findall(r'\[([^\]]*)\]\(([^)]+)\)', block)
+    for _text, url in md_links:
+        url_full = url if url.startswith('http') else base_url.rstrip('/') + '/' + url.lstrip('/')
+        if url_full in listing_links or _is_individual_listing_url(url_full.lower(), ''):
+            return url_full
+
+    # Look for bare URLs in the block
+    bare_urls = re.findall(r'https?://[^\s\)]+', block)
+    for url in bare_urls:
+        if url in listing_links or _is_individual_listing_url(url.lower(), ''):
+            return url
+
+    # Try to match block content to a listing link by keyword overlap
+    block_lower = block.lower()
+    best_url = None
+    best_score = 0
+    for url in listing_links:
+        # Score by how many URL path words appear in the block
+        path_words = re.findall(r'[a-z]{3,}', url.lower().split('/')[-1])
+        score = sum(1 for w in path_words if w in block_lower)
+        if score > best_score:
+            best_score = score
+            best_url = url
+    if best_score >= 2:
+        return best_url
+
+    return None
+
+
+def _extract_title_from_block(block):
+    """Extract a title from a markdown block."""
+    # Try markdown heading
+    heading = re.search(r'^#{1,3}\s+(.+)$', block, re.MULTILINE)
+    if heading:
+        title = heading.group(1).strip()
+        # Remove markdown link syntax
+        title = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', title)
+        if len(title) > 5:
+            return title[:200]
+
+    # Try first bold text
+    bold = re.search(r'\*\*([^*]+)\*\*', block)
+    if bold and len(bold.group(1).strip()) > 5:
+        return bold.group(1).strip()[:200]
+
+    # Try first markdown link text
+    link = re.search(r'\[([^\]]{5,})\]', block)
+    if link:
+        return link.group(1).strip()[:200]
+
+    # First non-empty line
+    for line in block.split('\n'):
+        line = line.strip().lstrip('#').strip()
+        if len(line) > 10:
+            return line[:200]
+
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Translation
+# ---------------------------------------------------------------------------
 
 def translate_to_russian(text):
     """Translate Vietnamese/English text to Russian using Google Translate."""
@@ -133,57 +298,16 @@ def translate_to_russian(text):
         return text
 
 
-def extract_listing_from_search_result(result, portal_name, location_key, config):
-    """Extract structured listing data from a search result."""
-    title = result.get('title', '')
-    snippet = result.get('snippet', '')
-    url = result.get('url', '')
-    combined = f"{title} {snippet}"
-
-    vnd_per_eur = config.get('vnd_per_eur', 27000)
-
-    price_eur = extract_price(combined, vnd_per_eur)
-    size_sqm = extract_size(combined)
-    bedrooms = extract_bedrooms(combined)
-    bathrooms = extract_bathrooms(combined)
-    developer = extract_developer(combined, config.get('known_developers', {}))
-    legal_status = extract_legal_status(combined)
-    furnishing = extract_furnishing(combined)
-
-    # Translate title and snippet to Russian
-    title_ru = translate_to_russian(title) if not is_mostly_ascii(title) else title
-    snippet_ru = translate_to_russian(snippet) if not is_mostly_ascii(snippet) else snippet
-
-    listing = {
-        'title': title_ru,
-        'title_original': title,
-        'url': url,
-        'portal': portal_name,
-        'location_key': location_key,
-        'price_eur': price_eur,
-        'price_raw': extract_raw_price(combined),
-        'size_sqm': size_sqm,
-        'bedrooms': bedrooms,
-        'bathrooms': bathrooms,
-        'developer': developer,
-        'legal_status': legal_status,
-        'furnishing': furnishing,
-        'description': snippet_ru,
-        'description_original': snippet,
-        'sea_proximity': None,
-        'found_date': datetime.now().strftime('%Y-%m-%d'),
-        'source_snippet': snippet_ru[:300]
-    }
-    return listing
-
-
 def is_mostly_ascii(text):
-    """Check if text is mostly ASCII (English)."""
     if not text:
         return True
     ascii_count = sum(1 for c in text if ord(c) < 128)
     return ascii_count / len(text) > 0.85
 
+
+# ---------------------------------------------------------------------------
+# Field extractors (kept from original)
+# ---------------------------------------------------------------------------
 
 def extract_price(text, vnd_per_eur=27000):
     """Extract price in EUR from text."""
@@ -191,9 +315,9 @@ def extract_price(text, vnd_per_eur=27000):
 
     # Direct USD patterns -> convert to EUR (1 USD ~ 0.92 EUR)
     usd_patterns = [
-        (r'\$\s*([\d,\.]+)\s*k\b', True),        # $85k
-        (r'\$\s*([\d,\.]+)\s*(?:usd)?', False),   # $85,000
-        (r'([\d,\.]+)\s*(?:usd|us\$)', False),    # 85000 USD
+        (r'\$\s*([\d,\.]+)\s*k\b', True),
+        (r'\$\s*([\d,\.]+)\s*(?:usd)?', False),
+        (r'([\d,\.]+)\s*(?:usd|us\$)', False),
     ]
     for pat, is_k in usd_patterns:
         m = re.search(pat, text_lower)
@@ -204,7 +328,7 @@ def extract_price(text, vnd_per_eur=27000):
             if val < 500:
                 val *= 1000
             if 10000 <= val <= 10_000_000:
-                return round(val * 0.92)  # USD to EUR
+                return round(val * 0.92)
 
     # EUR patterns
     eur_match = re.search(r'[€]\s*([\d,\.]+)\s*(k|thousand|million)?', text_lower)
@@ -219,7 +343,7 @@ def extract_price(text, vnd_per_eur=27000):
             return round(val)
 
     # VND billions (tỷ) -> EUR
-    vnd_bil = re.search(r'([\d,\.]+)\s*(?:t\u1ef7|ty|billion|bil)\b', text_lower)
+    vnd_bil = re.search(r'([\d,\.]+)\s*(?:tỷ|ty|billion|bil)\b', text_lower)
     if vnd_bil:
         val = _clean_number(vnd_bil.group(1))
         eur = val * 1_000_000_000 / vnd_per_eur
@@ -227,7 +351,7 @@ def extract_price(text, vnd_per_eur=27000):
             return round(eur)
 
     # VND millions (triệu) -> EUR
-    vnd_mil = re.search(r'([\d,\.]+)\s*(?:tri\u1ec7u|trieu|million vnd|tr)\b', text_lower)
+    vnd_mil = re.search(r'([\d,\.]+)\s*(?:triệu|trieu|million vnd|tr)\b', text_lower)
     if vnd_mil:
         val = _clean_number(vnd_mil.group(1))
         eur = val * 1_000_000 / vnd_per_eur
@@ -237,7 +361,7 @@ def extract_price(text, vnd_per_eur=27000):
     # VND with đ or VND suffix
     vnd_direct = re.search(r'vnd\s*([\d,\.]+)', text_lower)
     if not vnd_direct:
-        vnd_direct = re.search(r'([\d,\.]+)\s*(?:vnd|\u0111)', text_lower)
+        vnd_direct = re.search(r'([\d,\.]+)\s*(?:vnd|đ)', text_lower)
     if vnd_direct:
         val = _clean_number(vnd_direct.group(1))
         if val > 1_000_000_000:
@@ -249,10 +373,9 @@ def extract_price(text, vnd_per_eur=27000):
 
 
 def extract_raw_price(text):
-    """Extract raw price string for display."""
     patterns = [
         r'\$[\d,\.]+\s*(?:k|m|usd|million|thousand)?',
-        r'[\d,\.]+\s*(?:t\u1ef7|ty|billion|tri\u1ec7u|trieu|million)\s*(?:vnd|\u0111|dong)?',
+        r'[\d,\.]+\s*(?:tỷ|ty|billion|triệu|trieu|million)\s*(?:vnd|đ|dong)?',
         r'[\d,\.]+\s*(?:usd|us\$)',
         r'[€][\d,\.]+',
     ]
@@ -264,9 +387,8 @@ def extract_raw_price(text):
 
 
 def extract_size(text):
-    """Extract square meters from text."""
     patterns = [
-        r'(\d+(?:\.\d+)?)\s*(?:sqm|m\u00b2|m2|sq\.?\s*m)',
+        r'(\d+(?:\.\d+)?)\s*(?:sqm|m²|m2|sq\.?\s*m)',
         r'(\d+(?:\.\d+)?)\s*(?:square\s*meter)',
     ]
     for pat in patterns:
@@ -279,12 +401,11 @@ def extract_size(text):
 
 
 def extract_bedrooms(text):
-    """Extract bedroom count from text."""
     text_lower = text.lower()
     if 'studio' in text_lower:
         return 0
     patterns = [
-        r'(\d+)\s*(?:br|bed|bedroom|ph\u00f2ng ng\u1ee7|pn)',
+        r'(\d+)\s*(?:br|bed|bedroom|phòng ngủ|pn)',
         r'(\d+)\s*(?:-?\s*bed)',
     ]
     for pat in patterns:
@@ -297,7 +418,6 @@ def extract_bedrooms(text):
 
 
 def extract_developer(text, known_developers):
-    """Try to find a known developer in the text."""
     text_lower = text.lower()
     for dev_name in known_developers:
         if dev_name in text_lower:
@@ -306,10 +426,9 @@ def extract_developer(text, known_developers):
 
 
 def extract_bathrooms(text):
-    """Extract bathroom count from text."""
     text_lower = text.lower()
     patterns = [
-        r'(\d+)\s*(?:bathroom|bath|wc|v\u1ec7 sinh|ph\u00f2ng t\u1eafm)',
+        r'(\d+)\s*(?:bathroom|bath|wc|vệ sinh|phòng tắm)',
         r'(\d+)\s*(?:-?\s*bath)',
     ]
     for pat in patterns:
@@ -322,184 +441,108 @@ def extract_bathrooms(text):
 
 
 def extract_legal_status(text):
-    """Extract legal/ownership status from text."""
     text_lower = text.lower()
-    if any(w in text_lower for w in ['s\u1ed5 h\u1ed3ng', 'freehold', 'long-term', 'l\u00e2u d\u00e0i', 'permanent']):
-        return '\u0421\u043e\u0431\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0441\u0442\u044c'  # Собственность
-    if any(w in text_lower for w in ['h\u1ee3p \u0111\u1ed3ng mua b\u00e1n', 'sale contract', 'purchase contract']):
-        return '\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043a\u0443\u043f\u043b\u0438-\u043f\u0440\u043e\u0434\u0430\u0436\u0438'  # Договор купли-продажи
-    if any(w in text_lower for w in ['leasehold', '50 year', '50-year', '50 n\u0103m']):
-        return '\u0410\u0440\u0435\u043d\u0434\u0430 50 \u043b\u0435\u0442'  # Аренда 50 лет
-    if any(w in text_lower for w in ['s\u1edf h\u1eefu', 'foreign quota', 'foreign ownership']):
-        return '\u0418\u043d\u043e\u0441\u0442\u0440. \u043a\u0432\u043e\u0442\u0430'  # Иностр. квота
+    if any(w in text_lower for w in ['sổ hồng', 'freehold', 'long-term', 'lâu dài', 'permanent']):
+        return 'Собственность'
+    if any(w in text_lower for w in ['hợp đồng mua bán', 'sale contract', 'purchase contract']):
+        return 'Договор купли-продажи'
+    if any(w in text_lower for w in ['leasehold', '50 year', '50-year', '50 năm']):
+        return 'Аренда 50 лет'
+    if any(w in text_lower for w in ['sở hữu', 'foreign quota', 'foreign ownership']):
+        return 'Иностр. квота'
     return None
 
 
 def extract_furnishing(text):
-    """Extract furnishing level from text."""
     text_lower = text.lower()
-    if any(w in text_lower for w in ['full furniture', 'fully furnished', 'n\u1ed9i th\u1ea5t \u0111\u1ea7y \u0111\u1ee7', 'full n\u1ed9i th\u1ea5t']):
-        return '\u041f\u043e\u043b\u043d\u0430\u044f \u043c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u043a\u0430'  # Полная меблировка
-    if any(w in text_lower for w in ['basic', 'c\u01a1 b\u1ea3n', 'basic furniture', 'n\u1ed9i th\u1ea5t c\u01a1 b\u1ea3n']):
-        return '\u0411\u0430\u0437\u043e\u0432\u0430\u044f'  # Базовая
-    if any(w in text_lower for w in ['unfurnished', 'bare', 'kh\u00f4ng n\u1ed9i th\u1ea5t']):
-        return '\u0411\u0435\u0437 \u043c\u0435\u0431\u0435\u043b\u0438'  # Без мебели
-    if any(w in text_lower for w in ['furnished', 'n\u1ed9i th\u1ea5t']):
-        return '\u041c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u0430\u043d\u043e'  # Меблировано
+    if any(w in text_lower for w in ['full furniture', 'fully furnished', 'nội thất đầy đủ', 'full nội thất']):
+        return 'Полная меблировка'
+    if any(w in text_lower for w in ['basic', 'cơ bản', 'basic furniture', 'nội thất cơ bản']):
+        return 'Базовая'
+    if any(w in text_lower for w in ['unfurnished', 'bare', 'không nội thất']):
+        return 'Без мебели'
+    if any(w in text_lower for w in ['furnished', 'nội thất']):
+        return 'Меблировано'
     return None
 
 
 def generate_listing_id(listing):
-    """Create a unique hash for deduplication."""
     key = f"{listing.get('title_original', listing.get('title', ''))}|{listing.get('url', '')}".lower().strip()
     return hashlib.md5(key.encode()).hexdigest()[:12]
 
 
-def is_relevant_result(result, location_key, config):
-    """Filter out irrelevant search results."""
-    title = result.get('title', '').lower()
-    url = result.get('url', '').lower()
-    snippet = result.get('snippet', '').lower()
-    combined = f"{title} {snippet}"
-
-    # Must contain property-related terms
-    property_terms = ['apartment', 'c\u0103n h\u1ed9', 'condo', 'villa', 'property',
-                      'b\u00e1n', 'sale', 'bedroom', 'sqm', 'm\u00b2',
-                      'ph\u00f2ng ng\u1ee7', 'resort', 'residence',
-                      't\u1ef7', 'tri\u1ec7u', 'price', 'gi\u00e1']
-    if not any(term in combined for term in property_terms):
-        return False
-
-    # Skip news articles, guides, general pages
-    skip_terms = ['news', 'tin t\u1ee9c', 'blog', 'guide', 'how to', 'wikipedia',
-                  'youtube', 'apartments-for-rent', 'for-rent', 'cho thu\u00ea']
-    if any(term in combined for term in skip_terms):
-        return False
-
-    # Skip if title contains generic tag/category indicators
-    title_skip = ['- tags', '- b\u00e1n - tags', '- tag', 'danh s\u00e1ch', 'k\u1ebft qu\u1ea3']
-    if any(term in title for term in title_skip):
-        return False
-
-    # Skip generic directory/category pages
-    skip_url_patterns = config.get('skip_url_patterns', [])
-    for pattern in skip_url_patterns:
-        if pattern in url:
-            return False
-
-    return True
-
-
-def is_specific_listing(listing):
-    """
-    Check if this is a specific property listing (not a directory page).
-    Must have a price to be considered specific.
-    """
-    # Must have a price
-    if not listing.get('price_eur'):
-        return False
-
-    # Skip if URL looks like a category/search page
-    url = listing.get('url', '').lower()
-    generic_patterns = [
-        '/search', '/tim-kiem', '/tags/', '/tag/',
-        '/tags', 'page=', '/category/', 'apartments-for-sale',
-        'property-for-sale', 'condos-for-sale',
-        'properties-for-sale', 'bat-dong-san-ban',
-        'real-estate-for-sale', '/gia-tu-', '/gia-duoi-',
-    ]
-    for pattern in generic_patterns:
-        if pattern in url:
-            return False
-
-    # batdongsan.com.vn: individual listings have /ban-*.html or /pr* with IDs
-    # Generic area pages look like /nha-dat-ban-phu-quoc-kg (no .html, no ID)
-    if 'batdongsan.com.vn' in url:
-        # Individual listings end in .html or have a numeric ID like -pr12345
-        if not re.search(r'\.html|pr\d+|-\d{5,}', url):
-            return False
-
-    # dotproperty: individual listings have /apartment/ or /property/ with a numeric slug
-    if 'dotproperty' in url:
-        if not re.search(r'/\d+$|id-\d+', url):
-            return False
-
-    # fazwaz: individual listings have numeric IDs in the URL
-    if 'fazwaz.com' in url:
-        if not re.search(r'/\d+$|-\d{4,}', url):
-            return False
-
-    # General heuristic: if URL path has only 1-2 segments and no ID, it's likely a directory
-    url_path = re.sub(r'https?://[^/]+', '', url).strip('/')
-    path_segments = [s for s in url_path.split('/') if s]
-    if len(path_segments) <= 1 and not re.search(r'\d{4,}', url):
-        return False
-
-    # Skip if title looks like a category page
-    title = listing.get('title_original', listing.get('title', '')).lower()
-    generic_title_patterns = [
-        '- tags', '- b\u00e1n - tags', 'danh s\u00e1ch',
-        'mua b\u00e1n c\u0103n h\u1ed9 chung c\u01b0', 'b\u00e1n c\u0103n h\u1ed9 chung c\u01b0',
-        'best houses for sale', 'properties for sale in',
-        'real estate for sale and for rent',
-        'b\u00e1n chung c\u01b0 c\u0103n h\u1ed9 t\u1ea1i',
-        '\u043f\u043e\u043a\u0443\u043f\u043a\u0430 \u0438 \u043f\u0440\u043e\u0434\u0430\u0436\u0430 \u043d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u0438 \u0432 \u0433\u043e\u0440\u043e\u0434\u0435',
-    ]
-    if any(t in title.lower() for t in generic_title_patterns):
-        return False
-
-    return True
-
+# ---------------------------------------------------------------------------
+# Main search round — Firecrawl edition
+# ---------------------------------------------------------------------------
 
 def run_search_round(config):
-    """Run one complete search round across all locations and portals."""
-    all_listings = []
-    vnd_per_eur = config.get('vnd_per_eur', 27000)
-    budget_vnd = config.get('budget_max_eur', 140000) * vnd_per_eur
-    budget_vnd_str = f"{budget_vnd/1e9:.1f} t\u1ef7"
+    """
+    Run one complete search round by scraping portal listing pages
+    directly with Firecrawl.  Each portal page costs 1 credit.
+    """
+    firecrawl_key = os.environ.get('FIRECRAWL_API_KEY', '')
+    if not firecrawl_key:
+        print("ERROR: FIRECRAWL_API_KEY not set!")
+        return []
 
-    for loc_key, loc_config in config['locations'].items():
+    all_listings = []
+    scrape_targets = config.get("scrape_targets", [])
+
+    if not scrape_targets:
+        print("ERROR: No scrape_targets configured!")
+        return []
+
+    credits_used = 0
+
+    for target in scrape_targets:
+        loc_key = target["location_key"]
+        portal_name = target["portal"]
+        page_url = target["url"]
+        base_url = target.get("base_url", re.match(r'https?://[^/]+', page_url).group(0))
+        loc_config = config['locations'].get(loc_key, {})
+
         print(f"\n{'='*50}")
-        print(f"Searching: {loc_config.get('label_en', loc_config['label'])}")
+        print(f"  Scraping: {portal_name} → {loc_config.get('label_en', loc_key)}")
+        print(f"  URL: {page_url}")
         print(f"{'='*50}")
 
-        for portal in config['portals']:
-            for keyword in loc_config['search_keywords'][:2]:
-                try:
-                    query = portal['search_pattern'].format(
-                        keyword=keyword,
-                        budget_vnd=budget_vnd_str
-                    )
-                    print(f"\n  Portal: {portal['name']} | Query: {query[:80]}...")
-                    results = web_search(query, num_results=5)
-                    print(f"  Found {len(results)} results")
+        try:
+            page_data = firecrawl_scrape(page_url, firecrawl_key)
+            credits_used += 1
 
-                    for result in results:
-                        try:
-                            if not is_relevant_result(result, loc_key, config):
-                                continue
-                            listing = extract_listing_from_search_result(
-                                result, portal['name'], loc_key, config
-                            )
-                            if not is_specific_listing(listing):
-                                print(f"    Skipped (no price or generic): {listing.get('title_original', '')[:50]}")
-                                continue
-                            listing['listing_id'] = generate_listing_id(listing)
-                            all_listings.append(listing)
-                        except Exception as e:
-                            print(f"    WARNING: Error processing result: {e}")
-                            continue
+            if not page_data:
+                print(f"  No data returned")
+                continue
 
-                    time.sleep(1)
-                except Exception as e:
-                    print(f"  WARNING: Portal {portal['name']} query failed: {e}")
-                    continue
+            md_len = len(page_data.get("markdown", ""))
+            n_links = len(page_data.get("links", []))
+            print(f"  Got {md_len} chars markdown, {n_links} links")
 
+            listings = parse_listings_from_page(
+                page_data, portal_name, loc_key, base_url, config
+            )
+            print(f"  Extracted {len(listings)} listings")
+
+            for lst in listings:
+                print(f"    ✓ €{lst['price_eur']:,} | {lst.get('bedrooms', '?')}BR "
+                      f"| {lst.get('size_sqm', '?')}m² | {lst['title_original'][:50]}")
+
+            all_listings.extend(listings)
+            time.sleep(1)  # Rate limiting
+
+        except Exception as e:
+            print(f"  WARNING: Failed to scrape {portal_name}/{loc_key}: {e}")
+            continue
+
+    print(f"\n  Total Firecrawl credits used this run: {credits_used}")
     return all_listings
 
 
+# ---------------------------------------------------------------------------
+# Data persistence (unchanged)
+# ---------------------------------------------------------------------------
+
 def load_seen_listings(data_dir="data"):
-    """Load previously seen listing IDs."""
     seen_file = Path(data_dir) / "seen_listings.json"
     if seen_file.exists():
         with open(seen_file, encoding='utf-8-sig') as f:
@@ -508,7 +551,6 @@ def load_seen_listings(data_dir="data"):
 
 
 def save_seen_listings(seen, data_dir="data"):
-    """Save seen listing IDs."""
     Path(data_dir).mkdir(exist_ok=True)
     seen_file = Path(data_dir) / "seen_listings.json"
     with open(seen_file, 'w', encoding='utf-8') as f:
@@ -516,7 +558,6 @@ def save_seen_listings(seen, data_dir="data"):
 
 
 def load_published_listings(data_dir="data"):
-    """Load all published listings (the full history)."""
     pub_file = Path(data_dir) / "published_listings.json"
     if pub_file.exists():
         with open(pub_file, encoding='utf-8-sig') as f:
@@ -525,7 +566,6 @@ def load_published_listings(data_dir="data"):
 
 
 def save_published_listings(published, data_dir="data"):
-    """Save published listings."""
     Path(data_dir).mkdir(exist_ok=True)
     pub_file = Path(data_dir) / "published_listings.json"
     with open(pub_file, 'w', encoding='utf-8') as f:
@@ -534,8 +574,8 @@ def save_published_listings(published, data_dir="data"):
 
 if __name__ == '__main__':
     config = load_config()
-    print("Running test search...")
+    print("Running test scrape...")
     listings = run_search_round(config)
     print(f"\nTotal listings found: {len(listings)}")
     for l in listings[:5]:
-        print(f"  - {l['title'][:60]} | {l['portal']} | \u20ac{l.get('price_eur', 'N/A')}")
+        print(f"  - {l['title'][:60]} | {l['portal']} | €{l.get('price_eur', 'N/A')}")
