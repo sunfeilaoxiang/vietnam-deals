@@ -110,18 +110,35 @@ def generate_listing_card(listing):
     legal = listing.get('legal_status', '')
     furnishing = listing.get('furnishing', '')
 
-    details = ' \u00b7 '.join(filter(None, [price, bedrooms, bath_str, size, price_per_sqm]))
-    budget_badge = '<span class="badge badge-warn">\u0421\u0432\u0435\u0440\u0445 \u0431\u044e\u0434\u0436\u0435\u0442\u0430</span>' if over_budget else ''
+    budget_badge = '<span class="badge badge-warn">Сверх бюджета</span>' if over_budget else ''
 
-    # Property info tags
-    info_tags = ''
+    # Build property specs grid
+    specs = []
+    if price:
+        specs.append(('Цена', price))
+    if bedrooms:
+        specs.append(('Спальни', bedrooms))
+    if bath_str:
+        specs.append(('Ванные', bath_str))
+    if size:
+        specs.append(('Площадь', size))
+    if price_per_sqm:
+        specs.append(('Цена/м²', price_per_sqm))
     if legal:
-        info_tags += f'<span class="badge badge-info">{legal}</span>'
+        specs.append(('Право', legal))
     if furnishing:
-        info_tags += f'<span class="badge badge-info">{furnishing}</span>'
+        specs.append(('Мебель', furnishing))
     developer = listing.get('developer', '')
     if developer:
-        info_tags += f'<span class="badge badge-dev">{developer}</span>'
+        specs.append(('Застройщик', developer))
+
+    specs_html = ''.join(
+        f'<div class="spec-item"><span class="spec-label">{lbl}</span><span class="spec-value">{val}</span></div>'
+        for lbl, val in specs
+    )
+
+    # Legacy info_tags for developer badge outside specs
+    info_tags = ''
 
     components = listing.get('score_components', {})
     factor_names_ru = {
@@ -153,8 +170,7 @@ def generate_listing_card(listing):
           </div>
         </div>
       </div>
-      <div class="card-details">{details}</div>
-      {f'<div class="card-tags">{info_tags}</div>' if info_tags else ''}
+      <div class="specs-grid">{specs_html}</div>
       <p class="card-snippet">{snippet}</p>
     </div>
     '''
@@ -308,7 +324,10 @@ def generate_html(rounds, config, loc_labels):
     .badge-warn {{ background: var(--red); color: white; }}
     .badge-info {{ background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }}
     .badge-dev {{ background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }}
-    .card-details {{ color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }}
+    .specs-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.04); border-radius: 8px; }}
+    .spec-item {{ display: flex; flex-direction: column; }}
+    .spec-label {{ color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }}
+    .spec-value {{ color: var(--accent); font-weight: 600; font-size: 0.9rem; }}
     .card-tags {{ display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }}
     .card-snippet {{ color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }}
     .methodology {{ background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }}
