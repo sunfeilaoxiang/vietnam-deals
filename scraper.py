@@ -26,7 +26,8 @@ def web_search(query, num_results=10):
     """
     Search the web using SerpAPI (free tier: 100 searches/month)
     or fallback to DuckDuckGo HTML scraping.
-    """    serpapi_key = os.environ.get('SERPAPI_KEY', '')
+    """
+    serpapi_key = os.environ.get('SERPAPI_KEY', '')
     if serpapi_key:
         return _search_serpapi(query, serpapi_key, num_results)
     else:
@@ -54,7 +55,8 @@ def _search_serpapi(query, api_key, num_results):
                 results.append({
                     'title': r.get('title', ''),
                     'url': r.get('link', ''),
-                    'snippet': r.get('snippet', '')                })
+                    'snippet': r.get('snippet', '')
+                })
             return results
     except Exception as e:
         print(f"  SerpAPI error: {e}")
@@ -82,7 +84,8 @@ def _search_duckduckgo(query, num_results):
                 results.append({
                     'title': title.strip(),
                     'url': url_match.strip(),
-                    'snippet': snippet.strip()                })
+                    'snippet': snippet.strip()
+                })
             return results
     except Exception as e:
         print(f"  DuckDuckGo error: {e}")
@@ -111,7 +114,8 @@ def translate_to_russian(text):
 
 def extract_listing_from_search_result(result, portal_name, location_key, config):
     """Extract structured listing data from a search result."""
-    title = result.get('title', '')    snippet = result.get('snippet', '')
+    title = result.get('title', '')
+    snippet = result.get('snippet', '')
     url = result.get('url', '')
     combined = f"{title} {snippet}"
 
@@ -139,7 +143,8 @@ def extract_listing_from_search_result(result, portal_name, location_key, config
         'price_raw': extract_raw_price(combined),
         'size_sqm': size_sqm,
         'bedrooms': bedrooms,
-        'bathrooms': bathrooms,        'developer': developer,
+        'bathrooms': bathrooms,
+        'developer': developer,
         'legal_status': legal_status,
         'furnishing': furnishing,
         'description': snippet_ru,
@@ -199,6 +204,7 @@ def extract_price(text, vnd_per_eur=27000):
         eur = val * 1_000_000_000 / vnd_per_eur
         if eur > 500:
             return round(eur)
+
     # VND millions (triệu) -> EUR
     vnd_mil = re.search(r'([\d,\.]+)\s*(?:tri\u1ec7u|trieu|million vnd|tr)\b', text_lower)
     if vnd_mil:
@@ -298,13 +304,13 @@ def extract_legal_status(text):
     """Extract legal/ownership status from text."""
     text_lower = text.lower()
     if any(w in text_lower for w in ['s\u1ed5 h\u1ed3ng', 'freehold', 'long-term', 'l\u00e2u d\u00e0i', 'permanent']):
-        return '\u0421\u043e\u0431\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0441\u0442\u044c'
+        return '\u0421\u043e\u0431\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0441\u0442\u044c'  # Собственность
     if any(w in text_lower for w in ['h\u1ee3p \u0111\u1ed3ng mua b\u00e1n', 'sale contract', 'purchase contract']):
-        return '\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043a\u0443\u043f\u043b\u0438-\u043f\u0440\u043e\u0434\u0430\u0436\u0438'
+        return '\u0414\u043e\u0433\u043e\u0432\u043e\u0440 \u043a\u0443\u043f\u043b\u0438-\u043f\u0440\u043e\u0434\u0430\u0436\u0438'  # Договор купли-продажи
     if any(w in text_lower for w in ['leasehold', '50 year', '50-year', '50 n\u0103m']):
-        return '\u0410\u0440\u0435\u043d\u0434\u0430 50 \u043b\u0435\u0442'
+        return '\u0410\u0440\u0435\u043d\u0434\u0430 50 \u043b\u0435\u0442'  # Аренда 50 лет
     if any(w in text_lower for w in ['s\u1edf h\u1eefu', 'foreign quota', 'foreign ownership']):
-        return '\u0418\u043d\u043e\u0441\u0442\u0440. \u043a\u0432\u043e\u0442\u0430'
+        return '\u0418\u043d\u043e\u0441\u0442\u0440. \u043a\u0432\u043e\u0442\u0430'  # Иностр. квота
     return None
 
 
@@ -312,14 +318,15 @@ def extract_furnishing(text):
     """Extract furnishing level from text."""
     text_lower = text.lower()
     if any(w in text_lower for w in ['full furniture', 'fully furnished', 'n\u1ed9i th\u1ea5t \u0111\u1ea7y \u0111\u1ee7', 'full n\u1ed9i th\u1ea5t']):
-        return '\u041f\u043e\u043b\u043d\u0430\u044f \u043c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u043a\u0430'
+        return '\u041f\u043e\u043b\u043d\u0430\u044f \u043c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u043a\u0430'  # Полная меблировка
     if any(w in text_lower for w in ['basic', 'c\u01a1 b\u1ea3n', 'basic furniture', 'n\u1ed9i th\u1ea5t c\u01a1 b\u1ea3n']):
-        return '\u0411\u0430\u0437\u043e\u0432\u0430\u044f'
+        return '\u0411\u0430\u0437\u043e\u0432\u0430\u044f'  # Базовая
     if any(w in text_lower for w in ['unfurnished', 'bare', 'kh\u00f4ng n\u1ed9i th\u1ea5t']):
-        return '\u0411\u0435\u0437 \u043c\u0435\u0431\u0435\u043b\u0438'
+        return '\u0411\u0435\u0437 \u043c\u0435\u0431\u0435\u043b\u0438'  # Без мебели
     if any(w in text_lower for w in ['furnished', 'n\u1ed9i th\u1ea5t']):
-        return '\u041c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u0430\u043d\u043e'
+        return '\u041c\u0435\u0431\u043b\u0438\u0440\u043e\u0432\u0430\u043d\u043e'  # Меблировано
     return None
+
 
 def generate_listing_id(listing):
     """Create a unique hash for deduplication."""
@@ -410,7 +417,8 @@ def run_search_round(config):
                 query = portal['search_pattern'].format(
                     keyword=keyword,
                     budget_vnd=budget_vnd_str
-                )                print(f"\n  Portal: {portal['name']} | Query: {query[:80]}...")
+                )
+                print(f"\n  Portal: {portal['name']} | Query: {query[:80]}...")
                 results = web_search(query, num_results=5)
                 print(f"  Found {len(results)} results")
 
@@ -440,6 +448,7 @@ def load_seen_listings(data_dir="data"):
             return json.load(f)
     return {}
 
+
 def save_seen_listings(seen, data_dir="data"):
     """Save seen listing IDs."""
     Path(data_dir).mkdir(exist_ok=True)
@@ -467,7 +476,8 @@ def save_published_listings(published, data_dir="data"):
 
 if __name__ == '__main__':
     config = load_config()
-    print("Running test search...")    listings = run_search_round(config)
+    print("Running test search...")
+    listings = run_search_round(config)
     print(f"\nTotal listings found: {len(listings)}")
     for l in listings[:5]:
         print(f"  - {l['title'][:60]} | {l['portal']} | \u20ac{l.get('price_eur', 'N/A')}")

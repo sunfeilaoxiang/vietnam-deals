@@ -55,6 +55,7 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
         val = float(vnd_match.group(1).replace(',', ''))
         vnd_amount = val * 1_000_000_000
         return vnd_amount / vnd_per_eur
+
     # VND (tri\u1ec7u / million VND)
     vnd_match2 = re.search(r'([\d,\.]+)\s*(tri\u1ec7u|trieu|million vnd|tr)\b', price_str)
     if vnd_match2:
@@ -176,6 +177,7 @@ def score_listing(listing, location_key, config):
     full_text = f"{listing.get('title_original', listing.get('title', ''))} {listing.get('description_original', listing.get('description', ''))} {listing.get('developer', '')}"
 
     scores = {}
+
     # 1. Price per sqm (20%) - EUR benchmarks
     if price_eur and size_sqm and size_sqm > 0:
         price_per_sqm = price_eur / size_sqm
@@ -204,6 +206,7 @@ def score_listing(listing, location_key, config):
             scores['price_per_sqm'] = 2
     else:
         scores['price_per_sqm'] = 3
+
     # 2. Location tier (15%)
     scores['location_tier'] = loc_config.get('location_tier', 4)
 
@@ -232,6 +235,7 @@ def score_listing(listing, location_key, config):
     # 6. Air quality (5%)
     air_q = listing.get('air_quality') or loc_config.get('air_quality_default', 'good')
     scores['air_quality'] = config['air_quality_scores'].get(air_q, 4)
+
     # 7. Developer reputation (10%)
     dev_tier = detect_developer_tier(listing.get('developer', ''), config.get('known_developers', {}))
     scores['developer_reputation'] = config['developer_tiers'].get(dev_tier, 3)
@@ -261,6 +265,7 @@ def score_listing(listing, location_key, config):
     composite = sum(scores[k] * weights[k] for k in weights if k in scores)
     if over_budget:
         composite *= 0.5
+
     final_score = round(composite, 1)
 
     return {
@@ -289,6 +294,7 @@ if __name__ == '__main__':
         'description_original': 'Beachfront apartment in An Thoi, South Phu Quoc. Long-term ownership. Sea view.',
         'sea_proximity': 'beachfront'
     }
-    result = score_listing(sample, 'phu_quoc', config)    print(f"Score: {result['final_score']}/7")
+    result = score_listing(sample, 'phu_quoc', config)
+    print(f"Score: {result['final_score']}/7")
     print(f"Components: {json.dumps(result['component_scores'], indent=2)}")
     print(f"Parsed: {json.dumps(result['parsed'], indent=2)}")

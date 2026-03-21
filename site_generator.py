@@ -37,17 +37,17 @@ def score_color(score):
 
 def score_label(score):
     if score >= 6.5:
-        return '\u041e\u0442\u043b\u0438\u0447\u043d\u043e'
+        return '\u041e\u0442\u043b\u0438\u0447\u043d\u043e'  # Отлично
     elif score >= 6:
-        return '\u041e\u0447. \u0445\u043e\u0440\u043e\u0448\u043e'
+        return '\u041e\u0447. \u0445\u043e\u0440\u043e\u0448\u043e'  # Оч. хорошо
     elif score >= 5.5:
-        return '\u0425\u043e\u0440\u043e\u0448\u043e'
+        return '\u0425\u043e\u0440\u043e\u0448\u043e'  # Хорошо
     elif score >= 5:
-        return '\u041d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u043e'
+        return '\u041d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u043e'  # Нормально
     elif score >= 4:
-        return '\u0421\u0440\u0435\u0434\u043d\u0435'
+        return '\u0421\u0440\u0435\u0434\u043d\u0435'  # Средне
     else:
-        return '\u041d\u0438\u0436\u0435 \u0441\u0440.'
+        return '\u041d\u0438\u0436\u0435 \u0441\u0440.'  # Ниже ср.
 
 
 def format_price(listing):
@@ -74,8 +74,8 @@ def format_bedrooms(listing):
     br = listing.get('parsed_data', {}).get('bedrooms') or listing.get('bedrooms')
     if br is not None:
         if br == 0:
-            return '\u0421\u0442\u0443\u0434\u0438\u044f'
-        return f"{br} \u0441\u043f."
+            return '\u0421\u0442\u0443\u0434\u0438\u044f'  # Студия
+        return f"{br} \u0441\u043f."  # сп.
     return ''
 
 
@@ -86,6 +86,7 @@ def format_price_per_sqm(listing):
         ppsm = price / sqm
         return f"\u20ac{ppsm:,.0f}/\u043c\u00b2"
     return ''
+
 
 def generate_listing_card(listing):
     score = listing.get('score', 0)
@@ -145,7 +146,8 @@ def generate_listing_card(listing):
           <span class="score-label">{label}</span>
         </div>
         <div class="card-title-area">
-          <a href="{url}" target="_blank" rel="noopener" class="card-title">{title}</a>          <div class="card-meta">
+          <a href="{url}" target="_blank" rel="noopener" class="card-title">{title}</a>
+          <div class="card-meta">
             <span class="badge badge-portal">{portal}</span>
             {budget_badge}
           </div>
@@ -174,7 +176,8 @@ def generate_html(rounds, config, loc_labels):
         total_searched = rnd.get('total_searched', 0)
         new_found = rnd.get('new_found', 0)
 
-        if not listings:            rounds_html += f'''
+        if not listings:
+            rounds_html += f'''
             <section class="round-section">
               <h2 class="round-date">{date}</h2>
               <p class="round-meta">\u041f\u0440\u043e\u0432\u0435\u0440\u0435\u043d\u043e {total_searched} \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432 \u00b7 {new_found} \u043d\u043e\u0432\u044b\u0445 \u00b7 \u041d\u0435\u0442 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0439 \u0441 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u043e\u043c {threshold}+</p>
@@ -204,7 +207,8 @@ def generate_html(rounds, config, loc_labels):
           <h2 class="round-date">{date}</h2>
           <p class="round-meta">\u041f\u0440\u043e\u0432\u0435\u0440\u0435\u043d\u043e {total_searched} \u00b7 {new_found} \u043d\u043e\u0432\u044b\u0445 \u00b7 {len(listings)} \u0432\u044b\u0433\u043e\u0434\u043d\u044b\u0445 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0439</p>
           {listings_html}
-        </section>        '''
+        </section>
+        '''
 
     weights = config.get('scoring_weights', {})
     factor_names_ru = {
@@ -222,6 +226,10 @@ def generate_html(rounds, config, loc_labels):
         f'<tr><td>{factor_names_ru.get(k, k)}</td><td>{int(v*100)}%</td></tr>'
         for k, v in weights.items()
     )
+
+    empty_state = '<div class="empty-state"><p>\u041f\u043e\u043a\u0430 \u043d\u0435\u0442 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432.</p><p>\u041f\u0435\u0440\u0432\u044b\u0439 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0438\u0441\u043a \u0432 05:00 UTC.</p></div>'
+    main_content = rounds_html if rounds_html.strip() else empty_state
+
     return f'''<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -251,7 +259,8 @@ def generate_html(rounds, config, loc_labels):
     }}
     .container {{
       max-width: 900px;
-      margin: 0 auto;      padding: 2rem 1.5rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
     }}
     header {{
       text-align: center;
@@ -280,7 +289,8 @@ def generate_html(rounds, config, loc_labels):
     .stat-num {{ font-size: 1.5rem; font-weight: 700; color: var(--accent); }}
     .stat-label {{ font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }}
     .round-section {{ margin-bottom: 3rem; }}
-    .round-date {{ font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.5rem; }}    .round-meta {{ color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }}
+    .round-date {{ font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.5rem; }}
+    .round-meta {{ color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }}
     .location-group {{ margin-bottom: 1.5rem; }}
     .location-label {{ font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; padding-left: 0.5rem; border-left: 3px solid var(--accent); }}
     .listing-card {{ background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }}
@@ -304,7 +314,8 @@ def generate_html(rounds, config, loc_labels):
     .methodology {{ background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }}
     .methodology h2 {{ font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }}
     .methodology table {{ width: 100%; border-collapse: collapse; }}
-    .methodology td {{ padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--surface2); font-size: 0.85rem; }}    .methodology td:last-child {{ text-align: right; font-weight: 600; color: var(--accent); }}
+    .methodology td {{ padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--surface2); font-size: 0.85rem; }}
+    .methodology td:last-child {{ text-align: right; font-weight: 600; color: var(--accent); }}
     footer {{ text-align: center; padding: 2rem 0; color: var(--text-dim); font-size: 0.8rem; }}
     .empty-state {{ text-align: center; padding: 4rem 2rem; color: var(--text-dim); }}
     .empty-state p {{ font-size: 1.1rem; margin-bottom: 0.5rem; }}
@@ -320,7 +331,7 @@ def generate_html(rounds, config, loc_labels):
 <body>
   <div class="container">
     <header>
-      <h1>\u041d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u044c \u0412\u044c\u0435\u0442\u043d\u0430\u043c\u0430</h1>
+      <h1>\u041d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u044c \u0412\u044c\u0435\u0444\u043d\u0430\u043c\u0430</h1>
       <p class="subtitle">\u0415\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u044b\u0439 \u043f\u043e\u0438\u0441\u043a \u00b7 \u0411\u044e\u0434\u0436\u0435\u0442: \u20ac{budget:,} \u00b7 {locations_str}</p>
       <div class="stats-bar">
         <div class="stat">
@@ -333,7 +344,8 @@ def generate_html(rounds, config, loc_labels):
         </div>
         <div class="stat">
           <div class="stat-num">{threshold}+/7</div>
-          <div class="stat-label">\u041c\u0438\u043d. \u0440\u0435\u0439\u0442\u0438\u043d\u0433</div>        </div>
+          <div class="stat-label">\u041c\u0438\u043d. \u0440\u0435\u0439\u0442\u0438\u043d\u0433</div>
+        </div>
         <div class="stat">
           <div class="stat-num">{last_run}</div>
           <div class="stat-label">\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u0437\u0430\u043f\u0443\u0441\u043a</div>
@@ -342,7 +354,7 @@ def generate_html(rounds, config, loc_labels):
     </header>
 
     <main>
-      {rounds_html if rounds_html.strip() else '<div class="empty-state"><p>\u041f\u043e\u043a\u0430 \u043d\u0435\u0442 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432.</p><p>\u041f\u0435\u0440\u0432\u044b\u0439 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0438\u0441\u043a \u0432 05:00 UTC.</p></div>'}
+      {main_content}
     </main>
 
     <div class="methodology">
@@ -351,7 +363,7 @@ def generate_html(rounds, config, loc_labels):
         {weights_rows}
       </table>
       <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
-        \u041f\u0443\u0431\u043b\u0438\u043a\u0443\u044e\u0442\u0441\u044f \u0442\u043e\u043b\u044c\u043a\u043e \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u0441 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u043e\u043c {threshold}+. \u0421\u0432\u0435\u0440\u0445 \u0431\u044e\u0434\u0436\u0435\u0442\u0430 = \u0448\u0442\u0440\u0430\u0444 50%.
+        \u041f\u0443\u0431\u043b\u0438\u043a\u0443\u044e\u0442\u0441\u044f \u0442\u043e\u043b\u044c\u043a\u043e \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u0441 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u043e\u043`�{threshold}+. \u0421\u0432\u0435\u0440\u0445 \u0431\u044e\u0434\u0436\u0435\u0442\u0430 = \u0448\u0442\u0440\u0430\u0444 50%.
       </p>
     </div>
 
