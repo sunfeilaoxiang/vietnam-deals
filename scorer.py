@@ -25,7 +25,8 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
         val = float(eur_match.group(1).replace(',', ''))
         suffix = eur_match.group(2) or ''
         if suffix in ('k', 'thousand'):
-            val *= 1000        elif suffix in ('m', 'million'):
+            val *= 1000
+        elif suffix in ('m', 'million'):
             val *= 1_000_000
         return val
 
@@ -82,7 +83,8 @@ def parse_sqm(size_str):
     match = re.search(r'([\d\.]+)\s*(sqm|m2|m\u00b2|sq\.?\s*m)', str(size_str).lower())
     if match:
         return float(match.group(1))
-    match2 = re.search(r'(\d+)', str(size_str))    if match2:
+    match2 = re.search(r'(\d+)', str(size_str))
+    if match2:
         val = float(match2.group(1))
         if 15 <= val <= 500:
             return val
@@ -111,7 +113,8 @@ def detect_sea_proximity(text):
     """Guess sea proximity from listing description."""
     text = str(text).lower()
     if any(w in text for w in ['beachfront', 'beach front', 'bi\u1ec3n', 's\u00e1t bi\u1ec3n', 'm\u1eb7t bi\u1ec3n', 'ocean front', 'sea front']):
-        return 'beachfront'    if any(w in text for w in ['100m', '150m', '200m', 'g\u1ea7n bi\u1ec3n', 'near beach', 'near sea', 'walking distance']):
+        return 'beachfront'
+    if any(w in text for w in ['100m', '150m', '200m', 'g\u1ea7n bi\u1ec3n', 'near beach', 'near sea', 'walking distance']):
         return 'under_200m'
     if any(w in text for w in ['300m', '400m', '500m']):
         return 'under_500m'
@@ -141,7 +144,8 @@ def detect_developer_tier(developer_name, known_developers):
 
 def detect_foreign_ownership(text):
     """Score foreign ownership clarity from description."""
-    text = str(text).lower()    if any(w in text for w in ['long-term', 'l\u00e2u d\u00e0i', 'permanent', 'freehold', 's\u1ed5 h\u1ed3ng']):
+    text = str(text).lower()
+    if any(w in text for w in ['long-term', 'l\u00e2u d\u00e0i', 'permanent', 'freehold', 's\u1ed5 h\u1ed3ng']):
         return 7
     if any(w in text for w in ['50 year', '50-year', '50 n\u0103m', 'leasehold', 'foreign quota', 's\u1edf h\u1eefu n\u01b0\u1edbc ngo\u00e0i']):
         return 5

@@ -168,7 +168,8 @@ def extract_price(text, vnd_per_eur=27000):
         (r'\$\s*([\d,\.]+)\s*k\b', True),        # $85k
         (r'\$\s*([\d,\.]+)\s*(?:usd)?', False),   # $85,000
         (r'([\d,\.]+)\s*(?:usd|us\$)', False),    # 85000 USD
-    ]    for pat, is_k in usd_patterns:
+    ]
+    for pat, is_k in usd_patterns:
         m = re.search(pat, text_lower)
         if m:
             val = float(m.group(1).replace(',', ''))
@@ -227,7 +228,8 @@ def extract_raw_price(text):
         r'[\d,\.]+\s*(?:t\u1ef7|ty|billion|tri\u1ec7u|trieu|million)\s*(?:vnd|\u0111|dong)?',
         r'[\d,\.]+\s*(?:usd|us\$)',
         r'[€][\d,\.]+',
-    ]    for pat in patterns:
+    ]
+    for pat in patterns:
         m = re.search(pat, text, re.IGNORECASE)
         if m:
             return m.group(0).strip()
@@ -257,7 +259,8 @@ def extract_bedrooms(text):
     patterns = [
         r'(\d+)\s*(?:br|bed|bedroom|ph\u00f2ng ng\u1ee7|pn)',
         r'(\d+)\s*(?:-?\s*bed)',
-    ]    for pat in patterns:
+    ]
+    for pat in patterns:
         m = re.search(pat, text_lower)
         if m:
             val = int(m.group(1))
@@ -286,7 +289,8 @@ def extract_bathrooms(text):
         m = re.search(pat, text_lower)
         if m:
             val = int(m.group(1))
-            if 0 <= val <= 10:                return val
+            if 0 <= val <= 10:
+                return val
     return None
 
 
@@ -345,7 +349,8 @@ def is_relevant_result(result, location_key, config):
         return False
 
     # Skip if title contains generic tag/category indicators
-    title_skip = ['- tags', '- b\u00e1n - tags', '- tag', 'danh s\u00e1ch', 'k\u1ebft qu\u1ea3']    if any(term in title for term in title_skip):
+    title_skip = ['- tags', '- b\u00e1n - tags', '- tag', 'danh s\u00e1ch', 'k\u1ebft qu\u1ea3']
+    if any(term in title for term in title_skip):
         return False
 
     # Skip generic directory/category pages
@@ -375,7 +380,8 @@ def is_specific_listing(listing):
         'properties-for-sale', 'bat-dong-san-ban',
         'real-estate-for-sale', '/gia-tu-', '/gia-duoi-',
         '/ban-can-ho-chung-cu-', '/ban-nha-',
-    ]    for pattern in generic_patterns:
+    ]
+    for pattern in generic_patterns:
         if pattern in url:
             return False
 

@@ -27,7 +27,8 @@ def score_color(score):
         return '#16a34a'
     elif score >= 5.5:
         return '#2563eb'
-    elif score >= 5:        return '#0891b2'
+    elif score >= 5:
+        return '#0891b2'
     elif score >= 4:
         return '#d97706'
     else:
@@ -56,7 +57,8 @@ def format_price(listing):
             return f"\u20ac{price:,.0f}"
         else:
             return f"\u20ac{price:.0f}"
-    raw = listing.get('price_raw', '')    if raw:
+    raw = listing.get('price_raw', '')
+    if raw:
         return raw
     return None
 
@@ -113,7 +115,8 @@ def generate_listing_card(listing):
     # Property info tags
     info_tags = ''
     if legal:
-        info_tags += f'<span class="badge badge-info">{legal}</span>'    if furnishing:
+        info_tags += f'<span class="badge badge-info">{legal}</span>'
+    if furnishing:
         info_tags += f'<span class="badge badge-info">{furnishing}</span>'
     developer = listing.get('developer', '')
     if developer:
