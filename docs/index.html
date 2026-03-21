@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vietnam Property Deals</title>
+  <title>Недвижимость Вьетнама — Лучшие предложения</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -17,9 +17,7 @@
       --amber: #d97706;
       --red: #dc2626;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
@@ -27,32 +25,27 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-
     .container {
       max-width: 900px;
       margin: 0 auto;
       padding: 2rem 1.5rem;
     }
-
     header {
       text-align: center;
       padding: 3rem 0 2rem;
       border-bottom: 1px solid var(--surface2);
       margin-bottom: 2rem;
     }
-
     h1 {
       font-size: 2rem;
       font-weight: 700;
       color: var(--accent);
       margin-bottom: 0.5rem;
     }
-
     .subtitle {
       color: var(--text-dim);
       font-size: 1rem;
     }
-
     .stats-bar {
       display: flex;
       justify-content: center;
@@ -60,7 +53,6 @@
       margin-top: 1.5rem;
       flex-wrap: wrap;
     }
-
     .stat { text-align: center; }
     .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
     .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -82,7 +74,10 @@
     .badge { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
     .badge-portal { background: var(--surface2); color: var(--text-dim); }
     .badge-warn { background: var(--red); color: white; }
+    .badge-info { background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }
+    .badge-dev { background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }
     .card-details { color: var(--accent); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
     .card-snippet { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
     .methodology { background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }
     .methodology h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }
@@ -104,80 +99,49 @@
 <body>
   <div class="container">
     <header>
-      <h1>Vietnam Property Deals</h1>
-      <p class="subtitle">Daily curated listings · Budget: $150,000 USD · Phu Quoc, Quy Nhon / Binh Dinh, Da Lat, Con Dao</p>
+      <h1>Недвижимость Вьетнама</h1>
+      <p class="subtitle">Ежедневный поиск · Бюджет: €138,000 · Фукуок, Куиньон / Биньдинь, Далат, Кондао</p>
       <div class="stats-bar">
-        <div class="stat"><div class="stat-num">1</div><div class="stat-label">Search Rounds</div></div>
-        <div class="stat"><div class="stat-num">3</div><div class="stat-label">Deals Found</div></div>
-        <div class="stat"><div class="stat-num">5+/7</div><div class="stat-label">Score Threshold</div></div>
-        <div class="stat"><div class="stat-num">2026-03-21</div><div class="stat-label">Last Run</div></div>
+        <div class="stat">
+          <div class="stat-num">1</div>
+          <div class="stat-label">Поисков</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">0</div>
+          <div class="stat-label">Найдено</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">5.5+/7</div>
+          <div class="stat-label">Мин. рейтинг</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">2026-03-21</div>
+          <div class="stat-label">Последний запуск</div>
+        </div>
       </div>
     </header>
+
     <main>
-      <section class="round-section">
-        <h2 class="round-date">2026-03-21</h2>
-        <p class="round-meta">Searched 48 results · 12 new · 3 sweet deals published</p>
-        <div class="location-group">
-          <h3 class="location-label">Phu Quoc</h3>
-          <div class="listing-card">
-            <div class="card-header">
-              <div class="score-badge" style="background:#16a34a" title="Price Per Sqm: 6/7&#10;Location Tier: 6/7&#10;Sea Proximity: 7/7&#10;Growth Potential: 6/7&#10;Regional Development: 6/7&#10;Air Quality: 5/7&#10;Developer Reputation: 6/7&#10;Foreign Ownership Clarity: 7/7&#10;Bedroom Criteria Fit: 7/7">
-                <span class="score-num">6.2</span>
-                <span class="score-label">Excellent</span>
-              </div>
-              <div class="card-title-area">
-                <a href="https://sunset-town.com/en/example" target="_blank" rel="noopener" class="card-title">Sun Grand City Hillside 1BR - An Thoi Phu Quoc</a>
-                <div class="card-meta"><span class="badge badge-portal">sunset-town</span></div>
-              </div>
-            </div>
-            <div class="card-details">$85,000 · 1BR · 38 sqm</div>
-            <p class="card-snippet">Beachfront 1BR apartment with sea view. Long-term ownership. Santorini design.</p>
-          </div>
-          <div class="listing-card">
-            <div class="card-header">
-              <div class="score-badge" style="background:#2563eb" title="Price Per Sqm: 5/7&#10;Location Tier: 6/7&#10;Sea Proximity: 5/7&#10;Growth Potential: 6/7&#10;Regional Development: 6/7&#10;Air Quality: 5/7&#10;Developer Reputation: 5/7&#10;Foreign Ownership Clarity: 5/7&#10;Bedroom Criteria Fit: 7/7">
-                <span class="score-num">5.5</span>
-                <span class="score-label">Very Good</span>
-              </div>
-              <div class="card-title-area">
-                <a href="https://dotproperty.com.vn/example" target="_blank" rel="noopener" class="card-title">Meyhomes Capital 1BR - Duong To Phu Quoc</a>
-                <div class="card-meta"><span class="badge badge-portal">dotproperty</span></div>
-              </div>
-            </div>
-            <div class="card-details">$79,000 · 1BR · 32 sqm</div>
-            <p class="card-snippet">1BR apartment near Bai Truong beach. Township concept with full amenities.</p>
-          </div>
-        </div>
-        <div class="location-group">
-          <h3 class="location-label">Quy Nhon / Binh Dinh</h3>
-          <div class="listing-card">
-            <div class="card-header">
-              <div class="score-badge" style="background:#2563eb" title="Price Per Sqm: 7/7&#10;Location Tier: 5/7&#10;Sea Proximity: 3/7&#10;Growth Potential: 6/7&#10;Regional Development: 5/7&#10;Air Quality: 6/7&#10;Developer Reputation: 3/7&#10;Foreign Ownership Clarity: 3/7&#10;Bedroom Criteria Fit: 7/7">
-                <span class="score-num">5.8</span>
-                <span class="score-label">Very Good</span>
-              </div>
-              <div class="card-title-area">
-                <a href="https://dotproperty.com.vn/example2" target="_blank" rel="noopener" class="card-title">9X Quy Nhon 2BR Apartment - Nguyen Van Cu</a>
-                <div class="card-meta"><span class="badge badge-portal">dotproperty</span></div>
-              </div>
-            </div>
-            <div class="card-details">$33,000 · 2BR · 53 sqm</div>
-            <p class="card-snippet">2BR apartment in Quy Nhon city center. AC, security, car park, balcony.</p>
-          </div>
-        </div>
-      </section>
+      
+            <section class="round-section">
+              <h2 class="round-date">2026-03-21</h2>
+              <p class="round-meta">Проверено 23 результатов · 8 новых · Нет предложений с рейтингом 5.5+</p>
+            </section>
+            
     </main>
+
     <div class="methodology">
-      <h2>Scoring Methodology (1-7 Scale)</h2>
+      <h2>Методология оценки (1–7)</h2>
       <table>
-        <tr><td>Price Per Sqm</td><td>20%</td></tr><tr><td>Location Tier</td><td>15%</td></tr><tr><td>Sea Proximity</td><td>15%</td></tr><tr><td>Growth Potential</td><td>15%</td></tr><tr><td>Regional Development</td><td>10%</td></tr><tr><td>Air Quality</td><td>5%</td></tr><tr><td>Developer Reputation</td><td>10%</td></tr><tr><td>Foreign Ownership Clarity</td><td>5%</td></tr><tr><td>Bedroom Criteria Fit</td><td>5%</td></tr>
+        <tr><td>Цена за м²</td><td>20%</td></tr><tr><td>Локация</td><td>15%</td></tr><tr><td>Близость к морю</td><td>15%</td></tr><tr><td>Потенциал роста</td><td>15%</td></tr><tr><td>Развитие региона</td><td>10%</td></tr><tr><td>Качество воздуха</td><td>5%</td></tr><tr><td>Репутация застройщика</td><td>10%</td></tr><tr><td>Права собственности</td><td>5%</td></tr><tr><td>Спальни</td><td>5%</td></tr>
       </table>
       <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
-        Only listings scoring 5+ are published. Over-budget listings receive a 50% score penalty.
+        Публикуются только объявления с рейтингом 5.5+. Сверх бюджета = штраф 50%.
       </p>
     </div>
+
     <footer>
-      <p>Vietnam Property Deal Finder · Automated daily at 05:00 UTC · Data from batdongsan.vn, dotproperty.com.vn, fazwaz.vn, vietnam-real.estate, houseinhanoi.vn, sunset-town.com</p>
+      <p>Недвижимость Вьетнама · Автоматический поиск ежедневно в 05:00 UTC</p>
     </footer>
   </div>
 </body>
