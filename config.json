@@ -1,0 +1,143 @@
+{
+  "budget_max_usd": 150000,
+  "score_threshold": 5,
+  "vnd_per_usd": 24000,
+  "locations": {
+    "phu_quoc": {
+      "label": "Phu Quoc",
+      "bedroom_filter": "1BR only",
+      "min_bedrooms": 1,
+      "max_bedrooms": 1,
+      "location_tier": 6,
+      "sea_proximity_default": "beachfront",
+      "air_quality_default": "good",
+      "growth_pct_low": 40,
+      "growth_pct_high": 80,
+      "regional_development_score": 6,
+      "search_keywords": ["phu quoc apartment", "căn hộ phú quốc", "phu quoc 1 bedroom"]
+    },
+    "quy_nhon": {
+      "label": "Quy Nhon / Binh Dinh",
+      "bedroom_filter": "2BR minimum",
+      "min_bedrooms": 2,
+      "max_bedrooms": 99,
+      "location_tier": 5,
+      "sea_proximity_default": "coastal",
+      "air_quality_default": "very_good",
+      "growth_pct_low": 50,
+      "growth_pct_high": 100,
+      "regional_development_score": 5,
+      "search_keywords": ["quy nhon apartment 2 bedroom", "căn hộ quy nhơn", "binh dinh apartment"]
+    },
+    "da_lat": {
+      "label": "Da Lat",
+      "bedroom_filter": "any",
+      "min_bedrooms": 1,
+      "max_bedrooms": 99,
+      "location_tier": 4,
+      "sea_proximity_default": "inland",
+      "air_quality_default": "excellent",
+      "growth_pct_low": 60,
+      "growth_pct_high": 120,
+      "regional_development_score": 4,
+      "search_keywords": ["da lat apartment", "căn hộ đà lạt", "dalat property"]
+    },
+    "con_dao": {
+      "label": "Con Dao",
+      "bedroom_filter": "any",
+      "min_bedrooms": 1,
+      "max_bedrooms": 99,
+      "location_tier": 5,
+      "sea_proximity_default": "beachfront",
+      "air_quality_default": "excellent",
+      "growth_pct_low": 40,
+      "growth_pct_high": 80,
+      "regional_development_score": 3,
+      "search_keywords": ["con dao apartment", "căn hộ côn đảo", "con dao property"]
+    }
+  },
+  "scoring_weights": {
+    "price_per_sqm": 0.20,
+    "location_tier": 0.15,
+    "sea_proximity": 0.15,
+    "growth_potential": 0.15,
+    "regional_development": 0.10,
+    "air_quality": 0.05,
+    "developer_reputation": 0.10,
+    "foreign_ownership_clarity": 0.05,
+    "bedroom_criteria_fit": 0.05
+  },
+  "portals": [
+    {
+      "name": "batdongsan",
+      "base_url": "https://batdongsan.com.vn",
+      "search_pattern": "batdongsan.com.vn {keyword} apartment for sale under {budget_vnd}"
+    },
+    {
+      "name": "dotproperty",
+      "base_url": "https://dotproperty.com.vn",
+      "search_pattern": "dotproperty.com.vn {keyword} apartment for sale"
+    },
+    {
+      "name": "fazwaz",
+      "base_url": "https://www.fazwaz.vn",
+      "search_pattern": "fazwaz.vn {keyword} apartment for sale foreign ownership"
+    },
+    {
+      "name": "vietnam-real-estate",
+      "base_url": "https://vietnam-real.estate",
+      "search_pattern": "vietnam-real.estate {keyword} property for sale"
+    },
+    {
+      "name": "houseinhanoi",
+      "base_url": "https://houseinhanoi.vn",
+      "search_pattern": "houseinhanoi.vn {keyword} apartment"
+    },
+    {
+      "name": "sunset-town",
+      "base_url": "https://sunset-town.com",
+      "search_pattern": "sunset-town.com phu quoc apartment for sale"
+    }
+  ],
+  "sea_proximity_scores": {
+    "beachfront": 7,
+    "under_200m": 6,
+    "under_500m": 5,
+    "under_1km": 4,
+    "under_2km": 3,
+    "coastal": 3,
+    "inland": 1,
+    "mountain": 2
+  },
+  "air_quality_scores": {
+    "excellent": 7,
+    "very_good": 6,
+    "good": 5,
+    "moderate": 3,
+    "poor": 1
+  },
+  "developer_tiers": {
+    "international_branded": 7,
+    "major_vietnamese": 6,
+    "established_local": 5,
+    "mid_tier": 4,
+    "unknown": 3,
+    "suspicious": 1
+  },
+  "known_developers": {
+    "sun group": "major_vietnamese",
+    "vingroup": "major_vietnamese",
+    "bim group": "major_vietnamese",
+    "novaland": "major_vietnamese",
+    "six senses": "international_branded",
+    "intercontinental": "international_branded",
+    "regent": "international_branded",
+    "marriott": "international_branded",
+    "meyland": "established_local",
+    "artus": "established_local",
+    "vinaliving": "established_local",
+    "hung thinh": "major_vietnamese",
+    "dat xanh": "major_vietnamese",
+    "phu long": "established_local"
+  }
+}

@@ -1,0 +1,40 @@
+﻿name: Daily Property Scan
+
+on:
+  schedule:
+    # Run at 5:00 AM UTC every day
+    - cron: '0 5 * * *'
+  workflow_dispatch:  # Allow manual trigger from GitHub UI
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  scan-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run property scanner
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          cd ${{ github.workspace }}
+          python main.py
+
+      - name: Commit and push results
+        run: |
+          git config user.name "Vietnam Deal Bot"
+          git config user.email "bot@vietnam-deals.github.io"
+          git add data/ docs/
+          git diff --staged --quiet || git commit -m "Daily scan: $(date +%Y-%m-%d)"
+          git push
