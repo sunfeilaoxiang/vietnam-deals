@@ -13,6 +13,26 @@ def load_config(config_path="config.json"):
         return json.load(f)
 
 
+def _clean_number(s):
+    """Clean a number string that may use dots or commas as thousand separators."""
+    s = s.strip()
+    # Vietnamese format: 11.950.000.000 (dots as thousand sep, no decimal)
+    # If there are multiple dots, they're thousand separators
+    if s.count('.') >= 2:
+        return float(s.replace('.', ''))
+    # If there are multiple commas, they're thousand separators
+    if s.count(',') >= 2:
+        return float(s.replace(',', ''))
+    # Single comma or dot could be decimal or thousand sep
+    # If comma with 3 digits after -> thousand sep (e.g., 85,000)
+    if ',' in s and re.search(r',\d{3}$', s):
+        return float(s.replace(',', ''))
+    # If dot with 3 digits after -> thousand sep (e.g., 85.000)
+    if '.' in s and re.search(r'\.\d{3}$', s):
+        return float(s.replace('.', ''))
+    return float(s.replace(',', ''))
+
+
 def parse_price_eur(price_str, vnd_per_eur=27000):
     """Extract EUR price from various formats."""
     if not price_str:
@@ -22,7 +42,7 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
     # Direct EUR
     eur_match = re.search(r'[\u20ac]\s*([\d,\.]+)\s*(k|m|million|thousand)?', price_str)
     if eur_match:
-        val = float(eur_match.group(1).replace(',', ''))
+        val = _clean_number(eur_match.group(1))
         suffix = eur_match.group(2) or ''
         if suffix in ('k', 'thousand'):
             val *= 1000
@@ -33,7 +53,7 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
     # Direct USD -> convert to EUR
     usd_match = re.search(r'\$\s*([\d,\.]+)\s*(k|m|million|thousand)?', price_str)
     if usd_match:
-        val = float(usd_match.group(1).replace(',', ''))
+        val = _clean_number(usd_match.group(1))
         suffix = usd_match.group(2) or ''
         if suffix in ('k', 'thousand'):
             val *= 1000
@@ -44,7 +64,7 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
     # USD with keyword
     usd_match2 = re.search(r'([\d,\.]+)\s*(usd|us\$)', price_str)
     if usd_match2:
-        val = float(usd_match2.group(1).replace(',', ''))
+        val = _clean_number(usd_match2.group(1))
         if val < 1000:
             val *= 1000
         return val * 0.92
@@ -52,21 +72,21 @@ def parse_price_eur(price_str, vnd_per_eur=27000):
     # VND (billion / t\u1ef7)
     vnd_match = re.search(r'([\d,\.]+)\s*(t\u1ef7|ty|billion|bil)\b', price_str)
     if vnd_match:
-        val = float(vnd_match.group(1).replace(',', ''))
+        val = _clean_number(vnd_match.group(1))
         vnd_amount = val * 1_000_000_000
         return vnd_amount / vnd_per_eur
 
     # VND (tri\u1ec7u / million VND)
     vnd_match2 = re.search(r'([\d,\.]+)\s*(tri\u1ec7u|trieu|million vnd|tr)\b', price_str)
     if vnd_match2:
-        val = float(vnd_match2.group(1).replace(',', ''))
+        val = _clean_number(vnd_match2.group(1))
         vnd_amount = val * 1_000_000
         return vnd_amount / vnd_per_eur
 
     # Plain number
     num_match = re.search(r'([\d,\.]+)', price_str)
     if num_match:
-        val = float(num_match.group(1).replace(',', ''))
+        val = _clean_number(num_match.group(1))
         if val > 1_000_000_000:
             return val / vnd_per_eur
         elif val > 100_000:

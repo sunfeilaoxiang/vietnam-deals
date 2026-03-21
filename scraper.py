@@ -13,6 +13,20 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import ssl
+
+
+def _clean_number(s):
+    """Clean a number string that may use dots or commas as thousand separators."""
+    s = s.strip()
+    if s.count('.') >= 2:
+        return float(s.replace('.', ''))
+    if s.count(',') >= 2:
+        return float(s.replace(',', ''))
+    if ',' in s and re.search(r',\d{3}$', s):
+        return float(s.replace(',', ''))
+    if '.' in s and re.search(r'\.\d{3}$', s):
+        return float(s.replace('.', ''))
+    return float(s.replace(',', ''))
 from datetime import datetime
 from pathlib import Path
 
@@ -177,7 +191,7 @@ def extract_price(text, vnd_per_eur=27000):
     for pat, is_k in usd_patterns:
         m = re.search(pat, text_lower)
         if m:
-            val = float(m.group(1).replace(',', ''))
+            val = _clean_number(m.group(1))
             if is_k or 'k' in text_lower[m.start():m.end()+2]:
                 val *= 1000
             if val < 500:
@@ -188,7 +202,7 @@ def extract_price(text, vnd_per_eur=27000):
     # EUR patterns
     eur_match = re.search(r'[€]\s*([\d,\.]+)\s*(k|thousand|million)?', text_lower)
     if eur_match:
-        val = float(eur_match.group(1).replace(',', ''))
+        val = _clean_number(eur_match.group(1))
         suffix = eur_match.group(2) or ''
         if suffix in ('k', 'thousand'):
             val *= 1000
@@ -200,7 +214,7 @@ def extract_price(text, vnd_per_eur=27000):
     # VND billions (tỷ) -> EUR
     vnd_bil = re.search(r'([\d,\.]+)\s*(?:t\u1ef7|ty|billion|bil)\b', text_lower)
     if vnd_bil:
-        val = float(vnd_bil.group(1).replace(',', ''))
+        val = _clean_number(vnd_bil.group(1))
         eur = val * 1_000_000_000 / vnd_per_eur
         if eur > 500:
             return round(eur)
@@ -208,7 +222,7 @@ def extract_price(text, vnd_per_eur=27000):
     # VND millions (triệu) -> EUR
     vnd_mil = re.search(r'([\d,\.]+)\s*(?:tri\u1ec7u|trieu|million vnd|tr)\b', text_lower)
     if vnd_mil:
-        val = float(vnd_mil.group(1).replace(',', ''))
+        val = _clean_number(vnd_mil.group(1))
         eur = val * 1_000_000 / vnd_per_eur
         if eur > 500:
             return round(eur)
@@ -218,7 +232,7 @@ def extract_price(text, vnd_per_eur=27000):
     if not vnd_direct:
         vnd_direct = re.search(r'([\d,\.]+)\s*(?:vnd|\u0111)', text_lower)
     if vnd_direct:
-        val = float(vnd_direct.group(1).replace(',', ''))
+        val = _clean_number(vnd_direct.group(1))
         if val > 1_000_000_000:
             eur = val / vnd_per_eur
             if eur > 500:
