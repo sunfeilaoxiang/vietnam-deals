@@ -1,6 +1,7 @@
 """
 Static site generator for Vietnam Property Deal Finder.
 Generates a clean HTML page in Russian from published listings data.
+All listings from all rounds are merged into one filterable, sortable view.
 """
 
 import json
@@ -37,98 +38,142 @@ def score_color(score):
 
 def score_label(score):
     if score >= 6.5:
-        return '\u041e\u0442\u043b\u0438\u0447\u043d\u043e'  # Отлично
+        return 'Отлично'
     elif score >= 6:
-        return '\u041e\u0447. \u0445\u043e\u0440\u043e\u0448\u043e'  # Оч. хорошо
+        return 'Оч. хорошо'
     elif score >= 5.5:
-        return '\u0425\u043e\u0440\u043e\u0448\u043e'  # Хорошо
+        return 'Хорошо'
     elif score >= 5:
-        return '\u041d\u043e\u0440\u043c\u0430\u043b\u044c\u043d\u043e'  # Нормально
+        return 'Нормально'
     elif score >= 4:
-        return '\u0421\u0440\u0435\u0434\u043d\u0435'  # Средне
+        return 'Средне'
     else:
-        return '\u041d\u0438\u0436\u0435 \u0441\u0440.'  # Ниже ср.
+        return 'Ниже ср.'
 
 
-def format_price(listing):
+def format_price_eur(listing):
     price = listing.get('parsed_data', {}).get('price_eur') or listing.get('price_eur')
-    if price and isinstance(price, (int, float)):
-        if price >= 1000:
-            return f"\u20ac{price:,.0f}"
-        else:
-            return f"\u20ac{price:.0f}"
-    raw = listing.get('price_raw', '')
-    if raw:
-        return raw
-    return None
+    if price and isinstance(price, (int, float)) and price >= 100:
+        return price
+    return 0
 
 
-def format_size(listing):
+def format_size_sqm(listing):
     sqm = listing.get('parsed_data', {}).get('size_sqm') or listing.get('size_sqm')
-    if sqm:
-        return f"{sqm:.0f} \u043c\u00b2"
-    return ''
+    if sqm and isinstance(sqm, (int, float)):
+        return sqm
+    return 0
 
 
-def format_bedrooms(listing):
+def format_bedrooms_num(listing):
     br = listing.get('parsed_data', {}).get('bedrooms') or listing.get('bedrooms')
-    if br is not None:
-        if br == 0:
-            return '\u0421\u0442\u0443\u0434\u0438\u044f'  # Студия
-        return f"{br} \u0441\u043f."  # сп.
-    return ''
+    if br is not None and isinstance(br, (int, float)):
+        return int(br)
+    return -1
 
 
-def format_price_per_sqm(listing):
-    price = listing.get('parsed_data', {}).get('price_eur') or listing.get('price_eur')
-    sqm = listing.get('parsed_data', {}).get('size_sqm') or listing.get('size_sqm')
-    if price and sqm and isinstance(price, (int, float)) and isinstance(sqm, (int, float)) and sqm > 0:
-        ppsm = price / sqm
-        return f"\u20ac{ppsm:,.0f}/\u043c\u00b2"
-    return ''
+def price_per_sqm_num(listing):
+    price = format_price_eur(listing)
+    sqm = format_size_sqm(listing)
+    if price > 0 and sqm > 0:
+        return round(price / sqm, 0)
+    return 0
 
 
-def generate_listing_card(listing):
+def merge_all_listings(rounds):
+    """Merge all listings from all rounds, keeping the latest occurrence if duplicated."""
+    seen_ids = {}
+    all_listings = []
+    for rnd in rounds:
+        date = rnd.get('date', '')
+        for listing in rnd.get('listings', []):
+            lid = listing.get('listing_id', listing.get('url', ''))
+            listing['found_date'] = date
+            if lid not in seen_ids:
+                seen_ids[lid] = len(all_listings)
+                all_listings.append(listing)
+            # If already seen, keep the first (newest round) since rounds are sorted desc
+    return all_listings
+
+
+def listing_to_json_data(listing, idx):
+    """Convert a listing to a JSON-serializable dict for the JS filter engine."""
+    price = format_price_eur(listing)
+    sqm = format_size_sqm(listing)
+    bedrooms = format_bedrooms_num(listing)
+    ppsm = price_per_sqm_num(listing)
+    score = listing.get('score', 0)
+    return {
+        'idx': idx,
+        'price': price,
+        'sqm': sqm,
+        'bedrooms': bedrooms,
+        'ppsm': ppsm,
+        'score': round(score, 1),
+        'location': listing.get('location_key', 'other'),
+        'date': listing.get('found_date', ''),
+        'over_budget': listing.get('parsed_data', {}).get('over_budget', False)
+    }
+
+
+def generate_listing_card(listing, idx):
     score = listing.get('score', 0)
     color = score_color(score)
     label = score_label(score)
     title = listing.get('title', 'Untitled')[:80]
     url = listing.get('url', '#')
     portal = listing.get('portal', '')
-    price = format_price(listing)
-    size = format_size(listing)
-    bedrooms = format_bedrooms(listing)
-    price_per_sqm = format_price_per_sqm(listing)
-    snippet = listing.get('source_snippet', listing.get('description', ''))[:200]
+    found_date = listing.get('found_date', '')
     over_budget = listing.get('parsed_data', {}).get('over_budget', False)
 
-    # Format bathrooms
-    bathrooms = listing.get('bathrooms')
-    bath_str = f"{bathrooms} \u0432\u0430\u043d." if bathrooms else ''
+    # Format price
+    price_eur = format_price_eur(listing)
+    price_str = f"€{price_eur:,.0f}" if price_eur > 0 else ''
 
-    # Legal status and furnishing
+    # Format size
+    sqm = format_size_sqm(listing)
+    size_str = f"{sqm:.0f} м²" if sqm > 0 else ''
+
+    # Format bedrooms
+    br = format_bedrooms_num(listing)
+    if br == 0:
+        bedrooms_str = 'Студия'
+    elif br > 0:
+        bedrooms_str = f"{br} сп."
+    else:
+        bedrooms_str = ''
+
+    # Price per sqm
+    ppsm = price_per_sqm_num(listing)
+    ppsm_str = f"€{ppsm:,.0f}/м²" if ppsm > 0 else ''
+
+    # Bathrooms
+    bathrooms = listing.get('bathrooms')
+    bath_str = f"{bathrooms} ван." if bathrooms else ''
+
+    # Legal, furnishing, developer
     legal = listing.get('legal_status', '')
     furnishing = listing.get('furnishing', '')
+    developer = listing.get('developer', '')
 
     budget_badge = '<span class="badge badge-warn">Сверх бюджета</span>' if over_budget else ''
 
-    # Build property specs grid
+    # Build specs grid
     specs = []
-    if price:
-        specs.append(('Цена', price))
-    if bedrooms:
-        specs.append(('Спальни', bedrooms))
+    if price_str:
+        specs.append(('Цена', price_str))
+    if bedrooms_str:
+        specs.append(('Спальни', bedrooms_str))
     if bath_str:
         specs.append(('Ванные', bath_str))
-    if size:
-        specs.append(('Площадь', size))
-    if price_per_sqm:
-        specs.append(('Цена/м²', price_per_sqm))
+    if size_str:
+        specs.append(('Площадь', size_str))
+    if ppsm_str:
+        specs.append(('Цена/м²', ppsm_str))
     if legal:
         specs.append(('Право', legal))
     if furnishing:
         specs.append(('Мебель', furnishing))
-    developer = listing.get('developer', '')
     if developer:
         specs.append(('Застройщик', developer))
 
@@ -137,26 +182,26 @@ def generate_listing_card(listing):
         for lbl, val in specs
     )
 
-    # Legacy info_tags for developer badge outside specs
-    info_tags = ''
+    snippet = listing.get('source_snippet', listing.get('description', ''))[:200]
 
+    # Score tooltip
     components = listing.get('score_components', {})
     factor_names_ru = {
-        'price_per_sqm': '\u0426\u0435\u043d\u0430 \u0437\u0430 \u043c\u00b2',
-        'location_tier': '\u041b\u043e\u043a\u0430\u0446\u0438\u044f',
-        'sea_proximity': '\u0411\u043b\u0438\u0437\u043e\u0441\u0442\u044c \u043a \u043c\u043e\u0440\u044e',
-        'growth_potential': '\u041f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b \u0440\u043e\u0441\u0442\u0430',
-        'regional_development': '\u0420\u0430\u0437\u0432\u0438\u0442\u0438\u0435 \u0440\u0435\u0433\u0438\u043e\u043d\u0430',
-        'air_quality': '\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0432\u043e\u0437\u0434\u0443\u0445\u0430',
-        'developer_reputation': '\u0420\u0435\u043f\u0443\u0442\u0430\u0446\u0438\u044f \u0437\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a\u0430',
-        'foreign_ownership_clarity': '\u041f\u0440\u0430\u0432\u0430 \u0441\u043e\u0431\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0441\u0442\u0438',
-        'bedroom_criteria_fit': '\u0421\u043f\u0430\u043b\u044c\u043d\u0438'
+        'price_per_sqm': 'Цена за м²',
+        'location_tier': 'Локация',
+        'sea_proximity': 'Близость к морю',
+        'growth_potential': 'Потенциал роста',
+        'regional_development': 'Развитие региона',
+        'air_quality': 'Качество воздуха',
+        'developer_reputation': 'Репутация застройщика',
+        'foreign_ownership_clarity': 'Права собственности',
+        'bedroom_criteria_fit': 'Спальни'
     }
     tooltip_lines = [f"{factor_names_ru.get(k, k)}: {v}/7" for k, v in components.items()]
     tooltip = '&#10;'.join(tooltip_lines)
 
     return f'''
-    <div class="listing-card">
+    <div class="listing-card" data-idx="{idx}">
       <div class="card-header">
         <div class="score-badge" style="background:{color}" title="{tooltip}">
           <span class="score-num">{score:.1f}</span>
@@ -166,6 +211,7 @@ def generate_listing_card(listing):
           <a href="{url}" target="_blank" rel="noopener" class="card-title">{title}</a>
           <div class="card-meta">
             <span class="badge badge-portal">{portal}</span>
+            <span class="badge badge-date">{found_date}</span>
             {budget_badge}
           </div>
         </div>
@@ -182,76 +228,54 @@ def generate_html(rounds, config, loc_labels):
     locations_str = ', '.join(loc_labels.values())
 
     total_rounds = len(rounds)
-    total_listings = sum(r.get('published_count', 0) for r in rounds)
-    last_run = rounds[0]['date'] if rounds else '\u041d\u0438\u043a\u043e\u0433\u0434\u0430'
+    all_listings = merge_all_listings(rounds)
+    total_listings = len(all_listings)
+    last_run = rounds[0]['date'] if rounds else 'Никогда'
 
-    rounds_html = ''
-    for rnd in rounds:
-        date = rnd['date']
-        listings = rnd.get('listings', [])
-        total_searched = rnd.get('total_searched', 0)
-        new_found = rnd.get('new_found', 0)
+    # Generate cards HTML and JSON data for filtering
+    cards_html = ''
+    listings_json = []
+    for idx, listing in enumerate(all_listings):
+        cards_html += generate_listing_card(listing, idx)
+        listings_json.append(listing_to_json_data(listing, idx))
 
-        if not listings:
-            rounds_html += f'''
-            <section class="round-section">
-              <h2 class="round-date">{date}</h2>
-              <p class="round-meta">\u041f\u0440\u043e\u0432\u0435\u0440\u0435\u043d\u043e {total_searched} \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432 \u00b7 {new_found} \u043d\u043e\u0432\u044b\u0445 \u00b7 \u041d\u0435\u0442 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0439 \u0441 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u043e\u043c {threshold}+</p>
-            </section>
-            '''
-            continue
+    # Location filter options
+    loc_options = ''
+    used_locs = set(l.get('location_key', 'other') for l in all_listings)
+    for loc_key in config.get('locations', {}):
+        if loc_key in used_locs:
+            lbl = loc_labels.get(loc_key, loc_key)
+            loc_options += f'<option value="{loc_key}">{lbl}</option>'
 
-        by_location = {}
-        for l in listings:
-            loc = l.get('location_key', 'other')
-            by_location.setdefault(loc, []).append(l)
-
-        listings_html = ''
-        for loc_key, loc_listings in by_location.items():
-            loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
-            loc_listings.sort(key=lambda x: x.get('score', 0), reverse=True)
-            cards = ''.join(generate_listing_card(l) for l in loc_listings)
-            listings_html += f'''
-            <div class="location-group">
-              <h3 class="location-label">{loc_label}</h3>
-              {cards}
-            </div>
-            '''
-
-        rounds_html += f'''
-        <section class="round-section">
-          <h2 class="round-date">{date}</h2>
-          <p class="round-meta">\u041f\u0440\u043e\u0432\u0435\u0440\u0435\u043d\u043e {total_searched} \u00b7 {new_found} \u043d\u043e\u0432\u044b\u0445 \u00b7 {len(listings)} \u0432\u044b\u0433\u043e\u0434\u043d\u044b\u0445 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0439</p>
-          {listings_html}
-        </section>
-        '''
-
+    # Weights table
     weights = config.get('scoring_weights', {})
     factor_names_ru = {
-        'price_per_sqm': '\u0426\u0435\u043d\u0430 \u0437\u0430 \u043c\u00b2',
-        'location_tier': '\u041b\u043e\u043a\u0430\u0446\u0438\u044f',
-        'sea_proximity': '\u0411\u043b\u0438\u0437\u043e\u0441\u0442\u044c \u043a \u043c\u043e\u0440\u044e',
-        'growth_potential': '\u041f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b \u0440\u043e\u0441\u0442\u0430',
-        'regional_development': '\u0420\u0430\u0437\u0432\u0438\u0442\u0438\u0435 \u0440\u0435\u0433\u0438\u043e\u043d\u0430',
-        'air_quality': '\u041a\u0430\u0447\u0435\u0441\u0442\u0432\u043e \u0432\u043e\u0437\u0434\u0443\u0445\u0430',
-        'developer_reputation': '\u0420\u0435\u043f\u0443\u0442\u0430\u0446\u0438\u044f \u0437\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a\u0430',
-        'foreign_ownership_clarity': '\u041f\u0440\u0430\u0432\u0430 \u0441\u043e\u0431\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0441\u0442\u0438',
-        'bedroom_criteria_fit': '\u0421\u043f\u0430\u043b\u044c\u043d\u0438'
+        'price_per_sqm': 'Цена за м²',
+        'location_tier': 'Локация',
+        'sea_proximity': 'Близость к морю',
+        'growth_potential': 'Потенциал роста',
+        'regional_development': 'Развитие региона',
+        'air_quality': 'Качество воздуха',
+        'developer_reputation': 'Репутация застройщика',
+        'foreign_ownership_clarity': 'Права собственности',
+        'bedroom_criteria_fit': 'Спальни'
     }
     weights_rows = ''.join(
         f'<tr><td>{factor_names_ru.get(k, k)}</td><td>{int(v*100)}%</td></tr>'
         for k, v in weights.items()
     )
 
-    empty_state = '<div class="empty-state"><p>\u041f\u043e\u043a\u0430 \u043d\u0435\u0442 \u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u043e\u0432.</p><p>\u041f\u0435\u0440\u0432\u044b\u0439 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0438\u0441\u043a \u0432 05:00 UTC.</p></div>'
-    main_content = rounds_html if rounds_html.strip() else empty_state
+    listings_json_str = json.dumps(listings_json, ensure_ascii=False)
+
+    empty_state = '<div class="empty-state"><p>Пока нет результатов.</p><p>Первый автоматический поиск в 05:00 UTC.</p></div>'
+    main_content = f'<div id="listings-container">{cards_html}</div>' if all_listings else empty_state
 
     return f'''<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>\u041d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u044c \u0412\u044c\u0435\u0442\u043d\u0430\u043c\u0430 \u2014 \u041b\u0443\u0447\u0448\u0438\u0435 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f</title>
+  <title>Недвижимость Вьетнама — Лучшие предложения</title>
   <style>
     :root {{
       --bg: #0f172a;
@@ -282,7 +306,7 @@ def generate_html(rounds, config, loc_labels):
       text-align: center;
       padding: 3rem 0 2rem;
       border-bottom: 1px solid var(--surface2);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }}
     h1 {{
       font-size: 2rem;
@@ -304,13 +328,72 @@ def generate_html(rounds, config, loc_labels):
     .stat {{ text-align: center; }}
     .stat-num {{ font-size: 1.5rem; font-weight: 700; color: var(--accent); }}
     .stat-label {{ font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }}
-    .round-section {{ margin-bottom: 3rem; }}
-    .round-date {{ font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.5rem; }}
-    .round-meta {{ color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }}
-    .location-group {{ margin-bottom: 1.5rem; }}
-    .location-label {{ font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; padding-left: 0.5rem; border-left: 3px solid var(--accent); }}
+
+    /* Filter bar */
+    .filter-bar {{
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }}
+    .filter-bar label {{
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-right: 0.25rem;
+    }}
+    .filter-bar select, .filter-bar input {{
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }}
+    .filter-bar select:hover, .filter-bar input:hover {{
+      border-color: var(--accent);
+    }}
+    .filter-group {{
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }}
+    .sort-btn {{
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }}
+    .sort-btn:hover {{
+      border-color: var(--accent);
+      color: var(--text);
+    }}
+    .sort-btn.active {{
+      background: rgba(56,189,248,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }}
+    .results-count {{
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }}
+
     .listing-card {{ background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }}
     .listing-card:hover {{ transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
+    .listing-card.hidden {{ display: none; }}
     .card-header {{ display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 0.5rem; }}
     .score-badge {{ flex-shrink: 0; width: 56px; height: 56px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: help; }}
     .score-num {{ font-size: 1.25rem; font-weight: 800; line-height: 1; }}
@@ -321,6 +404,7 @@ def generate_html(rounds, config, loc_labels):
     .card-meta {{ display: flex; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap; }}
     .badge {{ font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }}
     .badge-portal {{ background: var(--surface2); color: var(--text-dim); }}
+    .badge-date {{ background: rgba(56,189,248,0.1); color: var(--accent); }}
     .badge-warn {{ background: var(--red); color: white; }}
     .badge-info {{ background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }}
     .badge-dev {{ background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }}
@@ -328,7 +412,6 @@ def generate_html(rounds, config, loc_labels):
     .spec-item {{ display: flex; flex-direction: column; }}
     .spec-label {{ color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }}
     .spec-value {{ color: var(--accent); font-weight: 600; font-size: 0.9rem; }}
-    .card-tags {{ display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }}
     .card-snippet {{ color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }}
     .methodology {{ background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }}
     .methodology h2 {{ font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }}
@@ -342,6 +425,8 @@ def generate_html(rounds, config, loc_labels):
       .container {{ padding: 1rem; }}
       h1 {{ font-size: 1.5rem; }}
       .stats-bar {{ gap: 1rem; }}
+      .filter-bar {{ flex-direction: column; align-items: stretch; }}
+      .filter-group {{ flex-wrap: wrap; }}
       .card-header {{ flex-direction: column; align-items: stretch; }}
       .score-badge {{ width: auto; height: auto; flex-direction: row; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 6px; }}
     }}
@@ -350,46 +435,142 @@ def generate_html(rounds, config, loc_labels):
 <body>
   <div class="container">
     <header>
-      <h1>\u041d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u044c \u0412\u044c\u0435\u0442\u043d\u0430\u043c\u0430</h1>
-      <p class="subtitle">\u0415\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u044b\u0439 \u043f\u043e\u0438\u0441\u043a \u00b7 \u0411\u044e\u0434\u0436\u0435\u0442: \u20ac{budget:,} \u00b7 {locations_str}</p>
+      <h1>Недвижимость Вьетнама</h1>
+      <p class="subtitle">Ежедневный поиск · Бюджет: €{budget:,} · {locations_str}</p>
       <div class="stats-bar">
         <div class="stat">
           <div class="stat-num">{total_rounds}</div>
-          <div class="stat-label">\u041f\u043e\u0438\u0441\u043a\u043e\u0432</div>
+          <div class="stat-label">Поисков</div>
         </div>
         <div class="stat">
           <div class="stat-num">{total_listings}</div>
-          <div class="stat-label">\u041d\u0430\u0439\u0434\u0435\u043d\u043e</div>
+          <div class="stat-label">Найдено</div>
         </div>
         <div class="stat">
           <div class="stat-num">{threshold}+/7</div>
-          <div class="stat-label">\u041c\u0438\u043d. \u0440\u0435\u0439\u0442\u0438\u043d\u0433</div>
+          <div class="stat-label">Мин. рейтинг</div>
         </div>
         <div class="stat">
           <div class="stat-num">{last_run}</div>
-          <div class="stat-label">\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0439 \u0437\u0430\u043f\u0443\u0441\u043a</div>
+          <div class="stat-label">Последний запуск</div>
         </div>
       </div>
     </header>
+
+    <div class="filter-bar" id="filter-bar">
+      <div class="filter-group">
+        <label>Город:</label>
+        <select id="filter-location">
+          <option value="all">Все</option>
+          {loc_options}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Сортировка:</label>
+        <button class="sort-btn active" data-sort="score" data-dir="desc">Рейтинг ↓</button>
+        <button class="sort-btn" data-sort="price" data-dir="asc">Цена ↑</button>
+        <button class="sort-btn" data-sort="price" data-dir="desc">Цена ↓</button>
+        <button class="sort-btn" data-sort="sqm" data-dir="desc">м² ↓</button>
+        <button class="sort-btn" data-sort="sqm" data-dir="asc">м² ↑</button>
+        <button class="sort-btn" data-sort="ppsm" data-dir="asc">€/м² ↑</button>
+        <button class="sort-btn" data-sort="ppsm" data-dir="desc">€/м² ↓</button>
+        <button class="sort-btn" data-sort="date" data-dir="desc">Новые</button>
+      </div>
+    </div>
+
+    <div class="results-count" id="results-count">{total_listings} предложений</div>
 
     <main>
       {main_content}
     </main>
 
     <div class="methodology">
-      <h2>\u041c\u0435\u0442\u043e\u0434\u043e\u043b\u043e\u0433\u0438\u044f \u043e\u0446\u0435\u043d\u043a\u0438 (1\u20137)</h2>
+      <h2>Методология оценки (1–7)</h2>
       <table>
         {weights_rows}
       </table>
       <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
-        \u041f\u0443\u0431\u043b\u0438\u043a\u0443\u044e\u0442\u0441\u044f \u0442\u043e\u043b\u044c\u043a\u043e \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u044f \u0441 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u043e\u043c {threshold}+. \u0421\u0432\u0435\u0440\u0445 \u0431\u044e\u0434\u0436\u0435\u0442\u0430 = \u0448\u0442\u0440\u0430\u0444 50%.
+        Публикуются только объявления с рейтингом {threshold}+. Сверх бюджета = штраф 50%.
       </p>
     </div>
 
     <footer>
-      <p>\u041d\u0435\u0434\u0432\u0438\u0436\u0438\u043c\u043e\u0441\u0442\u044c \u0412\u044c\u0435\u0442\u043d\u0430\u043c\u0430 \u00b7 \u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0438\u0441\u043a \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u043e \u0432 05:00 UTC</p>
+      <p>Недвижимость Вьетнама · Автоматический поиск ежедневно в 05:00 UTC</p>
     </footer>
   </div>
+
+  <script>
+  (function() {{
+    var listings = {listings_json_str};
+    var container = document.getElementById('listings-container');
+    var countEl = document.getElementById('results-count');
+    if (!container || !listings.length) return;
+
+    var cards = container.querySelectorAll('.listing-card');
+    var currentSort = 'score';
+    var currentDir = 'desc';
+    var currentLocation = 'all';
+
+    function applyFilters() {{
+      // Filter
+      var visible = [];
+      for (var i = 0; i < listings.length; i++) {{
+        var l = listings[i];
+        var show = true;
+        if (currentLocation !== 'all' && l.location !== currentLocation) show = false;
+        listings[i]._visible = show;
+        if (show) visible.push(l);
+      }}
+
+      // Sort visible
+      visible.sort(function(a, b) {{
+        var va = a[currentSort] || 0;
+        var vb = b[currentSort] || 0;
+        if (currentSort === 'date') {{
+          va = a.date || '';
+          vb = b.date || '';
+          return currentDir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+        }}
+        if (currentDir === 'desc') return vb - va;
+        return va - vb;
+      }});
+
+      // Reorder DOM
+      for (var j = 0; j < visible.length; j++) {{
+        var card = cards[visible[j].idx];
+        card.classList.remove('hidden');
+        container.appendChild(card);
+      }}
+
+      // Hide filtered out
+      for (var k = 0; k < listings.length; k++) {{
+        if (!listings[k]._visible) {{
+          cards[listings[k].idx].classList.add('hidden');
+        }}
+      }}
+
+      countEl.textContent = visible.length + ' предложений';
+    }}
+
+    // Location filter
+    document.getElementById('filter-location').addEventListener('change', function() {{
+      currentLocation = this.value;
+      applyFilters();
+    }});
+
+    // Sort buttons
+    var btns = document.querySelectorAll('.sort-btn');
+    btns.forEach(function(btn) {{
+      btn.addEventListener('click', function() {{
+        btns.forEach(function(b) {{ b.classList.remove('active'); }});
+        this.classList.add('active');
+        currentSort = this.getAttribute('data-sort');
+        currentDir = this.getAttribute('data-dir');
+        applyFilters();
+      }});
+    }});
+  }})();
+  </script>
 </body>
 </html>'''
 
