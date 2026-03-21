@@ -124,4 +124,12 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception as e:
+        import traceback
+        print(f"\n{'!'*60}")
+        print(f"  FATAL ERROR: {e}")
+        print(f"{'!'*60}")
+        traceback.print_exc()
+        sys.exit(1)

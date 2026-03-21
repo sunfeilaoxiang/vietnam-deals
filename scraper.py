@@ -289,7 +289,7 @@ def run_search_round(config):
     Returns a list of raw listings.
     """
     all_listings = []
-    budget_vnd = config['budget_max_usd'] * config['vnd_per_usd'] * 1000
+    budget_vnd = config['budget_max_usd'] * config['vnd_per_usd']
     budget_vnd_str = f"{budget_vnd/1e9:.1f} t\u1ef7"
 
     for loc_key, loc_config in config['locations'].items():

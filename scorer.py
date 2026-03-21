@@ -44,14 +44,14 @@ def parse_price_usd(price_str, vnd_per_usd=24000):
     if vnd_match:
         val = float(vnd_match.group(1).replace(',', ''))
         vnd_amount = val * 1_000_000_000
-        return vnd_amount / (vnd_per_usd * 1000)
+        return vnd_amount / (vnd_per_usd)
 
     # VND (trieu / million VND)
     vnd_match2 = re.search(r'([\d,\.]+)\s*(tri\u1ec7u|trieu|million vnd|tr)\b', price_str)
     if vnd_match2:
         val = float(vnd_match2.group(1).replace(',', ''))
         vnd_amount = val * 1_000_000
-        return vnd_amount / (vnd_per_usd * 1000)
+        return vnd_amount / (vnd_per_usd)
 
     # Plain number (try to guess)
     num_match = re.search(r'([\d,\.]+)', price_str)
@@ -59,7 +59,7 @@ def parse_price_usd(price_str, vnd_per_usd=24000):
         val = float(num_match.group(1).replace(',', ''))
         if val > 1_000_000_000:
             # Likely VND
-            return val / (vnd_per_usd * 1000)
+            return val / (vnd_per_usd)
         elif val > 100_000:
             # Likely USD
             return val
