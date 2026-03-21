@@ -164,23 +164,30 @@
     {"location_key": "phu_quoc", "portal": "batdongsan-meypearl", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-meypearl-harmony-phu-quoc", "base_url": "https://batdongsan.com.vn"},
     {"location_key": "phu_quoc", "portal": "batdongsan-grandworld", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-grand-world-phu-quoc", "base_url": "https://batdongsan.com.vn"},
 
-    {"location_key": "quy_nhon", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon/p2", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "quy_nhon", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "quy_nhon", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd/p2", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "quy_nhon", "portal": "batdongsan-sailing", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-the-sailing-quy-nhon", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "quy_nhon", "portal": "batdongsan-iec", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-iec-residences-quy-nhon", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "quy_nhon", "portal": "batdongsan-binh-dinh", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-binh-dinh", "base_url": "https://batdongsan.com.vn"},
     {"location_key": "quy_nhon", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%ACnh-%C4%91%E1%BB%8Bnh/qui-nh%C6%A1n", "base_url": "https://www.dotproperty.com.vn"},
     {"location_key": "quy_nhon", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/binh-dinh/quy-nhon", "base_url": "https://www.fazwaz.vn"},
     {"location_key": "quy_nhon", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/quy-nhon/", "base_url": "https://vietnam-real.estate"},
     {"location_key": "quy_nhon", "portal": "tranio", "url": "https://tranio.com/vietnam/quy_nhon/", "base_url": "https://tranio.com"},
 
-    {"location_key": "da_lat", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "da_lat", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat/p2", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "da_lat", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-ldd", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "da_lat", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-ldd/p2", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "da_lat", "portal": "batdongsan-center", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-center", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "da_lat", "portal": "batdongsan-haus", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-haus-da-lat", "base_url": "https://batdongsan.com.vn"},
     {"location_key": "da_lat", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/l%C3%A2m-%C4%91%E1%BB%93ng/da-lat", "base_url": "https://www.dotproperty.com.vn"},
     {"location_key": "da_lat", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/lam-dong/da-lat", "base_url": "https://www.fazwaz.vn"},
     {"location_key": "da_lat", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/da-lat/", "base_url": "https://vietnam-real.estate"},
     {"location_key": "da_lat", "portal": "tranio", "url": "https://tranio.com/vietnam/da_lat/", "base_url": "https://tranio.com"},
+    {"location_key": "da_lat", "portal": "nhatot", "url": "https://www.nhatot.com/mua-ban-can-ho-chung-cu-lam-dong", "base_url": "https://www.nhatot.com"},
 
-    {"location_key": "con_dao", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-huyen-con-dao", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "con_dao", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%A0-r%E1%BB%8Ba-v%C5%A9ng-t%C3%A0u/con-dao", "base_url": "https://www.dotproperty.com.vn"},
-    {"location_key": "con_dao", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/ba-ria-vung-tau/con-dao", "base_url": "https://www.fazwaz.vn"},
-    {"location_key": "con_dao", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/con-dao/", "base_url": "https://vietnam-real.estate"}
+    {"location_key": "con_dao", "portal": "batdongsan-brvt", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-ba-ria-vung-tau", "base_url": "https://batdongsan.com.vn"},
+    {"location_key": "con_dao", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%A0-r%E1%BB%8Ba-v%C5%A9ng-t%C3%A0u", "base_url": "https://www.dotproperty.com.vn"},
+    {"location_key": "con_dao", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/ba-ria-vung-tau", "base_url": "https://www.fazwaz.vn"},
+    {"location_key": "con_dao", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/con-dao/", "base_url": "https://vietnam-real.estate"},
+    {"location_key": "con_dao", "portal": "tranio", "url": "https://tranio.com/vietnam/ba_ria-vung_tau/", "base_url": "https://tranio.com"}
   ]
 }
