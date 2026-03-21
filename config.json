@@ -1,10 +1,14 @@
 {
-  "budget_max_usd": 150000,
-  "score_threshold": 5,
-  "vnd_per_usd": 24000,
+  "budget_max_eur": 140000,
+  "score_threshold": 5.5,
+  "vnd_per_eur": 27000,
+  "currency": "EUR",
+  "currency_symbol": "€",
+  "language": "ru",
   "locations": {
     "phu_quoc": {
-      "label": "Phu Quoc",
+      "label": "Фукуок",
+      "label_en": "Phu Quoc",
       "bedroom_filter": "1BR only",
       "min_bedrooms": 1,
       "max_bedrooms": 1,
@@ -14,10 +18,11 @@
       "growth_pct_low": 40,
       "growth_pct_high": 80,
       "regional_development_score": 6,
-      "search_keywords": ["phu quoc apartment", "căn hộ phú quốc", "phu quoc 1 bedroom"]
+      "search_keywords": ["phu quoc apartment for sale", "căn hộ phú quốc bán", "phu quoc 1 bedroom apartment price"]
     },
     "quy_nhon": {
-      "label": "Quy Nhon / Binh Dinh",
+      "label": "Куиньон / Биньдинь",
+      "label_en": "Quy Nhon / Binh Dinh",
       "bedroom_filter": "2BR minimum",
       "min_bedrooms": 2,
       "max_bedrooms": 99,
@@ -27,10 +32,11 @@
       "growth_pct_low": 50,
       "growth_pct_high": 100,
       "regional_development_score": 5,
-      "search_keywords": ["quy nhon apartment 2 bedroom", "căn hộ quy nhơn", "binh dinh apartment"]
+      "search_keywords": ["quy nhon apartment 2 bedroom for sale price", "căn hộ quy nhơn bán giá", "binh dinh apartment for sale"]
     },
     "da_lat": {
-      "label": "Da Lat",
+      "label": "Далат",
+      "label_en": "Da Lat",
       "bedroom_filter": "any",
       "min_bedrooms": 1,
       "max_bedrooms": 99,
@@ -40,10 +46,11 @@
       "growth_pct_low": 60,
       "growth_pct_high": 120,
       "regional_development_score": 4,
-      "search_keywords": ["da lat apartment", "căn hộ đà lạt", "dalat property"]
+      "search_keywords": ["da lat apartment for sale price", "căn hộ đà lạt bán giá", "dalat property for sale"]
     },
     "con_dao": {
-      "label": "Con Dao",
+      "label": "Кондао",
+      "label_en": "Con Dao",
       "bedroom_filter": "any",
       "min_bedrooms": 1,
       "max_bedrooms": 99,
@@ -53,7 +60,7 @@
       "growth_pct_low": 40,
       "growth_pct_high": 80,
       "regional_development_score": 3,
-      "search_keywords": ["con dao apartment", "căn hộ côn đảo", "con dao property"]
+      "search_keywords": ["con dao apartment for sale price", "căn hộ côn đảo bán giá", "con dao property for sale"]
     }
   },
   "scoring_weights": {
@@ -139,5 +146,11 @@
     "hung thinh": "major_vietnamese",
     "dat xanh": "major_vietnamese",
     "phu long": "established_local"
-  }
+  },
+  "skip_url_patterns": [
+    "/tag/", "/tags/", "/category/", "/search?", "/tim-kiem",
+    "/lich-su-gia", "/apartments-for-sale", "/property-for-sale",
+    "/condos-for-sale", "/properties-for-sale", "/bat-dong-san-ban",
+    "/real-estate-for-sale", "/apartments-for-rent", "/for-rent"
+  ]
 }

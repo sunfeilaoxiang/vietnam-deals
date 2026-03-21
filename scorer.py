@@ -9,18 +9,27 @@ from pathlib import Path
 
 
 def load_config(config_path="config.json"):
-    with open(config_path) as f:
+    with open(config_path, encoding='utf-8-sig') as f:
         return json.load(f)
 
 
-def parse_price_usd(price_str, vnd_per_usd=24000):
-    """Extract USD price from various formats."""
+def parse_price_eur(price_str, vnd_per_eur=27000):
+    """Extract EUR price from various formats."""
     if not price_str:
         return None
-
     price_str = str(price_str).lower().strip()
 
-    # Direct USD
+    # Direct EUR
+    eur_match = re.search(r'[\u20ac]\s*([\d,\.]+)\s*(k|m|million|thousand)?', price_str)
+    if eur_match:
+        val = float(eur_match.group(1).replace(',', ''))
+        suffix = eur_match.group(2) or ''
+        if suffix in ('k', 'thousand'):
+            val *= 1000        elif suffix in ('m', 'million'):
+            val *= 1_000_000
+        return val
+
+    # Direct USD -> convert to EUR
     usd_match = re.search(r'\$\s*([\d,\.]+)\s*(k|m|million|thousand)?', price_str)
     if usd_match:
         val = float(usd_match.group(1).replace(',', ''))
@@ -29,43 +38,39 @@ def parse_price_usd(price_str, vnd_per_usd=24000):
             val *= 1000
         elif suffix in ('m', 'million'):
             val *= 1_000_000
-        return val
+        return val * 0.92
 
     # USD with keyword
     usd_match2 = re.search(r'([\d,\.]+)\s*(usd|us\$)', price_str)
     if usd_match2:
         val = float(usd_match2.group(1).replace(',', ''))
         if val < 1000:
-            val *= 1000  # likely in thousands
-        return val
+            val *= 1000
+        return val * 0.92
 
-    # VND (billion)
+    # VND (billion / t\u1ef7)
     vnd_match = re.search(r'([\d,\.]+)\s*(t\u1ef7|ty|billion|bil)\b', price_str)
     if vnd_match:
         val = float(vnd_match.group(1).replace(',', ''))
         vnd_amount = val * 1_000_000_000
-        return vnd_amount / (vnd_per_usd)
-
-    # VND (trieu / million VND)
+        return vnd_amount / vnd_per_eur
+    # VND (tri\u1ec7u / million VND)
     vnd_match2 = re.search(r'([\d,\.]+)\s*(tri\u1ec7u|trieu|million vnd|tr)\b', price_str)
     if vnd_match2:
         val = float(vnd_match2.group(1).replace(',', ''))
         vnd_amount = val * 1_000_000
-        return vnd_amount / (vnd_per_usd)
+        return vnd_amount / vnd_per_eur
 
-    # Plain number (try to guess)
+    # Plain number
     num_match = re.search(r'([\d,\.]+)', price_str)
     if num_match:
         val = float(num_match.group(1).replace(',', ''))
         if val > 1_000_000_000:
-            # Likely VND
-            return val / (vnd_per_usd)
+            return val / vnd_per_eur
         elif val > 100_000:
-            # Likely USD
-            return val
+            return val * 0.92  # assume USD
         elif val > 1000:
-            # Likely thousands USD
-            return val * 1000
+            return val * 1000 * 0.92
 
     return None
 
@@ -77,11 +82,9 @@ def parse_sqm(size_str):
     match = re.search(r'([\d\.]+)\s*(sqm|m2|m\u00b2|sq\.?\s*m)', str(size_str).lower())
     if match:
         return float(match.group(1))
-    # Just a number
-    match2 = re.search(r'(\d+)', str(size_str))
-    if match2:
+    match2 = re.search(r'(\d+)', str(size_str))    if match2:
         val = float(match2.group(1))
-        if 15 <= val <= 500:  # reasonable sqm range
+        if 15 <= val <= 500:
             return val
     return None
 
@@ -103,12 +106,12 @@ def parse_bedrooms(br_str):
             return val
     return None
 
+
 def detect_sea_proximity(text):
     """Guess sea proximity from listing description."""
     text = str(text).lower()
     if any(w in text for w in ['beachfront', 'beach front', 'bi\u1ec3n', 's\u00e1t bi\u1ec3n', 'm\u1eb7t bi\u1ec3n', 'ocean front', 'sea front']):
-        return 'beachfront'
-    if any(w in text for w in ['100m', '150m', '200m', 'g\u1ea7n bi\u1ec3n', 'near beach', 'near sea', 'walking distance']):
+        return 'beachfront'    if any(w in text for w in ['100m', '150m', '200m', 'g\u1ea7n bi\u1ec3n', 'near beach', 'near sea', 'walking distance']):
         return 'under_200m'
     if any(w in text for w in ['300m', '400m', '500m']):
         return 'under_500m'
@@ -138,8 +141,7 @@ def detect_developer_tier(developer_name, known_developers):
 
 def detect_foreign_ownership(text):
     """Score foreign ownership clarity from description."""
-    text = str(text).lower()
-    if any(w in text for w in ['long-term', 'l\u00e2u d\u00e0i', 'permanent', 'freehold', 's\u1ed5 h\u1ed3ng']):
+    text = str(text).lower()    if any(w in text for w in ['long-term', 'l\u00e2u d\u00e0i', 'permanent', 'freehold', 's\u1ed5 h\u1ed3ng']):
         return 7
     if any(w in text for w in ['50 year', '50-year', '50 n\u0103m', 'leasehold', 'foreign quota', 's\u1edf h\u1eefu n\u01b0\u1edbc ngo\u00e0i']):
         return 5
@@ -147,30 +149,17 @@ def detect_foreign_ownership(text):
         return 3
     if any(w in text for w in ['foreign', 'n\u01b0\u1edbc ngo\u00e0i', 'expat']):
         return 4
-    return 3  # unknown defaults to cautious score
+    return 3
 
 
 def score_listing(listing, location_key, config):
-    """
-    Score a single listing on the 1-7 scale.
-
-    listing dict expected keys:
-        - price_usd: float or str
-        - size_sqm: float or str
-        - bedrooms: int or str
-        - description: str (full text)
-        - developer: str
-        - title: str
-        - sea_proximity: str (optional override)
-        - foreign_ownership: str (optional override)
-    """
+    """Score a single listing on the 1-7 scale."""
     weights = config['scoring_weights']
     loc_config = config['locations'].get(location_key, {})
 
-    # Parse values
-    price_usd = listing.get('price_usd')
-    if isinstance(price_usd, str):
-        price_usd = parse_price_usd(price_usd, config.get('vnd_per_usd', 24000))
+    price_eur = listing.get('price_eur')
+    if isinstance(price_eur, str):
+        price_eur = parse_price_eur(price_eur, config.get('vnd_per_eur', 27000))
 
     size_sqm = listing.get('size_sqm')
     if isinstance(size_sqm, str):
@@ -180,39 +169,37 @@ def score_listing(listing, location_key, config):
     if isinstance(bedrooms, str):
         bedrooms = parse_bedrooms(bedrooms)
 
-    full_text = f"{listing.get('title', '')} {listing.get('description', '')} {listing.get('developer', '')}"
+    full_text = f"{listing.get('title_original', listing.get('title', ''))} {listing.get('description_original', listing.get('description', ''))} {listing.get('developer', '')}"
 
     scores = {}
-
-    # 1. Price per sqm (20%)
-    if price_usd and size_sqm and size_sqm > 0:
-        price_per_sqm = price_usd / size_sqm
-        if price_per_sqm < 1500:
+    # 1. Price per sqm (20%) - EUR benchmarks
+    if price_eur and size_sqm and size_sqm > 0:
+        price_per_sqm = price_eur / size_sqm
+        if price_per_sqm < 1400:
             scores['price_per_sqm'] = 7
-        elif price_per_sqm < 2000:
+        elif price_per_sqm < 1800:
             scores['price_per_sqm'] = 6
-        elif price_per_sqm < 2500:
+        elif price_per_sqm < 2300:
             scores['price_per_sqm'] = 5
-        elif price_per_sqm < 3000:
+        elif price_per_sqm < 2800:
             scores['price_per_sqm'] = 4
-        elif price_per_sqm < 4000:
+        elif price_per_sqm < 3700:
             scores['price_per_sqm'] = 3
-        elif price_per_sqm < 5000:
+        elif price_per_sqm < 4600:
             scores['price_per_sqm'] = 2
         else:
             scores['price_per_sqm'] = 1
-    elif price_usd:
-        if price_usd < 50000:
+    elif price_eur:
+        if price_eur < 46000:
             scores['price_per_sqm'] = 6
-        elif price_usd < 100000:
+        elif price_eur < 92000:
             scores['price_per_sqm'] = 5
-        elif price_usd < 150000:
+        elif price_eur < 140000:
             scores['price_per_sqm'] = 4
         else:
             scores['price_per_sqm'] = 2
     else:
-        scores['price_per_sqm'] = 3  # unknown
-
+        scores['price_per_sqm'] = 3
     # 2. Location tier (15%)
     scores['location_tier'] = loc_config.get('location_tier', 4)
 
@@ -241,7 +228,6 @@ def score_listing(listing, location_key, config):
     # 6. Air quality (5%)
     air_q = listing.get('air_quality') or loc_config.get('air_quality_default', 'good')
     scores['air_quality'] = config['air_quality_scores'].get(air_q, 4)
-
     # 7. Developer reputation (10%)
     dev_tier = detect_developer_tier(listing.get('developer', ''), config.get('known_developers', {}))
     scores['developer_reputation'] = config['developer_tiers'].get(dev_tier, 3)
@@ -260,29 +246,24 @@ def score_listing(listing, location_key, config):
         else:
             scores['bedroom_criteria_fit'] = 1
     else:
-        scores['bedroom_criteria_fit'] = 4  # unknown
+        scores['bedroom_criteria_fit'] = 4
 
-    # Budget filter: if over budget, heavy penalty
-    budget_max = config.get('budget_max_usd', 150000)
+    # Budget filter
+    budget_max = config.get('budget_max_eur', 140000)
     over_budget = False
-    if price_usd and price_usd > budget_max:
+    if price_eur and price_eur > budget_max:
         over_budget = True
 
-    # Weighted composite
     composite = sum(scores[k] * weights[k] for k in weights if k in scores)
-
-    # Apply over-budget penalty
     if over_budget:
         composite *= 0.5
-
-    # Round to 1 decimal
     final_score = round(composite, 1)
 
     return {
         'final_score': final_score,
         'component_scores': scores,
         'parsed': {
-            'price_usd': price_usd,
+            'price_eur': price_eur,
             'size_sqm': size_sqm,
             'bedrooms': bedrooms,
             'sea_proximity': sea_prox,
@@ -292,20 +273,18 @@ def score_listing(listing, location_key, config):
 
 
 if __name__ == '__main__':
-    # Test with a sample listing
     config = load_config()
-
     sample = {
         'title': 'Sun Grand City Hillside 1BR Apartment',
-        'price_usd': 85000,
+        'title_original': 'Sun Grand City Hillside 1BR Apartment',
+        'price_eur': 78000,
         'size_sqm': 38,
         'bedrooms': 1,
         'developer': 'Sun Group',
         'description': 'Beachfront apartment in An Thoi, South Phu Quoc. Long-term ownership. Sea view.',
+        'description_original': 'Beachfront apartment in An Thoi, South Phu Quoc. Long-term ownership. Sea view.',
         'sea_proximity': 'beachfront'
     }
-
-    result = score_listing(sample, 'phu_quoc', config)
-    print(f"Score: {result['final_score']}/7")
+    result = score_listing(sample, 'phu_quoc', config)    print(f"Score: {result['final_score']}/7")
     print(f"Components: {json.dumps(result['component_scores'], indent=2)}")
     print(f"Parsed: {json.dumps(result['parsed'], indent=2)}")
