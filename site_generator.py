@@ -242,35 +242,41 @@ def generate_html(rounds, config, loc_labels):
         loc = listing.get('location_key', 'other')
         by_location.setdefault(loc, []).append((idx, listing))
 
+    CITY_PREVIEW = 5  # show top N per city initially
     cards_html = ''
     listings_json = []
+
+    def render_city_section(loc_key, loc_items):
+        nonlocal cards_html, listings_json
+        loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
+        loc_items.sort(key=lambda x: x[1].get('score', 0), reverse=True)
+        total_in_city = len(loc_items)
+        cards_html += f'<div class="city-section" data-city="{loc_key}">'
+        cards_html += f'<h2 class="city-header">{loc_label} <span class="city-count">{total_in_city}</span></h2>'
+        for i, (idx, listing) in enumerate(loc_items):
+            extra_cls = ' city-collapsed' if i >= CITY_PREVIEW else ''
+            card = generate_listing_card(listing, idx, loc_labels)
+            # Inject extra class into the card div
+            if extra_cls:
+                card = card.replace('class="listing-card"', f'class="listing-card{extra_cls}"', 1)
+            cards_html += card
+            listings_json.append(listing_to_json_data(listing, idx))
+        if total_in_city > CITY_PREVIEW:
+            remaining = total_in_city - CITY_PREVIEW
+            cards_html += f'<div class="city-expand-wrap"><button class="city-expand-btn" data-city="{loc_key}">Показать все {total_in_city} ({remaining} скрыто)</button></div>'
+        cards_html += '</div>'
+
     # Render location groups in config order
     loc_order = list(config.get('locations', {}).keys())
     for loc_key in loc_order:
         if loc_key not in by_location:
             continue
-        loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
-        loc_items = by_location[loc_key]
-        # Sort by score desc within each city
-        loc_items.sort(key=lambda x: x[1].get('score', 0), reverse=True)
-        cards_html += f'<div class="city-section" data-city="{loc_key}">'
-        cards_html += f'<h2 class="city-header">{loc_label} <span class="city-count">{len(loc_items)}</span></h2>'
-        for idx, listing in loc_items:
-            cards_html += generate_listing_card(listing, idx, loc_labels)
-            listings_json.append(listing_to_json_data(listing, idx))
-        cards_html += '</div>'
+        render_city_section(loc_key, by_location[loc_key])
     # Any remaining locations not in config
     for loc_key, loc_items in by_location.items():
         if loc_key in loc_order:
             continue
-        loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
-        loc_items.sort(key=lambda x: x[1].get('score', 0), reverse=True)
-        cards_html += f'<div class="city-section" data-city="{loc_key}">'
-        cards_html += f'<h2 class="city-header">{loc_label} <span class="city-count">{len(loc_items)}</span></h2>'
-        for idx, listing in loc_items:
-            cards_html += generate_listing_card(listing, idx, loc_labels)
-            listings_json.append(listing_to_json_data(listing, idx))
-        cards_html += '</div>'
+        render_city_section(loc_key, loc_items)
 
     # Location filter options
     loc_options = ''
@@ -428,6 +434,12 @@ def generate_html(rounds, config, loc_labels):
     .city-header {{ font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.75rem; padding-left: 0.5rem; }}
     .city-header .city-count {{ font-size: 0.85rem; font-weight: 400; color: var(--text-dim); margin-left: 0.5rem; }}
     .city-section.hidden {{ display: none; }}
+    .listing-card.city-collapsed {{ display: none; }}
+    .city-section.expanded .listing-card.city-collapsed {{ display: block; }}
+    .city-expand-wrap {{ text-align: center; margin: 0.5rem 0 1rem; }}
+    .city-expand-btn {{ background: transparent; color: var(--accent); border: 1px dashed var(--surface2); border-radius: 6px; padding: 0.5rem 1.5rem; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; }}
+    .city-expand-btn:hover {{ border-color: var(--accent); background: rgba(56,189,248,0.08); }}
+    .city-section.expanded .city-expand-wrap {{ display: none; }}
     .listing-card {{ background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }}
     .listing-card:hover {{ transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
     .listing-card.hidden {{ display: none; }}
@@ -557,11 +569,24 @@ def generate_html(rounds, config, loc_labels):
     var currentLocation = 'all';
     var shownCount = 0;
     var filteredList = [];
+    var flatMode = false; // true when sorting or filtering overrides city view
+
+    // City expand buttons
+    document.querySelectorAll('.city-expand-btn').forEach(function(btn) {{
+      btn.addEventListener('click', function() {{
+        var sec = this.closest('.city-section');
+        if (sec) sec.classList.add('expanded');
+      }});
+    }});
+
+    function isCityView() {{
+      // City grouped view: default sort (score desc) and no city filter
+      return currentSort === 'score' && currentDir === 'desc' && currentLocation === 'all';
+    }}
 
     function applyFilters() {{
-      // When sorting is active (not default score), flatten into single sorted list
-      var isSorting = !(currentSort === 'score' && currentDir === 'desc' && currentLocation === 'all');
       var isFilteringCity = currentLocation !== 'all';
+      flatMode = !isCityView();
 
       // Filter
       filteredList = [];
@@ -571,8 +596,8 @@ def generate_html(rounds, config, loc_labels):
         filteredList.push(l);
       }}
 
-      // Sort
-      if (currentSort !== 'score' || currentDir !== 'desc') {{
+      // Sort (only in non-default mode)
+      if (flatMode) {{
         filteredList.sort(function(a, b) {{
           var va = a[currentSort] || 0;
           var vb = b[currentSort] || 0;
@@ -586,32 +611,49 @@ def generate_html(rounds, config, loc_labels):
         }});
       }}
 
-      // Show/hide city sections when filtering by city
-      citySections.forEach(function(sec) {{
-        if (isFilteringCity) {{
-          sec.classList.toggle('hidden', sec.getAttribute('data-city') !== currentLocation);
-        }} else {{
-          sec.classList.remove('hidden');
+      if (flatMode) {{
+        // --- FLAT MODE: hide city sections, show paginated flat list ---
+        citySections.forEach(function(sec) {{ sec.classList.add('hidden'); }});
+
+        // Hide all cards, remove city-collapsed so pagination controls visibility
+        for (var k = 0; k < cards.length; k++) {{
+          cards[k].classList.add('hidden');
+          cards[k].classList.remove('city-collapsed');
         }}
-      }});
 
-      // Hide all cards first
-      for (var k = 0; k < cards.length; k++) {{
-        cards[k].classList.add('hidden');
-      }}
-
-      // If custom sort is active, move cards out of city sections into flat order
-      if (currentSort !== 'score' || currentDir !== 'desc') {{
+        // Move cards into flat order in container
         for (var j = 0; j < filteredList.length; j++) {{
           container.appendChild(cards[filteredList[j].idx]);
         }}
-        // Hide city headers when sorting flat
-        citySections.forEach(function(sec) {{ sec.classList.add('hidden'); }});
-      }}
 
-      // Reset pagination
-      shownCount = 0;
-      showMore();
+        // Paginate
+        shownCount = 0;
+        showMore();
+      }} else {{
+        // --- CITY VIEW: show city sections with 5 preview + expand ---
+        // Restore city-collapsed classes and show city sections
+        citySections.forEach(function(sec) {{
+          sec.classList.remove('hidden');
+          sec.classList.remove('expanded');
+          // Move cards back into their city sections
+          var city = sec.getAttribute('data-city');
+          var cityCards = sec.querySelectorAll('.listing-card');
+          // Re-apply city-collapsed to cards beyond preview
+          var count = 0;
+          for (var c = 0; c < cityCards.length; c++) {{
+            cityCards[c].classList.remove('hidden');
+            if (count >= 5) {{
+              cityCards[c].classList.add('city-collapsed');
+            }} else {{
+              cityCards[c].classList.remove('city-collapsed');
+            }}
+            count++;
+          }}
+        }});
+
+        // Hide load-more in city view
+        if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      }}
 
       countEl.textContent = filteredList.length + ' предложений';
     }}
@@ -626,7 +668,8 @@ def generate_html(rounds, config, loc_labels):
         loadMoreWrap.style.display = shownCount >= filteredList.length ? 'none' : 'block';
       }}
       if (loadMoreBtn) {{
-        loadMoreBtn.textContent = 'Показать ещё (' + (filteredList.length - shownCount) + ' осталось)';
+        var remaining = filteredList.length - shownCount;
+        loadMoreBtn.textContent = 'Показать ещё (' + remaining + ' осталось)';
       }}
     }}
 
@@ -653,8 +696,7 @@ def generate_html(rounds, config, loc_labels):
       }});
     }});
 
-    // Initial load: show first PAGE_SIZE with city sections visible
-    applyFilters();
+    // No initial applyFilters needed — HTML already renders city view correctly
   }})();
   </script>
 </body>
