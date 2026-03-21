@@ -116,7 +116,7 @@ def listing_to_json_data(listing, idx):
     }
 
 
-def generate_listing_card(listing, idx):
+def generate_listing_card(listing, idx, loc_labels=None):
     score = listing.get('score', 0)
     color = score_color(score)
     label = score_label(score)
@@ -124,6 +124,8 @@ def generate_listing_card(listing, idx):
     url = listing.get('url', '#')
     portal = listing.get('portal', '')
     found_date = listing.get('found_date', '')
+    location_key = listing.get('location_key', 'other')
+    city_label = (loc_labels or {}).get(location_key, location_key.replace('_', ' ').title())
     over_budget = listing.get('parsed_data', {}).get('over_budget', False)
 
     # Format price
@@ -210,6 +212,7 @@ def generate_listing_card(listing, idx):
         <div class="card-title-area">
           <a href="{url}" target="_blank" rel="noopener" class="card-title">{title}</a>
           <div class="card-meta">
+            <span class="badge badge-city">{city_label}</span>
             <span class="badge badge-portal">{portal}</span>
             <span class="badge badge-date">{found_date}</span>
             {budget_badge}
@@ -232,12 +235,42 @@ def generate_html(rounds, config, loc_labels):
     total_listings = len(all_listings)
     last_run = rounds[0]['date'] if rounds else 'Никогда'
 
-    # Generate cards HTML and JSON data for filtering
+    # Generate cards HTML grouped by city and JSON data for filtering
+    # First group by location
+    by_location = {}
+    for idx, listing in enumerate(all_listings):
+        loc = listing.get('location_key', 'other')
+        by_location.setdefault(loc, []).append((idx, listing))
+
     cards_html = ''
     listings_json = []
-    for idx, listing in enumerate(all_listings):
-        cards_html += generate_listing_card(listing, idx)
-        listings_json.append(listing_to_json_data(listing, idx))
+    # Render location groups in config order
+    loc_order = list(config.get('locations', {}).keys())
+    for loc_key in loc_order:
+        if loc_key not in by_location:
+            continue
+        loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
+        loc_items = by_location[loc_key]
+        # Sort by score desc within each city
+        loc_items.sort(key=lambda x: x[1].get('score', 0), reverse=True)
+        cards_html += f'<div class="city-section" data-city="{loc_key}">'
+        cards_html += f'<h2 class="city-header">{loc_label} <span class="city-count">{len(loc_items)}</span></h2>'
+        for idx, listing in loc_items:
+            cards_html += generate_listing_card(listing, idx, loc_labels)
+            listings_json.append(listing_to_json_data(listing, idx))
+        cards_html += '</div>'
+    # Any remaining locations not in config
+    for loc_key, loc_items in by_location.items():
+        if loc_key in loc_order:
+            continue
+        loc_label = loc_labels.get(loc_key, loc_key.replace('_', ' ').title())
+        loc_items.sort(key=lambda x: x[1].get('score', 0), reverse=True)
+        cards_html += f'<div class="city-section" data-city="{loc_key}">'
+        cards_html += f'<h2 class="city-header">{loc_label} <span class="city-count">{len(loc_items)}</span></h2>'
+        for idx, listing in loc_items:
+            cards_html += generate_listing_card(listing, idx, loc_labels)
+            listings_json.append(listing_to_json_data(listing, idx))
+        cards_html += '</div>'
 
     # Location filter options
     loc_options = ''
@@ -268,7 +301,7 @@ def generate_html(rounds, config, loc_labels):
     listings_json_str = json.dumps(listings_json, ensure_ascii=False)
 
     empty_state = '<div class="empty-state"><p>Пока нет результатов.</p><p>Первый автоматический поиск в 05:00 UTC.</p></div>'
-    main_content = f'<div id="listings-container">{cards_html}</div>' if all_listings else empty_state
+    main_content = f'<div id="listings-container">{cards_html}</div><div class="load-more-wrap" id="load-more-wrap"><button class="load-more-btn" id="load-more-btn">Показать ещё</button></div>' if all_listings else empty_state
 
     return f'''<!DOCTYPE html>
 <html lang="ru">
@@ -391,6 +424,10 @@ def generate_html(rounds, config, loc_labels):
       margin-bottom: 1rem;
     }}
 
+    .city-section {{ margin-bottom: 2rem; }}
+    .city-header {{ font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.75rem; padding-left: 0.5rem; }}
+    .city-header .city-count {{ font-size: 0.85rem; font-weight: 400; color: var(--text-dim); margin-left: 0.5rem; }}
+    .city-section.hidden {{ display: none; }}
     .listing-card {{ background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }}
     .listing-card:hover {{ transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
     .listing-card.hidden {{ display: none; }}
@@ -404,6 +441,7 @@ def generate_html(rounds, config, loc_labels):
     .card-meta {{ display: flex; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap; }}
     .badge {{ font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }}
     .badge-portal {{ background: var(--surface2); color: var(--text-dim); }}
+    .badge-city {{ background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }}
     .badge-date {{ background: rgba(56,189,248,0.1); color: var(--accent); }}
     .badge-warn {{ background: var(--red); color: white; }}
     .badge-info {{ background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }}
@@ -419,6 +457,9 @@ def generate_html(rounds, config, loc_labels):
     .methodology td {{ padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--surface2); font-size: 0.85rem; }}
     .methodology td:last-child {{ text-align: right; font-weight: 600; color: var(--accent); }}
     footer {{ text-align: center; padding: 2rem 0; color: var(--text-dim); font-size: 0.8rem; }}
+    .load-more-wrap {{ text-align: center; margin: 1.5rem 0; }}
+    .load-more-btn {{ background: var(--surface2); color: var(--accent); border: 1px solid var(--accent); border-radius: 8px; padding: 0.75rem 2rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }}
+    .load-more-btn:hover {{ background: rgba(56,189,248,0.15); }}
     .empty-state {{ text-align: center; padding: 4rem 2rem; color: var(--text-dim); }}
     .empty-state p {{ font-size: 1.1rem; margin-bottom: 0.5rem; }}
     @media (max-width: 600px) {{
@@ -504,52 +545,94 @@ def generate_html(rounds, config, loc_labels):
     var listings = {listings_json_str};
     var container = document.getElementById('listings-container');
     var countEl = document.getElementById('results-count');
+    var loadMoreWrap = document.getElementById('load-more-wrap');
+    var loadMoreBtn = document.getElementById('load-more-btn');
     if (!container || !listings.length) return;
 
+    var PAGE_SIZE = 20;
     var cards = container.querySelectorAll('.listing-card');
+    var citySections = container.querySelectorAll('.city-section');
     var currentSort = 'score';
     var currentDir = 'desc';
     var currentLocation = 'all';
+    var shownCount = 0;
+    var filteredList = [];
 
     function applyFilters() {{
+      // When sorting is active (not default score), flatten into single sorted list
+      var isSorting = !(currentSort === 'score' && currentDir === 'desc' && currentLocation === 'all');
+      var isFilteringCity = currentLocation !== 'all';
+
       // Filter
-      var visible = [];
+      filteredList = [];
       for (var i = 0; i < listings.length; i++) {{
         var l = listings[i];
-        var show = true;
-        if (currentLocation !== 'all' && l.location !== currentLocation) show = false;
-        listings[i]._visible = show;
-        if (show) visible.push(l);
+        if (currentLocation !== 'all' && l.location !== currentLocation) continue;
+        filteredList.push(l);
       }}
 
-      // Sort visible
-      visible.sort(function(a, b) {{
-        var va = a[currentSort] || 0;
-        var vb = b[currentSort] || 0;
-        if (currentSort === 'date') {{
-          va = a.date || '';
-          vb = b.date || '';
-          return currentDir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+      // Sort
+      if (currentSort !== 'score' || currentDir !== 'desc') {{
+        filteredList.sort(function(a, b) {{
+          var va = a[currentSort] || 0;
+          var vb = b[currentSort] || 0;
+          if (currentSort === 'date') {{
+            va = a.date || '';
+            vb = b.date || '';
+            return currentDir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+          }}
+          if (currentDir === 'desc') return vb - va;
+          return va - vb;
+        }});
+      }}
+
+      // Show/hide city sections when filtering by city
+      citySections.forEach(function(sec) {{
+        if (isFilteringCity) {{
+          sec.classList.toggle('hidden', sec.getAttribute('data-city') !== currentLocation);
+        }} else {{
+          sec.classList.remove('hidden');
         }}
-        if (currentDir === 'desc') return vb - va;
-        return va - vb;
       }});
 
-      // Reorder DOM
-      for (var j = 0; j < visible.length; j++) {{
-        var card = cards[visible[j].idx];
-        card.classList.remove('hidden');
-        container.appendChild(card);
+      // Hide all cards first
+      for (var k = 0; k < cards.length; k++) {{
+        cards[k].classList.add('hidden');
       }}
 
-      // Hide filtered out
-      for (var k = 0; k < listings.length; k++) {{
-        if (!listings[k]._visible) {{
-          cards[listings[k].idx].classList.add('hidden');
+      // If custom sort is active, move cards out of city sections into flat order
+      if (currentSort !== 'score' || currentDir !== 'desc') {{
+        for (var j = 0; j < filteredList.length; j++) {{
+          container.appendChild(cards[filteredList[j].idx]);
         }}
+        // Hide city headers when sorting flat
+        citySections.forEach(function(sec) {{ sec.classList.add('hidden'); }});
       }}
 
-      countEl.textContent = visible.length + ' предложений';
+      // Reset pagination
+      shownCount = 0;
+      showMore();
+
+      countEl.textContent = filteredList.length + ' предложений';
+    }}
+
+    function showMore() {{
+      var end = Math.min(shownCount + PAGE_SIZE, filteredList.length);
+      for (var i = shownCount; i < end; i++) {{
+        cards[filteredList[i].idx].classList.remove('hidden');
+      }}
+      shownCount = end;
+      if (loadMoreWrap) {{
+        loadMoreWrap.style.display = shownCount >= filteredList.length ? 'none' : 'block';
+      }}
+      if (loadMoreBtn) {{
+        loadMoreBtn.textContent = 'Показать ещё (' + (filteredList.length - shownCount) + ' осталось)';
+      }}
+    }}
+
+    // Load more button
+    if (loadMoreBtn) {{
+      loadMoreBtn.addEventListener('click', showMore);
     }}
 
     // Location filter
@@ -569,6 +652,9 @@ def generate_html(rounds, config, loc_labels):
         applyFilters();
       }});
     }});
+
+    // Initial load: show first PAGE_SIZE with city sections visible
+    applyFilters();
   }})();
   </script>
 </body>

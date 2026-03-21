@@ -283,7 +283,17 @@ def score_listing(listing, location_key, config):
     if price_eur and price_eur > budget_max:
         over_budget = True
 
-    composite = sum(scores[k] * weights[k] for k in weights if k in scores)
+    # For inland/mountain locations, redistribute sea_proximity weight
+    # so they aren't penalized for not being near the sea
+    effective_weights = dict(weights)
+    if loc_config.get('sea_proximity_default') in ('inland', 'mountain'):
+        sea_weight = effective_weights.pop('sea_proximity', 0)
+        # Redistribute to air_quality (inland cities like Da Lat have great air)
+        # and growth_potential (inland markets often have high appreciation)
+        effective_weights['air_quality'] = effective_weights.get('air_quality', 0) + sea_weight * 0.5
+        effective_weights['growth_potential'] = effective_weights.get('growth_potential', 0) + sea_weight * 0.5
+
+    composite = sum(scores[k] * effective_weights[k] for k in effective_weights if k in scores)
     if over_budget:
         composite *= 0.5
 
