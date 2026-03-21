@@ -123,6 +123,12 @@
     .city-header { font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.75rem; padding-left: 0.5rem; }
     .city-header .city-count { font-size: 0.85rem; font-weight: 400; color: var(--text-dim); margin-left: 0.5rem; }
     .city-section.hidden { display: none; }
+    .listing-card.city-collapsed { display: none; }
+    .city-section.expanded .listing-card.city-collapsed { display: block; }
+    .city-expand-wrap { text-align: center; margin: 0.5rem 0 1rem; }
+    .city-expand-btn { background: transparent; color: var(--accent); border: 1px dashed var(--surface2); border-radius: 6px; padding: 0.5rem 1.5rem; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; }
+    .city-expand-btn:hover { border-color: var(--accent); background: rgba(56,189,248,0.08); }
+    .city-section.expanded .city-expand-wrap { display: none; }
     .listing-card { background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }
     .listing-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
     .listing-card.hidden { display: none; }
@@ -364,7 +370,7 @@
 [2-bedroom apartment </p>
     </div>
     
-    <div class="listing-card" data-idx="5">
+    <div class="listing-card city-collapsed" data-idx="5">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 5/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -402,7 +408,7 @@ Giá đang cập nhật
 </p>
     </div>
     
-    <div class="listing-card" data-idx="6">
+    <div class="listing-card city-collapsed" data-idx="6">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -441,7 +447,7 @@ Giá đang cập nhật
 - Типы домов на продажу</p>
     </div>
     
-    <div class="listing-card" data-idx="7">
+    <div class="listing-card city-collapsed" data-idx="7">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 5/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.7</span>
@@ -465,7 +471,7 @@ Artus Real Estate - Preferred Partner\\
 ![](https://build.dotproperty.com.vn/assets/verified-d4016607.</p>
     </div>
     
-    <div class="listing-card" data-idx="8">
+    <div class="listing-card city-collapsed" data-idx="8">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -485,7 +491,7 @@ Artus Real Estate - Preferred Partner\\
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/01/05/20260105095317-5924_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/11/14/20251114151105-17c4_wm.</p>
     </div>
     
-    <div class="listing-card" data-idx="9">
+    <div class="listing-card city-collapsed" data-idx="9">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -507,7 +513,7 @@ Artus Real Estate - Preferred Partner\\
 **![](https://staticfile.batdongsan.com.vn/images/Produc</p>
     </div>
     
-    <div class="listing-card" data-idx="10">
+    <div class="listing-card city-collapsed" data-idx="10">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -544,7 +550,7 @@ Artus Real Estate - Preferred Partner\\
 **23</p>
     </div>
     
-    <div class="listing-card" data-idx="11">
+    <div class="listing-card city-collapsed" data-idx="11">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -571,7 +577,7 @@ Artus Real Estate - Preferred Partner\\
   </p>
     </div>
     
-    <div class="listing-card" data-idx="12">
+    <div class="listing-card city-collapsed" data-idx="12">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -593,7 +599,7 @@ Artus Real Estate - Preferred Partner\\
 [2-bedroom apartm</p>
     </div>
     
-    <div class="listing-card" data-idx="13">
+    <div class="listing-card city-collapsed" data-idx="13">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -615,7 +621,7 @@ Artus Real Estate - Preferred Partner\\
 [2-bedroom </p>
     </div>
     
-    <div class="listing-card" data-idx="14">
+    <div class="listing-card city-collapsed" data-idx="14">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -637,7 +643,7 @@ Artus Real Estate - Preferred Partner\\
 [2</p>
     </div>
     
-    <div class="listing-card" data-idx="20">
+    <div class="listing-card city-collapsed" data-idx="20">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -659,7 +665,7 @@ Artus Real Estate - Preferred Partner\\
 [1-bedroom </p>
     </div>
     
-    <div class="listing-card" data-idx="21">
+    <div class="listing-card city-collapsed" data-idx="21">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -679,7 +685,7 @@ Artus Real Estate - Preferred Partner\\
       <p class="card-snippet">[![1-bedroom apartment in new building 51 m² in Ba Ria - Vung Tau for $116,000](https://tranio.com/photos/adt/b6f96757/32395609/275x176.jpg)](https://tranio.com/vietnam/adt/new-home-in-ba-ria-vung-tau</p>
     </div>
     
-    <div class="listing-card" data-idx="22">
+    <div class="listing-card city-collapsed" data-idx="22">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -700,7 +706,7 @@ Artus Real Estate - Preferred Partner\\
 
 [1-</p>
     </div>
-    </div><div class="city-section" data-city="quy_nhon"><h2 class="city-header">Куиньон / Биньдинь <span class="city-count">3</span></h2>
+    <div class="city-expand-wrap"><button class="city-expand-btn" data-city="phu_quoc">Показать все 18 (13 скрыто)</button></div></div><div class="city-section" data-city="quy_nhon"><h2 class="city-header">Куиньон / Биньдинь <span class="city-count">3</span></h2>
     <div class="listing-card" data-idx="23">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 7/7&#10;Спальни: 4/7">
@@ -934,7 +940,7 @@ Artus Real Estate - Preferred Partner\\
           <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-hung-vuong-2-phuong-10_4-391/ban-goc-chi-3-ty-co-thang-may-63m2-so-hong-lau-dai-vay-ngan-hang-de-dang-pr45294064" target="_blank" rel="noopener" class="card-title">Продам угловую квартиру всего за 3 миллиарда, жилой дом Хунг Выонг с лифтом 63м2</a>
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-hung-vuong-2-phuong-10_4-391/ban-goc-chi-3-ty-co-thang-may-63m2-so-hong-lau-dai-vay-ngan-hang-de-dang-pr45294064" target="_blank" rel="noopener" class="card-title">Продается угловая квартира всего за 3 миллиарда, жилой дом Хунг Выонг с лифтом 6</a>
           <div class="card-meta">
             <span class="badge badge-city">Далат</span>
             <span class="badge badge-portal">batdongsan</span>
@@ -951,7 +957,7 @@ Artus Real Estate - Preferred Partner\\
 **Bán căn góc chỉ 3 tỷ chung cư Hùng Vương có thang máy 63m2 sổ hồng lâu dài vay ngâ</p>
     </div>
     
-    <div class="listing-card" data-idx="27">
+    <div class="listing-card city-collapsed" data-idx="27">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 4/7&#10;Близость к морю: 1/7&#10;Потенциал роста: 7/7&#10;Развитие региона: 4/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.5</span>
@@ -970,7 +976,7 @@ Artus Real Estate - Preferred Partner\\
       <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€1,667</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">20 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€83/м²</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
       <p class="card-snippet">[![Cho thuê Phòng trọ Quận Bình Thạnh Tp Hồ Chí Minh diện tích 20 m² giá 4,5 triệu/tháng](https://cdn.chotot.com/JPPep46P7LcUxTOfFEb06jRgPFUUjo_laEeFaoj4XiE/preset:listing/plain/a8d95a53795da58f4f51f7</p>
     </div>
-    </div><div class="city-section" data-city="con_dao"><h2 class="city-header">Кондао <span class="city-count">4</span></h2>
+    <div class="city-expand-wrap"><button class="city-expand-btn" data-city="da_lat">Показать все 6 (1 скрыто)</button></div></div><div class="city-section" data-city="con_dao"><h2 class="city-header">Кондао <span class="city-count">4</span></h2>
     <div class="listing-card" data-idx="19">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 3/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 7/7&#10;Спальни: 4/7">
@@ -1106,11 +1112,24 @@ Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (h
     var currentLocation = 'all';
     var shownCount = 0;
     var filteredList = [];
+    var flatMode = false; // true when sorting or filtering overrides city view
+
+    // City expand buttons
+    document.querySelectorAll('.city-expand-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var sec = this.closest('.city-section');
+        if (sec) sec.classList.add('expanded');
+      });
+    });
+
+    function isCityView() {
+      // City grouped view: default sort (score desc) and no city filter
+      return currentSort === 'score' && currentDir === 'desc' && currentLocation === 'all';
+    }
 
     function applyFilters() {
-      // When sorting is active (not default score), flatten into single sorted list
-      var isSorting = !(currentSort === 'score' && currentDir === 'desc' && currentLocation === 'all');
       var isFilteringCity = currentLocation !== 'all';
+      flatMode = !isCityView();
 
       // Filter
       filteredList = [];
@@ -1120,8 +1139,8 @@ Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (h
         filteredList.push(l);
       }
 
-      // Sort
-      if (currentSort !== 'score' || currentDir !== 'desc') {
+      // Sort (only in non-default mode)
+      if (flatMode) {
         filteredList.sort(function(a, b) {
           var va = a[currentSort] || 0;
           var vb = b[currentSort] || 0;
@@ -1135,32 +1154,49 @@ Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (h
         });
       }
 
-      // Show/hide city sections when filtering by city
-      citySections.forEach(function(sec) {
-        if (isFilteringCity) {
-          sec.classList.toggle('hidden', sec.getAttribute('data-city') !== currentLocation);
-        } else {
-          sec.classList.remove('hidden');
+      if (flatMode) {
+        // --- FLAT MODE: hide city sections, show paginated flat list ---
+        citySections.forEach(function(sec) { sec.classList.add('hidden'); });
+
+        // Hide all cards, remove city-collapsed so pagination controls visibility
+        for (var k = 0; k < cards.length; k++) {
+          cards[k].classList.add('hidden');
+          cards[k].classList.remove('city-collapsed');
         }
-      });
 
-      // Hide all cards first
-      for (var k = 0; k < cards.length; k++) {
-        cards[k].classList.add('hidden');
-      }
-
-      // If custom sort is active, move cards out of city sections into flat order
-      if (currentSort !== 'score' || currentDir !== 'desc') {
+        // Move cards into flat order in container
         for (var j = 0; j < filteredList.length; j++) {
           container.appendChild(cards[filteredList[j].idx]);
         }
-        // Hide city headers when sorting flat
-        citySections.forEach(function(sec) { sec.classList.add('hidden'); });
-      }
 
-      // Reset pagination
-      shownCount = 0;
-      showMore();
+        // Paginate
+        shownCount = 0;
+        showMore();
+      } else {
+        // --- CITY VIEW: show city sections with 5 preview + expand ---
+        // Restore city-collapsed classes and show city sections
+        citySections.forEach(function(sec) {
+          sec.classList.remove('hidden');
+          sec.classList.remove('expanded');
+          // Move cards back into their city sections
+          var city = sec.getAttribute('data-city');
+          var cityCards = sec.querySelectorAll('.listing-card');
+          // Re-apply city-collapsed to cards beyond preview
+          var count = 0;
+          for (var c = 0; c < cityCards.length; c++) {
+            cityCards[c].classList.remove('hidden');
+            if (count >= 5) {
+              cityCards[c].classList.add('city-collapsed');
+            } else {
+              cityCards[c].classList.remove('city-collapsed');
+            }
+            count++;
+          }
+        });
+
+        // Hide load-more in city view
+        if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      }
 
       countEl.textContent = filteredList.length + ' предложений';
     }
@@ -1175,7 +1211,8 @@ Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (h
         loadMoreWrap.style.display = shownCount >= filteredList.length ? 'none' : 'block';
       }
       if (loadMoreBtn) {
-        loadMoreBtn.textContent = 'Показать ещё (' + (filteredList.length - shownCount) + ' осталось)';
+        var remaining = filteredList.length - shownCount;
+        loadMoreBtn.textContent = 'Показать ещё (' + remaining + ' осталось)';
       }
     }
 
@@ -1202,8 +1239,7 @@ Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (h
       });
     });
 
-    // Initial load: show first PAGE_SIZE with city sections visible
-    applyFilters();
+    // No initial applyFilters needed — HTML already renders city view correctly
   })();
   </script>
 </body>
