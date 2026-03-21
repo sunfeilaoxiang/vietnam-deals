@@ -1,6 +1,6 @@
 {
   "budget_max_eur": 138000,
-  "score_threshold": 5.5,
+  "score_threshold": 5.0,
   "vnd_per_eur": 27000,
   "currency": "EUR",
   "currency_symbol": "€",
