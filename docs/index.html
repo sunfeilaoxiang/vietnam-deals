@@ -34,7 +34,7 @@
       text-align: center;
       padding: 3rem 0 2rem;
       border-bottom: 1px solid var(--surface2);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
     h1 {
       font-size: 2rem;
@@ -56,13 +56,72 @@
     .stat { text-align: center; }
     .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
     .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; }
-    .round-section { margin-bottom: 3rem; }
-    .round-date { font-size: 1.3rem; font-weight: 700; color: var(--accent); padding-bottom: 0.5rem; border-bottom: 2px solid var(--surface2); margin-bottom: 0.5rem; }
-    .round-meta { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
-    .location-group { margin-bottom: 1.5rem; }
-    .location-label { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; padding-left: 0.5rem; border-left: 3px solid var(--accent); }
+
+    /* Filter bar */
+    .filter-bar {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-bar label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-right: 0.25rem;
+    }
+    .filter-bar select, .filter-bar input {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+    .filter-bar select:hover, .filter-bar input:hover {
+      border-color: var(--accent);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .sort-btn {
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .sort-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .sort-btn.active {
+      background: rgba(56,189,248,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .results-count {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+    }
+
     .listing-card { background: var(--surface); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; transition: transform 0.15s; }
     .listing-card:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .listing-card.hidden { display: none; }
     .card-header { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 0.5rem; }
     .score-badge { flex-shrink: 0; width: 56px; height: 56px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: help; }
     .score-num { font-size: 1.25rem; font-weight: 800; line-height: 1; }
@@ -73,6 +132,7 @@
     .card-meta { display: flex; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap; }
     .badge { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
     .badge-portal { background: var(--surface2); color: var(--text-dim); }
+    .badge-date { background: rgba(56,189,248,0.1); color: var(--accent); }
     .badge-warn { background: var(--red); color: white; }
     .badge-info { background: rgba(56,189,248,0.15); color: var(--accent); border: 1px solid rgba(56,189,248,0.3); }
     .badge-dev { background: rgba(22,163,74,0.15); color: var(--green); border: 1px solid rgba(22,163,74,0.3); }
@@ -80,7 +140,6 @@
     .spec-item { display: flex; flex-direction: column; }
     .spec-label { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .spec-value { color: var(--accent); font-weight: 600; font-size: 0.9rem; }
-    .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
     .card-snippet { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
     .methodology { background: var(--surface); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }
     .methodology h2 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }
@@ -94,6 +153,8 @@
       .container { padding: 1rem; }
       h1 { font-size: 1.5rem; }
       .stats-bar { gap: 1rem; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .filter-group { flex-wrap: wrap; }
       .card-header { flex-direction: column; align-items: stretch; }
       .score-badge { width: auto; height: auto; flex-direction: row; gap: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 6px; }
     }
@@ -106,11 +167,11 @@
       <p class="subtitle">Ежедневный поиск · Бюджет: €150,000 · Фукуок, Куиньон / Биньдинь, Далат, Кондао</p>
       <div class="stats-bar">
         <div class="stat">
-          <div class="stat-num">2</div>
+          <div class="stat-num">1</div>
           <div class="stat-label">Поисков</div>
         </div>
         <div class="stat">
-          <div class="stat-num">27</div>
+          <div class="stat-num">25</div>
           <div class="stat-label">Найдено</div>
         </div>
         <div class="stat">
@@ -124,16 +185,32 @@
       </div>
     </header>
 
+    <div class="filter-bar" id="filter-bar">
+      <div class="filter-group">
+        <label>Город:</label>
+        <select id="filter-location">
+          <option value="all">Все</option>
+          <option value="phu_quoc">Фукуок</option><option value="quy_nhon">Куиньон / Биньдинь</option><option value="con_dao">Кондао</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Сортировка:</label>
+        <button class="sort-btn active" data-sort="score" data-dir="desc">Рейтинг ↓</button>
+        <button class="sort-btn" data-sort="price" data-dir="asc">Цена ↑</button>
+        <button class="sort-btn" data-sort="price" data-dir="desc">Цена ↓</button>
+        <button class="sort-btn" data-sort="sqm" data-dir="desc">м² ↓</button>
+        <button class="sort-btn" data-sort="sqm" data-dir="asc">м² ↑</button>
+        <button class="sort-btn" data-sort="ppsm" data-dir="asc">€/м² ↑</button>
+        <button class="sort-btn" data-sort="ppsm" data-dir="desc">€/м² ↓</button>
+        <button class="sort-btn" data-sort="date" data-dir="desc">Новые</button>
+      </div>
+    </div>
+
+    <div class="results-count" id="results-count">25 предложений</div>
+
     <main>
-      
-        <section class="round-section">
-          <h2 class="round-date">2026-03-21</h2>
-          <p class="round-meta">Проверено 72 · 53 новых · 27 выгодных предложений</p>
-          
-            <div class="location-group">
-              <h3 class="location-label">Фукуок</h3>
-              
-    <div class="listing-card">
+      <div id="listings-container">
+    <div class="listing-card" data-idx="0">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -143,6 +220,7 @@
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/em-ang-co-quy-2-quy-cho-tang-studio-view-truc-dien-cau-hon-phao-hoa-tang-ep-gia-2-9-ty-pr45240936" target="_blank" rel="noopener" class="card-title">Kiên Giang</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -170,7 +248,7 @@
 - Типы домов на продажу</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="1">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -180,6 +258,7 @@
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/au-tu-nghi-ket-hop-vua-giu-gia-tri-truyen-oi-vua-tao-ra-dong-tien-toi-a-pr45367101" target="_blank" rel="noopener" class="card-title">Kiên Giang</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan-p2</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -207,7 +286,7 @@
 - Типы домов на продажу</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="2">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -217,6 +296,7 @@
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/ban-cat-lo-1-ty-view-bien-phu-quoc-dt-56m2-gia-4-ty-dong-tien-30tr-thang-pr44843604" target="_blank" rel="noopener" class="card-title">Продажа с убытком 1 миллиард. Квартира с видом на пляж Фукуока, площадь 56м2, це</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan-p2</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -229,7 +309,28 @@
 **Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng**\</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="3">
+      <div class="card-header">
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
+          <span class="score-num">5.8</span>
+          <span class="score-label">Хорошо</span>
+        </div>
+        <div class="card-title-area">
+          <a href="https://tranio.com/photos/adt/1d8cd30e/38441428/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![2-bedroom apartment 110 m² in Da Nang for $153,000](https://tranio.com/photos</a>
+          <div class="card-meta">
+            <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
+            
+          </div>
+        </div>
+      </div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€140,760</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">2 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">110 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,280/м²</span></div></div>
+      <p class="card-snippet">[![2-bedroom apartment 110 m² in Da Nang for $153,000](https://tranio.com/photos/adt/1d8cd30e/38441428/275x176.jpg)](https://tranio.com/vietnam/adt/apartment-in-da-nang-2456267/)
+
+[2-bedroom apartment</p>
+    </div>
+    
+    <div class="listing-card" data-idx="4">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -239,6 +340,7 @@
           <a href="https://tranio.com/photos/adt/c6b7ce06/32909203/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![2-bedroom apartment 77 m² in Da Nang for $108,000](https://tranio.com/photos/</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -249,7 +351,7 @@
 [2-bedroom apartment </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="5">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 5/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -259,6 +361,7 @@
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/ban-quy-ngoai-giao-harmoney-view-bien-so-o-lau-dai-chiet-khau-cao-pr45360075" target="_blank" rel="noopener" class="card-title">История цен на квартиры на продажу в Meypearl Harmony Phu Quoc</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan-meypearl</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -285,7 +388,7 @@ Giá đang cập nhật
 </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="6">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.8</span>
@@ -295,6 +398,7 @@ Giá đang cập nhật
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-xa-ganh-dau-grand-world-phu-quoc/ban-cc-mini-3-ty-29-2m2-view-dep-hang-hiem-tai-kien-giang-pr44073903" target="_blank" rel="noopener" class="card-title">Kiên Giang</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan-grandworld</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -322,7 +426,7 @@ Giá đang cập nhật
 - Типы домов на продажу</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="7">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 5/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.7</span>
@@ -332,6 +436,7 @@ Giá đang cập nhật
           <a href="https://images.proppit.com/publisher/99965b8e-a78b-4872-9a29-a5af47703ed6/logo.jpeg" target="_blank" rel="noopener" class="card-title">Phu Quoc</a>
           <div class="card-meta">
             <span class="badge badge-portal">dotproperty</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -344,7 +449,7 @@ Artus Real Estate - Preferred Partner\\
 ![](https://build.dotproperty.com.vn/assets/verified-d4016607.</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="8">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -354,6 +459,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/suat-ngoai-giao-ki-truc-tiep-cdt-tu-1pn-2pn-3pn-gia-tot-view-bien-chiet-khau-len-den-40-pr44556910" target="_blank" rel="noopener" class="card-title">Дипломатический контракт, подписанный напрямую с инвестором, на квартиру с 2 спа</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -362,7 +468,7 @@ Artus Real Estate - Preferred Partner\\
       <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/01/05/20260105095317-5924_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/11/14/20251114151105-17c4_wm.</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="9">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -372,6 +478,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tpc.googlesyndication.com/pimgad/7609403466909576896?" target="_blank" rel="noopener" class="card-title">![](https://staticfile.batdongsan.com.vn/images/Product/label_custom_qc_pixiu.sv</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -382,7 +489,7 @@ Artus Real Estate - Preferred Partner\\
 **![](https://staticfile.batdongsan.com.vn/images/Produc</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="10">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -392,6 +499,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-ngoai-giao-2pn-goc-view-bien-tang-ep-66-68m2-gia-tot-nhat-quoc-pr45235760" target="_blank" rel="noopener" class="card-title">История цен на квартиры на продажу в городе Фукуок</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan-p2</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -417,7 +525,7 @@ Artus Real Estate - Preferred Partner\\
 **23</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="11">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -427,6 +535,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-kien-giang_8823778" target="_blank" rel="noopener" class="card-title">[![DotPropertyIcon](https://build.dotproperty.com.vn/assets/dotproperty-default-</a>
           <div class="card-meta">
             <span class="badge badge-portal">dotproperty</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -442,7 +551,7 @@ Artus Real Estate - Preferred Partner\\
   </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="12">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -452,6 +561,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/50485387/32804163/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![2-bedroom apartment 69 m² in Nha Trang for $110,000](https://tranio.com/photo</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -462,7 +572,7 @@ Artus Real Estate - Preferred Partner\\
 [2-bedroom apartm</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="13">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -472,6 +582,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/99f3d5ee/31505426/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![2-bedroom apartments in condo 71 m² in Nha Trang for $135,000](https://tranio</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -482,7 +593,7 @@ Artus Real Estate - Preferred Partner\\
 [2-bedroom </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="14">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
           <span class="score-num">5.6</span>
@@ -492,6 +603,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/83ca44bb/33238325/275x176.jpg" target="_blank" rel="noopener" class="card-title">Mikhail Bulanov</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -502,7 +614,26 @@ Artus Real Estate - Preferred Partner\\
 [2</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="15">
+      <div class="card-header">
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 3/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 7/7&#10;Спальни: 4/7">
+          <span class="score-num">5.6</span>
+          <span class="score-label">Хорошо</span>
+        </div>
+        <div class="card-title-area">
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-3-2-2-phuong-10-11-blanca-city/mo-ban-beacon-so-hong-lau-dai-tai-vung-tau-pr45114597" target="_blank" rel="noopener" class="card-title">Квартира-маяк с долгосрочной розовой книгой в Бланка Сити Вунгтау</a>
+          <div class="card-meta">
+            <span class="badge badge-portal">batdongsan-brvt</span>
+            <span class="badge badge-date">2026-03-21</span>
+            
+          </div>
+        </div>
+      </div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€1,852</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">80 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€23/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div></div>
+      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/01/29/20260129110202-2765_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2026/01/29/20260129110238-3a0d_wm.</p>
+    </div>
+    
+    <div class="listing-card" data-idx="16">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -512,6 +643,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/beaeb62d/31505403/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![1-bedroom apartments in condo 54 m² in Nha Trang for $115,000](https://tranio</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -522,7 +654,7 @@ Artus Real Estate - Preferred Partner\\
 [1-bedroom </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="17">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -532,6 +664,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/b6f96757/32395609/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![1-bedroom apartment in new building 51 m² in Ba Ria - Vung Tau for $116,000](</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -540,7 +673,7 @@ Artus Real Estate - Preferred Partner\\
       <p class="card-snippet">[![1-bedroom apartment in new building 51 m² in Ba Ria - Vung Tau for $116,000](https://tranio.com/photos/adt/b6f96757/32395609/275x176.jpg)](https://tranio.com/vietnam/adt/new-home-in-ba-ria-vung-tau</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="18">
       <div class="card-header">
         <div class="score-badge" style="background:#2563eb" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
           <span class="score-num">5.5</span>
@@ -550,6 +683,7 @@ Artus Real Estate - Preferred Partner\\
           <a href="https://tranio.com/photos/adt/d13b72c1/38259248/275x176.jpg" target="_blank" rel="noopener" class="card-title">[![1-bedroom apartment in new building 30 m² in Nha Trang for $60,000](https://t</a>
           <div class="card-meta">
             <span class="badge badge-portal">tranio</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
@@ -560,265 +694,151 @@ Artus Real Estate - Preferred Partner\\
 [1-</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="19">
       <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 5/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.4</span>
-          <span class="score-label">Нормально</span>
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 6/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 7/7&#10;Спальни: 4/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/con-sot-1n-1-view-bien-gia-full-ck-32-5-2-ty-htls-0-48-thang-han-goc-lh-em-pr45364283" target="_blank" rel="noopener" class="card-title">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/21/2026</a>
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/bien-so-hong-lau-dai-re-nhat-tp-quy-nhon-tang-full-noi-that-cao-cap-pr45333288" target="_blank" rel="noopener" class="card-title">САМАЯ ДЕШЕВАЯ КВАРТИРА С РОЗОВЫМИ ОКНАМИ НА ДОЛГОСРОЧНЫЙ СРОК В ГОРОДЕ Куинён (П</a>
           <div class="card-meta">
             <span class="badge badge-portal">batdongsan</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
       </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">34 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,179/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/21/20260321112127-dba0_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x64/2026/03/21/20260321112127-3b29_wm.</p>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">45 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,646/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
+      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/17/20260317170010-1fd3_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x64/2026/03/17/20260317170005-eba5_wm.</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="20">
       <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 4/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.2</span>
-          <span class="score-label">Нормально</span>
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-ban-cat-lo-2-ty-studio-32m2-phu-quoc-dong-tien-15tr-thang-pr44843139" target="_blank" rel="noopener" class="card-title">Căn duy nhất bán cắt lỗ 2 tỷ - căn studio 32m2 - Sun Grand Hillside Phú Quốc - d</a>
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/vi-tri-vip-saling-1pn-giam-tu-300-500tr-view-bien-so-lau-dai-pr43134263" target="_blank" rel="noopener" class="card-title">Дипломатическая VIP-корзина - Верхний этаж, вид на море - Дешевле, чем рынок 500</a>
           <div class="card-meta">
-            <span class="badge badge-portal">batdongsan</span>
+            <span class="badge badge-portal">batdongsan-sailing</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
       </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">32 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,315/м²</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2025/12/19/20251219143341-2061_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/12/19/20251219143342-5bf4_wm.</p>
-    </div>
-    
-    <div class="listing-card">
-      <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 4/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.2</span>
-          <span class="score-label">Нормально</span>
-        </div>
-        <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/ban-studio-quy-ngoai-giao-view-bien-ep-nhat-phu-quoc-huong-mat-gia-cuc-tot-30m2-2-2ty-pr45255144" target="_blank" rel="noopener" class="card-title">Продам студию дипломатического фонда с видом на море, самую красивую на Фукуоке,</a>
-          <div class="card-meta">
-            <span class="badge badge-portal">batdongsan</span>
-            
-          </div>
-        </div>
-      </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€81,481</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,716/м²</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2026/03/07/20260307180030-37d7_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2026/03/13/20260313161341-9bfb_wm.</p>
-    </div>
-    
-    <div class="listing-card">
-      <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 4/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.2</span>
-          <span class="score-label">Нормально</span>
-        </div>
-        <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dai-lo-cua-lap-an-thoi-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-studio-32m-ban-cat-2-ty-phu-quoc-pr45302277" target="_blank" rel="noopener" class="card-title">Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc</a>
-          <div class="card-meta">
-            <span class="badge badge-portal">batdongsan-p2</span>
-            
-          </div>
-        </div>
-      </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€74,074</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">Студия</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">32 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,315/м²</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/13/20260313151118-1308_wm.jpg)\\
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">65 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€570/м²</span></div></div>
+      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2025/05/13/20250513081813-6fc1_wm.jpg)\\
 \\
-8\\
+10\\
 \\
-**Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc**\\
-\\
-2 tỷ·32 m²·62,</p>
+**Giỏ hàng ngoại giao Vip -Tầg cao, View biển- Rẻ hơn thị trườg 500tr - 1tỷ- Có hỗ </p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="21">
       <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 4/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.2</span>
-          <span class="score-label">Нормально</span>
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-at-the-5-way-phu-quoc-in-ganh-dau-kien-giang-u2046678" target="_blank" rel="noopener" class="card-title">How affordable are condos in Phu Quoc?</a>
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-long-van-long-my-phuong-tran-quang-dieu-iec-residences-quy-nhon/thong-bao-tiep-nhan-so-noxh-toa-ct02-tp-bien-nhon-pr45153643" target="_blank" rel="noopener" class="card-title">Уведомление о получении заявления на получение социального жилья IEC в здании CT</a>
           <div class="card-meta">
-            <span class="badge badge-portal">fazwaz</span>
+            <span class="badge badge-portal">batdongsan-iec</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
       </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€129,116</span></div></div>
-      <p class="card-snippet">### How affordable are condos in Phu Quoc?
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€23,519</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">47 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€500/м²</span></div></div>
+      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/02/09/20260209153405-8197_wm.jpg)\\
+\\
+4\\
+\\
+**Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn**\\
+\\
+635 triệu·47 m</p>
+    </div>
+    
+    <div class="listing-card" data-idx="22">
+      <div class="card-header">
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 3/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
+        </div>
+        <div class="card-title-area">
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nguyen-huu-canh-phuong-nguyen-an-ninh-vung-tau-centre-point/ban-nhanh-2pn-76m2-tang-cao-ep-huong-ong-nam-gia-4-2-ty-don-ve-o-ngay-pr45360217" target="_blank" rel="noopener" class="card-title">Сохранено успешно.</a>
+          <div class="card-meta">
+            <span class="badge badge-portal">batdongsan-brvt</span>
+            <span class="badge badge-date">2026-03-21</span>
+            
+          </div>
+        </div>
+      </div>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
+      <p class="card-snippet">Сохранено успешно.
 
-![The median sales price for a condo in Phu Quoc is approximately $140,344](https://www.fazwaz.vn/images/icon/for-price-blue.svg)
-The median sales price for</p>
+Несохраненное сообщение
+
+ПокупаюНайти в аренду
+
+Тип недвижимости
+
+Добавить
+
+- Вся недвижимость
+
+
+- Квартира
+
+
+- Мини-квартиры, апартаменты с обслуживанием
+
+
+- Типы домов на продажу</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="23">
       <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 3/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 7/7&#10;Спальни: 4/7">
-          <span class="score-num">5.1</span>
-          <span class="score-label">Нормально</span>
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 3/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/2-3-ty-full-so-huu-bien-s4-phu-quoc-so-hong-lau-dai-cho-thue-uoc-luon-pr45290291" target="_blank" rel="noopener" class="card-title">2,3 миллиарда (полных) за владение пляжной квартирой прямо на станции отправлени</a>
+          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/chi-voi-hon-1-ty-8-da-so-huu-cho-minh-1-cao-cap-o-my-pr44678698" target="_blank" rel="noopener" class="card-title">Имея чуть более 1,8 миллиарда долларов, вы можете владеть квартирой с 1 спальней</a>
           <div class="card-meta">
-            <span class="badge badge-portal">batdongsan-p2</span>
+            <span class="badge badge-portal">batdongsan-brvt</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
       </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€85,185</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€2,840/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/12/20260312105315-0aee_wm.jpg)\\
-\\
-5\\
-\\
-**2.3 tỷ (full) sở hữu căn hộ biển ngay Ga đi Cáp treo Phú Quốc, sổ hồng lâu dài, ch</p>
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">47 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€788/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Иностр. квота</span></div></div>
+      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/348x174/2025/12/01/20251201102420-e913_wm.jpg)![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/115x86/2025/12/01/20251201102406-2efa_wm.</p>
     </div>
     
-    <div class="listing-card">
+    <div class="listing-card" data-idx="24">
       <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 3/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
-          <span class="score-num">5.1</span>
-          <span class="score-label">Нормально</span>
+        <div class="score-badge" style="background:#2563eb" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 3/7&#10;Качество воздуха: 7/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
+          <span class="score-num">5.5</span>
+          <span class="score-label">Хорошо</span>
         </div>
         <div class="card-title-area">
-          <a href="https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-the-5-way-phu-quoc-in-ganh-dau-kien-giang-u2146431" target="_blank" rel="noopener" class="card-title">267 Condos available on FazWaz.vn</a>
+          <a href="https://www.fazwaz.vn/property-sales/2-bedroom-condo-for-sale-at-the-song-v%C5%A9ng-tau-in-ward-8-ba-ria-vung-tau-u2074489" target="_blank" rel="noopener" class="card-title">209 Condos available on FazWaz.vn</a>
           <div class="card-meta">
             <span class="badge badge-portal">fazwaz</span>
+            <span class="badge badge-date">2026-03-21</span>
             
           </div>
         </div>
       </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€127,641</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">1 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">35 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€3,647/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
-      <p class="card-snippet">## 267 Condos available on FazWaz.vn
+      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€33,976</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Ванные</span><span class="spec-value">1 ван.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">49 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€693/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Аренда 50 лет</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Полная меблировка</span></div></div>
+      <p class="card-snippet">## 209 Condos available on FazWaz.vn
 
 Sort: RecommendedSort: New Listings FirstSort: Price (low to high)Sort: Price (high to low)Sort: Best Value for MoneySort: Biggest Price Reduction (%)Sort: Highes</p>
     </div>
-    
-    <div class="listing-card">
-      <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 3/7&#10;Локация: 6/7&#10;Близость к морю: 7/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 6/7&#10;Качество воздуха: 5/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 4/7">
-          <span class="score-num">5.0</span>
-          <span class="score-label">Нормально</span>
-        </div>
-        <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/gio-hang-cat-lo-view-bien-tu-2-5-ty-9-ty-tat-ca-cac-toa-lh-pr45333032" target="_blank" rel="noopener" class="card-title">\\
-\\
-2,5 tỷ·28 m²·89,29 tr/m²·1·1\\
-\\
-P. An Thới (Đặc Khu Phú Quốc mới)\\
-\\
-Đ</a>
-          <div class="card-meta">
-            <span class="badge badge-portal">batdongsan-p2</span>
-            
-          </div>
-        </div>
-      </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€92,593</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">28 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€3,307/м²</span></div></div>
-      <p class="card-snippet">[![Ảnh đại diện](https://file4.batdongsan.com.vn/crop/232x186/2026/03/17/20260317160335-9e26_wm.jpg)\\
-\\
-24\\
-\\
-**Cắt lỗ view biển 2.5 tỷ tất cả các tòa. LH 0975 716 \*\*\***\\
-\\
-2,5 tỷ·28 m²·89</p>
     </div>
-    
-            </div>
-            
-            <div class="location-group">
-              <h3 class="location-label">Куиньон / Биньдинь</h3>
-              
-    <div class="listing-card">
-      <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 3/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
-          <span class="score-num">5.1</span>
-          <span class="score-label">Нормально</span>
-        </div>
-        <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nguyen-van-linh-xa-binh-hung-1-mizuki-park/mo-ban-phan-khu-trellia-cove-gom-va-nha-pho-gia-tu-4-1-ty-pr45368153" target="_blank" rel="noopener" class="card-title">Вся недвижимость по всей стране</a>
-          <div class="card-meta">
-            <span class="badge badge-portal">batdongsan</span>
-            
-          </div>
-        </div>
-      </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
-      <p class="card-snippet">Сохранено успешно.
-
-Несохраненное сообщение
-
-ПокупаюНайти в аренду
-
-Тип недвижимости
-
-Добавить
-
-- Вся недвижимость
-
-
-- Квартира
-
-
-- Мини-квартиры, апартаменты с обслуживанием
-
-
-- Типы домов на продажу</p>
-    </div>
-    
-    <div class="listing-card">
-      <div class="card-header">
-        <div class="score-badge" style="background:#0891b2" title="Цена за м²: 7/7&#10;Локация: 5/7&#10;Близость к морю: 3/7&#10;Потенциал роста: 6/7&#10;Развитие региона: 5/7&#10;Качество воздуха: 6/7&#10;Репутация застройщика: 3/7&#10;Права собственности: 3/7&#10;Спальни: 7/7">
-          <span class="score-num">5.1</span>
-          <span class="score-label">Нормально</span>
-        </div>
-        <div class="card-title-area">
-          <a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-mizuki-park-xa-binh-hung-tp-ho-chi-minh/mo-ban-phan-khu-trellia-cove-gom-va-nha-pho-gia-tu-4-1-ty-pr45368153" target="_blank" rel="noopener" class="card-title">Вся недвижимость по всей стране</a>
-          <div class="card-meta">
-            <span class="badge badge-portal">batdongsan-p2</span>
-            
-          </div>
-        </div>
-      </div>
-      <div class="specs-grid"><div class="spec-item"><span class="spec-label">Цена</span><span class="spec-value">€37,037</span></div><div class="spec-item"><span class="spec-label">Спальни</span><span class="spec-value">2 сп.</span></div><div class="spec-item"><span class="spec-label">Площадь</span><span class="spec-value">30 м²</span></div><div class="spec-item"><span class="spec-label">Цена/м²</span><span class="spec-value">€1,235/м²</span></div><div class="spec-item"><span class="spec-label">Право</span><span class="spec-value">Собственность</span></div><div class="spec-item"><span class="spec-label">Мебель</span><span class="spec-value">Базовая</span></div></div>
-      <p class="card-snippet">Сохранено успешно.
-
-Несохраненное сообщение
-
-ПокупаюНайти в аренду
-
-Тип недвижимости
-
-Добавить
-
-- Вся недвижимость
-
-
-- Квартира
-
-
-- Мини-квартиры, апартаменты с обслуживанием
-
-
-- Типы домов на продажу</p>
-    </div>
-    
-            </div>
-            
-        </section>
-        
-            <section class="round-section">
-              <h2 class="round-date">2026-03-21</h2>
-              <p class="round-meta">Проверено 72 результатов · 0 новых · Нет предложений с рейтингом 5.5+</p>
-            </section>
-            
     </main>
 
     <div class="methodology">
@@ -835,5 +855,78 @@ P. An Thới (Đặc Khu Phú Quốc mới)\\
       <p>Недвижимость Вьетнама · Автоматический поиск ежедневно в 05:00 UTC</p>
     </footer>
   </div>
+
+  <script>
+  (function() {
+    var listings = [{"idx": 0, "price": 37037, "sqm": 30.0, "bedrooms": 2, "ppsm": 1235.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 1, "price": 37037, "sqm": 30.0, "bedrooms": 2, "ppsm": 1235.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 2, "price": 37037, "sqm": 56.0, "bedrooms": -1, "ppsm": 661.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 3, "price": 140760, "sqm": 110.0, "bedrooms": 2, "ppsm": 1280.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 4, "price": 99360, "sqm": 77.0, "bedrooms": 2, "ppsm": 1290.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 5, "price": 3148, "sqm": 0, "bedrooms": -1, "ppsm": 0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 6, "price": 37037, "sqm": 30.0, "bedrooms": 2, "ppsm": 1235.0, "score": 5.8, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 7, "price": 70370, "sqm": 0, "bedrooms": 1, "ppsm": 0, "score": 5.7, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 8, "price": 74074, "sqm": 45.0, "bedrooms": 0, "ppsm": 1646.0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 9, "price": 14259, "sqm": 0, "bedrooms": -1, "ppsm": 0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 10, "price": 3148, "sqm": 0, "bedrooms": -1, "ppsm": 0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 11, "price": 37037, "sqm": 0, "bedrooms": 0, "ppsm": 0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 12, "price": 101200, "sqm": 69.0, "bedrooms": 2, "ppsm": 1467.0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 13, "price": 124200, "sqm": 71.0, "bedrooms": 2, "ppsm": 1749.0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 14, "price": 115000, "sqm": 65.0, "bedrooms": 2, "ppsm": 1769.0, "score": 5.6, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 15, "price": 1852, "sqm": 80.0, "bedrooms": 0, "ppsm": 23.0, "score": 5.6, "location": "con_dao", "date": "2026-03-21", "over_budget": false}, {"idx": 16, "price": 105800, "sqm": 54.0, "bedrooms": 1, "ppsm": 1959.0, "score": 5.5, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 17, "price": 106720, "sqm": 51.0, "bedrooms": 1, "ppsm": 2093.0, "score": 5.5, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 18, "price": 55200, "sqm": 30.0, "bedrooms": 1, "ppsm": 1840.0, "score": 5.5, "location": "phu_quoc", "date": "2026-03-21", "over_budget": false}, {"idx": 19, "price": 74074, "sqm": 45.0, "bedrooms": 1, "ppsm": 1646.0, "score": 5.5, "location": "quy_nhon", "date": "2026-03-21", "over_budget": false}, {"idx": 20, "price": 37037, "sqm": 65.0, "bedrooms": 1, "ppsm": 570.0, "score": 5.5, "location": "quy_nhon", "date": "2026-03-21", "over_budget": false}, {"idx": 21, "price": 23519, "sqm": 47.0, "bedrooms": -1, "ppsm": 500.0, "score": 5.5, "location": "quy_nhon", "date": "2026-03-21", "over_budget": false}, {"idx": 22, "price": 37037, "sqm": 30.0, "bedrooms": 2, "ppsm": 1235.0, "score": 5.5, "location": "con_dao", "date": "2026-03-21", "over_budget": false}, {"idx": 23, "price": 37037, "sqm": 47.0, "bedrooms": 1, "ppsm": 788.0, "score": 5.5, "location": "con_dao", "date": "2026-03-21", "over_budget": false}, {"idx": 24, "price": 33976, "sqm": 49.0, "bedrooms": 2, "ppsm": 693.0, "score": 5.5, "location": "con_dao", "date": "2026-03-21", "over_budget": false}];
+    var container = document.getElementById('listings-container');
+    var countEl = document.getElementById('results-count');
+    if (!container || !listings.length) return;
+
+    var cards = container.querySelectorAll('.listing-card');
+    var currentSort = 'score';
+    var currentDir = 'desc';
+    var currentLocation = 'all';
+
+    function applyFilters() {
+      // Filter
+      var visible = [];
+      for (var i = 0; i < listings.length; i++) {
+        var l = listings[i];
+        var show = true;
+        if (currentLocation !== 'all' && l.location !== currentLocation) show = false;
+        listings[i]._visible = show;
+        if (show) visible.push(l);
+      }
+
+      // Sort visible
+      visible.sort(function(a, b) {
+        var va = a[currentSort] || 0;
+        var vb = b[currentSort] || 0;
+        if (currentSort === 'date') {
+          va = a.date || '';
+          vb = b.date || '';
+          return currentDir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+        }
+        if (currentDir === 'desc') return vb - va;
+        return va - vb;
+      });
+
+      // Reorder DOM
+      for (var j = 0; j < visible.length; j++) {
+        var card = cards[visible[j].idx];
+        card.classList.remove('hidden');
+        container.appendChild(card);
+      }
+
+      // Hide filtered out
+      for (var k = 0; k < listings.length; k++) {
+        if (!listings[k]._visible) {
+          cards[listings[k].idx].classList.add('hidden');
+        }
+      }
+
+      countEl.textContent = visible.length + ' предложений';
+    }
+
+    // Location filter
+    document.getElementById('filter-location').addEventListener('change', function() {
+      currentLocation = this.value;
+      applyFilters();
+    });
+
+    // Sort buttons
+    var btns = document.querySelectorAll('.sort-btn');
+    btns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        btns.forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        currentSort = this.getAttribute('data-sort');
+        currentDir = this.getAttribute('data-dir');
+        applyFilters();
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
