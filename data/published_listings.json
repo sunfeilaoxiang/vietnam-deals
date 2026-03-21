@@ -1,1 +1,12 @@
-{"rounds":[]}
+{
+  "rounds": [
+    {
+      "date": "2026-03-21",
+      "timestamp": "2026-03-21T19:44:44.544550",
+      "total_searched": 19,
+      "new_found": 5,
+      "published_count": 0,
+      "listings": []
+    }
+  ]
+}
