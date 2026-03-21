@@ -16,21 +16,22 @@ def load_config(config_path="config.json"):
 def _clean_number(s):
     """Clean a number string that may use dots or commas as thousand separators."""
     s = s.strip()
-    # Vietnamese format: 11.950.000.000 (dots as thousand sep, no decimal)
-    # If there are multiple dots, they're thousand separators
-    if s.count('.') >= 2:
-        return float(s.replace('.', ''))
-    # If there are multiple commas, they're thousand separators
-    if s.count(',') >= 2:
+    # Remove any non-numeric chars except dots, commas, minus
+    s = re.sub(r'[^\d.,-]', '', s)
+    if not s or not re.search(r'\d', s):
+        return 0.0
+    try:
+        if s.count('.') >= 2:
+            return float(s.replace('.', ''))
+        if s.count(',') >= 2:
+            return float(s.replace(',', ''))
+        if ',' in s and re.search(r',\d{3}$', s):
+            return float(s.replace(',', ''))
+        if '.' in s and re.search(r'\.\d{3}$', s):
+            return float(s.replace('.', ''))
         return float(s.replace(',', ''))
-    # Single comma or dot could be decimal or thousand sep
-    # If comma with 3 digits after -> thousand sep (e.g., 85,000)
-    if ',' in s and re.search(r',\d{3}$', s):
-        return float(s.replace(',', ''))
-    # If dot with 3 digits after -> thousand sep (e.g., 85.000)
-    if '.' in s and re.search(r'\.\d{3}$', s):
-        return float(s.replace('.', ''))
-    return float(s.replace(',', ''))
+    except ValueError:
+        return 0.0
 
 
 def parse_price_eur(price_str, vnd_per_eur=27000):

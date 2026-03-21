@@ -18,15 +18,22 @@ import ssl
 def _clean_number(s):
     """Clean a number string that may use dots or commas as thousand separators."""
     s = s.strip()
-    if s.count('.') >= 2:
-        return float(s.replace('.', ''))
-    if s.count(',') >= 2:
+    # Remove any non-numeric chars except dots, commas, minus
+    s = re.sub(r'[^\d.,-]', '', s)
+    if not s or not re.search(r'\d', s):
+        return 0.0
+    try:
+        if s.count('.') >= 2:
+            return float(s.replace('.', ''))
+        if s.count(',') >= 2:
+            return float(s.replace(',', ''))
+        if ',' in s and re.search(r',\d{3}$', s):
+            return float(s.replace(',', ''))
+        if '.' in s and re.search(r'\.\d{3}$', s):
+            return float(s.replace('.', ''))
         return float(s.replace(',', ''))
-    if ',' in s and re.search(r',\d{3}$', s):
-        return float(s.replace(',', ''))
-    if '.' in s and re.search(r'\.\d{3}$', s):
-        return float(s.replace('.', ''))
-    return float(s.replace(',', ''))
+    except ValueError:
+        return 0.0
 from datetime import datetime
 from pathlib import Path
 
