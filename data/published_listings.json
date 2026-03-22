@@ -1665,6 +1665,95 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-22",
+      "timestamp": "2026-03-22T09:49:43.343908",
+      "total_searched": 23,
+      "new_found": 4,
+      "published_count": 2,
+      "listings": [
+        {
+          "title": "Продажа с убытком 1 миллиард. Квартира с видом на пляж Фукуока, площадь 56м2, цена 4 миллиарда, денежный поток 30 миллионов в месяц.",
+          "title_original": "Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/ban-cat-lo-1-ty-view-bien-phu-quoc-dt-56m2-gia-4-ty-dong-tien-30tr-thang-pr44843604",
+          "portal": "batdongsan-p2",
+          "location_key": "phu_quoc",
+          "price_eur": 37037,
+          "price_raw": "1 tỷ",
+          "size_sqm": 56.0,
+          "bedrooms": 0,
+          "bathrooms": null,
+          "developer": "Sun Group",
+          "legal_status": "Собственность",
+          "furnishing": "Полная меблировка",
+          "description": "- !Продать с убытком 1 миллиард квартир с видом на море на Фукуоке, площадь 56м2, цена 4 миллиарда, денежный поток 30 миллионов/месяц - Фото 0 - !Продать с убытком 1 миллиард квартир с видом на море на Фукуоке, площадь 56м2, цена 4 миллиарда, денежный поток 30 миллионов/месяц - Фото 1 - !Продать с убытком 1 миллиард квартир с видом на море на Фукуоке, площадь 56м2, цена 4 млрд, денежный поток 30 млн/мес - Фото 2 - !Продам с убытком 1 млрд Квартира с видом на пляж Фукуок, площадь 56м2, цена 4 млрд, денежный поток 30 млн/мес - Фото 3",
+          "description_original": "- !Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng - Ảnh 0 - !Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng - Ảnh 1 - !Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng - Ảnh 2 - !Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng - Ảnh 3",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !Продать с убытком 1 миллиард квартир с видом на море на Фукуоке, площадь 56м2, цена 4 миллиарда, денежный поток 30 миллионов/месяц - Фото 0 - !Продать с убытком 1 миллиард квартир с видом на море на Фукуоке, площадь 56м2, цена 4 миллиарда, денежный поток 30 миллионов/месяц - Фото 1 - !Продать с у",
+          "listing_id": "78f10582d5ce",
+          "score": 6.0,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 6,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 37037,
+            "size_sqm": 56.0,
+            "bedrooms": 0,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1-2Bedroom Second Home in Sleepless Mega Resort Complex for Foreigner and Vietkieu 📌 Condo  for sale in Ba Ria - Vung Tau | Dot Property",
+          "title_original": "1-2Bedroom Second Home in Sleepless Mega Resort Complex for Foreigner and Vietkieu 📌 Condo  for sale in Ba Ria - Vung Tau | Dot Property",
+          "url": "https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-ba-ria-vung-tau_9554732",
+          "portal": "dotproperty",
+          "location_key": "con_dao",
+          "price_eur": 107407,
+          "price_raw": "2.9 billion",
+          "size_sqm": 90.0,
+          "bedrooms": 1,
+          "bathrooms": null,
+          "developer": "Intercontinental",
+          "legal_status": "Собственность",
+          "furnishing": null,
+          "description": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "description_original": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial pr",
+          "listing_id": "3e26f3e18415",
+          "score": 6.0,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 3,
+            "air_quality": 7,
+            "developer_reputation": 7,
+            "foreign_ownership_clarity": 4,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 107407,
+            "size_sqm": 90.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
