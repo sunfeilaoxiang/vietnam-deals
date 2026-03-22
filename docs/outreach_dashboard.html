@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vietnam Property Outreach Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a; color: #e2e8f0; padding: 20px;
+}
+h1 { color: #f8fafc; margin-bottom: 8px; font-size: 24px; }
+.subtitle { color: #94a3b8; margin-bottom: 20px; font-size: 14px; }
+.stats-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.stat-card { background: #1e293b; border-radius: 8px; padding: 16px 24px; min-width: 140px; }
+.stat-card .label { color: #94a3b8; font-size: 12px; text-transform: uppercase; }
+.stat-card .value { color: #f8fafc; font-size: 28px; font-weight: 700; margin-top: 4px; }
+.stat-card .value.green { color: #10b981; }
+.stat-card .value.blue { color: #3b82f6; }
+.stat-card .value.yellow { color: #f59e0b; }
+.filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-btn {
+    background: #1e293b; border: 1px solid #334155; color: #94a3b8;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.filter-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+.filter-btn:hover { border-color: #60a5fa; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+    background: #1e293b; color: #94a3b8; padding: 10px 12px; text-align: left;
+    position: sticky; top: 0; cursor: pointer; user-select: none;
+    border-bottom: 2px solid #334155; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+thead th:hover { color: #e2e8f0; }
+tbody tr { border-bottom: 1px solid #1e293b; }
+tbody tr:hover { background: #1e293b; }
+td { padding: 10px 12px; vertical-align: middle; }
+.score-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-weight: 700; font-size: 13px; min-width: 32px; text-align: center;
+}
+.score-high { background: #065f46; color: #6ee7b7; }
+.score-mid { background: #854d0e; color: #fde68a; }
+.score-low { background: #7f1d1d; color: #fca5a5; }
+.status-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+}
+.status-pending { background: #374151; color: #9ca3af; }
+.status-contacted { background: #1e3a5f; color: #60a5fa; }
+.status-responded { background: #064e3b; color: #6ee7b7; }
+.status-meeting { background: #78350f; color: #fde68a; }
+.status-rejected { background: #7f1d1d; color: #fca5a5; }
+.status-error { background: #1f2937; color: #6b7280; }
+.broker-name { font-weight: 500; color: #f8fafc; }
+.listing-title { color: #94a3b8; font-size: 12px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.listing-title a { color: #60a5fa; text-decoration: none; }
+.listing-title a:hover { text-decoration: underline; }
+.location { color: #c084fc; font-weight: 500; }
+.price { color: #fbbf24; font-weight: 500; }
+.contact-links a { color: #60a5fa; text-decoration: none; margin-right: 8px; font-size: 12px; }
+.contact-links a:hover { text-decoration: underline; }
+.phone-masked { color: #6b7280; font-style: italic; }
+.phone-full { color: #10b981; }
+.last-updated { color: #475569; font-size: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<h1>Vietnam Property Outreach</h1>
+<p class="subtitle">Broker contact tracker &mdash; updated 2026-03-23 00:00 UTC</p>
+
+<div class="stats-bar">
+    <div class="stat-card"><div class="label">Total Listings</div><div class="value">39</div></div>
+    <div class="stat-card"><div class="label">Actionable</div><div class="value blue">1</div></div>
+    <div class="stat-card"><div class="label">Contacted</div><div class="value blue">0</div></div>
+    <div class="stat-card"><div class="label">Responded</div><div class="value green">0</div></div>
+    <div class="stat-card"><div class="label">Meetings</div><div class="value yellow">0</div></div>
+    <div class="stat-card"><div class="label">Pending</div><div class="value">39</div></div>
+</div>
+
+<div class="filters">
+    <button class="filter-btn active" onclick="filterStatus('all')">All</button>
+    <button class="filter-btn" onclick="filterStatus('pending')">Pending</button>
+    <button class="filter-btn" onclick="filterStatus('contacted')">Contacted</button>
+    <button class="filter-btn" onclick="filterStatus('responded')">Responded</button>
+    <button class="filter-btn" onclick="filterStatus('meeting')">Meeting</button>
+</div>
+
+<table id="dashboard">
+<thead>
+<tr>
+    <th onclick="sortTable(0)">Score</th>
+    <th onclick="sortTable(1)">City</th>
+    <th onclick="sortTable(2)">Listing</th>
+    <th onclick="sortTable(3)">Price (EUR)</th>
+    <th onclick="sortTable(4)">Broker</th>
+    <th onclick="sortTable(5)">Phone</th>
+    <th onclick="sortTable(6)">Channel</th>
+    <th onclick="sortTable(7)">Status</th>
+    <th>Links</th>
+</tr>
+</thead>
+<tbody>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">6.0</span></td>
+    <td class="location">Con Dao</td>
+    <td class="listing-title"><a href="https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-ba-ria-vung-tau_9554732" target="_blank">1-2Bedroom Second Home in Sleepless Mega Resort Complex for Foreigner and Vietki</a></td>
+    <td class="price">€107,407</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Form</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-ba-ria-vung-tau_9554732" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.9</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nguyen-tat-thanh-phuong-ly-thuong-kiet-1-grand-center-quy-nhon/ban-2pn-2wc-so-hong-lau-dai-huong-bien-dong-nam-cat-lo-600-trieu-pr44689813" target="_blank">Bán căn hộ Grand Center Quy Nhơn. 2PN, 2WC. Sổ hồng lâu dài, hướng biển Đông Nam</a></td>
+    <td class="price">€90,741</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked">0901007***</td>
+    <td>Zalo</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nguyen-tat-thanh-phuong-ly-thuong-kiet-1-grand-center-quy-nhon/ban-2pn-2wc-so-hong-lau-dai-huong-bien-dong-nam-cat-lo-600-trieu-pr44689813" target="_blank">Listing</a> <a href="https://zalo.me/SzGcZlLFf042TSCSuOk9Pt64pEVlouaJVYlmeeAfsY_lfaWIQtg"" target="_blank">Zalo</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.8</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/au-tu-nghi-ket-hop-vua-giu-gia-tri-truyen-oi-vua-tao-ra-dong-tien-toi-a-pr45367101" target="_blank">CĂN HỘ ĐẦU TƯ NGHỈ DƯỠNG KẾT HỢP AN CƯ (vừa giữ giá trị truyền đời vừa tạo ra dò</a></td>
+    <td class="price">€100,000</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/au-tu-nghi-ket-hop-vua-giu-gia-tri-truyen-oi-vua-tao-ra-dong-tien-toi-a-pr45367101" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.8</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nam-ho-phuong-11_1-sun-garden-da-lat/ban-moi-xay-dau-lat-pr43871329" target="_blank">Bán căn hộ (đã có sổ hồng) mới xây đầu đường Nam Hồ, Đà Lạt</a></td>
+    <td class="price">€88,889</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nam-ho-phuong-11_1-sun-garden-da-lat/ban-moi-xay-dau-lat-pr43871329" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/du-lich-residence-view-bien-so-hong-lau-dai-pr45365948" target="_blank">Căn hộ du lịch Altara Residence view biển - sổ hồng lâu dài</a></td>
+    <td class="price">€87,037</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/du-lich-residence-view-bien-so-hong-lau-dai-pr45365948" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/ban-lo-manh-cao-cap-view-bien-pr38720421" target="_blank">Bán lỗ mạnh căn hộ cao cấp Altara view biển</a></td>
+    <td class="price">€62,593</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/ban-lo-manh-cao-cap-view-bien-pr38720421" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/ban-gap-1pn-1-ban-cong-view-bien-gia-tot-nhat-tai-meyhomes-quoc-pr45145977" target="_blank">Cần bán gấp căn 1PN + 1 ban công view biển, giá tốt nhất tại Meyhomes Phú Quốc</a></td>
+    <td class="price">€77,778</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/ban-gap-1pn-1-ban-cong-view-bien-gia-tot-nhat-tai-meyhomes-quoc-pr45145977" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/view-bien-quy-nhon-so-o-lau-dai-mien-phi-3-nam-phi-quan-ly-ck-en-11-pr45274886" target="_blank">Simona Heights view biển Quy Nhơn - sổ đỏ lâu dài - miễn phí 3 năm phí quản lý -</a></td>
+    <td class="price">€99,630</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/view-bien-quy-nhon-so-o-lau-dai-mien-phi-3-nam-phi-quan-ly-ck-en-11-pr45274886" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-huynh-tan-phat-phuong-nhon-binh-khu-do-thi-an-phu-thinh/ban-quy-loai-3-phong-ngu-view-cua-bien-quy-cuc-ep-pr45315228" target="_blank">Bán căn hộ chung cư An Phú Thịnh Quy Nhơn. Loại căn hộ 3 phòng ngủ, view cửa biể</a></td>
+    <td class="price">€59,259</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-huynh-tan-phat-phuong-nhon-binh-khu-do-thi-an-phu-thinh/ban-quy-loai-3-phong-ngu-view-cua-bien-quy-cuc-ep-pr45315228" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.7</span></td>
+    <td class="location">Con Dao</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-cao-cap-so-hong-lau-dai-full-noi-that-cao-cap-gia-chi-tu-1-85-ti-pr45297017" target="_blank">Bán căn hộ cao cấp Maison Grand Phú Mỹ, sổ hồng lâu dài, full nội thất cao cấp, </a></td>
+    <td class="price">€68,519</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-cao-cap-so-hong-lau-dai-full-noi-that-cao-cap-gia-chi-tu-1-85-ti-pr45297017" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/tu-c-t-chi-2-2-ty-view-phao-hoa-full-noi-that-tt-700tr-nhan-nha-cho-thue-25tr-th-pr45350546" target="_blank">Căn hộ SunSet từ CĐT chỉ 2,2 tỷ - View pháo hoa full nội thất, TT 700tr nhận nhà</a></td>
+    <td class="price">€81,481</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/tu-c-t-chi-2-2-ty-view-phao-hoa-full-noi-that-tt-700tr-nhan-nha-cho-thue-25tr-th-pr45350546" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/ban-studio-quy-ngoai-giao-view-bien-ep-nhat-phu-quoc-huong-mat-gia-cuc-tot-30m2-2-2ty-pr45255144" target="_blank">Bán căn Studio quỹ ngoại giao view biển, đẹp nhất Phú Quốc, hướng mát, giá cực t</a></td>
+    <td class="price">€81,481</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/ban-studio-quy-ngoai-giao-view-bien-ep-nhat-phu-quoc-huong-mat-gia-cuc-tot-30m2-2-2ty-pr45255144" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-ban-cat-lo-2-ty-studio-32m2-phu-quoc-dong-tien-15tr-thang-pr44843139" target="_blank">Căn duy nhất bán cắt lỗ 2 tỷ - căn studio 32m2 - Sun Grand Hillside Phú Quốc - d</a></td>
+    <td class="price">€74,074</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-ban-cat-lo-2-ty-studio-32m2-phu-quoc-dong-tien-15tr-thang-pr44843139" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/2-3-ty-full-so-huu-bien-s4-phu-quoc-so-hong-lau-dai-cho-thue-uoc-luon-pr45290291" target="_blank">2.3 tỷ (full) sở hữu căn hộ biển ngay Ga đi Cáp treo Phú Quốc, sổ hồng lâu dài, </a></td>
+    <td class="price">€85,185</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/2-3-ty-full-so-huu-bien-s4-phu-quoc-so-hong-lau-dai-cho-thue-uoc-luon-pr45290291" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-ngoai-giao-2pn-goc-view-bien-tang-ep-66-68m2-gia-tot-nhat-quoc-pr45235760" target="_blank">Căn ngoại giao 2PN góc view biển tầng đẹp + (68m2) giá tốt nhất Meypearl Phú Quố</a></td>
+    <td class="price">€103,704</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-ngoai-giao-2pn-goc-view-bien-tang-ep-66-68m2-gia-tot-nhat-quoc-pr45235760" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/ban-cat-lo-1-ty-view-bien-phu-quoc-dt-56m2-gia-4-ty-dong-tien-30tr-thang-pr44843604" target="_blank">Bán cắt lỗ 1 tỷ căn view biển Phú Quốc, DT 56m2, giá 4 tỷ, dòng tiền 30tr/tháng</a></td>
+    <td class="price">€148,148</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/ban-cat-lo-1-ty-view-bien-phu-quoc-dt-56m2-gia-4-ty-dong-tien-30tr-thang-pr44843604" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-so-hong-rieng-ke-goc-thoang-dep-lau-2-chi-2-150-ty-thuong-luong-pr45108945" target="_blank">Chung cư mới sổ hồng căn góc thoáng chỉ 2,150 tỷ gần chợ đầy đủ tiện nghi</a></td>
+    <td class="price">€79,630</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-so-hong-rieng-ke-goc-thoang-dep-lau-2-chi-2-150-ty-thuong-luong-pr45108945" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-hung-vuong-2-phuong-10_4-391/ban-goc-chi-3-ty-co-thang-may-63m2-so-hong-lau-dai-vay-ngan-hang-de-dang-pr45294064" target="_blank">Bán căn góc chỉ 3 tỷ chung cư Hùng Vương có thang máy 63m2 sổ hồng lâu dài vay n</a></td>
+    <td class="price">€111,111</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-hung-vuong-2-phuong-10_4-391/ban-goc-chi-3-ty-co-thang-may-63m2-so-hong-lau-dai-vay-ngan-hang-de-dang-pr45294064" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/re-nhat-1-4-ty-khong-co-thu-2-nhanh-tay-a-pr45235046" target="_blank">Rẻ nhất chung cư Yersin 1,4 tỷ không có căn thứ 2 nhanh tay ạ</a></td>
+    <td class="price">€51,852</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/re-nhat-1-4-ty-khong-co-thu-2-nhanh-tay-a-pr45235046" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/ban-chua-qua-tay-ai-chu-au-tien-uoc-cap-tai-inh-1-490-ty-pr45307213" target="_blank">Bán chung cư Yersin chưa qua tay ai chủ đầu tiên được cấp tái định cư 1,490 tỷ</a></td>
+    <td class="price">€55,185</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/ban-chua-qua-tay-ai-chu-au-tien-uoc-cap-tai-inh-1-490-ty-pr45307213" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.6</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/so-hong-rieng-lau-dai-tang-thap-cuc-hiem-nha-moi-vao-o-ngay-quyen-pr45283491" target="_blank">Chung cư sổ hồng riêng lâu dài tầng thấp cực hiếm nhà mới vào ở ngay chung cư Ng</a></td>
+    <td class="price">€78,519</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/so-hong-rieng-lau-dai-tang-thap-cuc-hiem-nha-moi-vao-o-ngay-quyen-pr45283491" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/10-suat-chiet-khau-hon-15-cuoi-cung-dac-dia-nhat-nhon-pr44880402" target="_blank">2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường</a></td>
+    <td class="price">€107,407</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/10-suat-chiet-khau-hon-15-cuoi-cung-dac-dia-nhat-nhon-pr44880402" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/ban-cao-cap-view-truc-dien-bien-02-phong-ngu-gia-2-42-ti-pr44907702" target="_blank">Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng</a></td>
+    <td class="price">€95,926</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/ban-cao-cap-view-truc-dien-bien-02-phong-ngu-gia-2-42-ti-pr44907702" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-long-van-long-my-phuong-tran-quang-dieu-iec-residences-quy-nhon/thong-bao-tiep-nhan-so-noxh-toa-ct02-tp-bien-nhon-pr45153643" target="_blank">Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn</a></td>
+    <td class="price">€23,519</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-long-van-long-my-phuong-tran-quang-dieu-iec-residences-quy-nhon/thong-bao-tiep-nhan-so-noxh-toa-ct02-tp-bien-nhon-pr45153643" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dai-lo-cua-lap-an-thoi-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-studio-32m-ban-cat-2-ty-phu-quoc-pr45302277" target="_blank">Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc</a></td>
+    <td class="price">€74,074</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dai-lo-cua-lap-an-thoi-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-studio-32m-ban-cat-2-ty-phu-quoc-pr45302277" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-le-loi-5-simona-heights/cao-cap-height-quy-nhon-gia-chi-1-8-ty-view-bien-so-huu-lau-dai-pr45365603" target="_blank">Căn hộ cao cấp Simona Height Quy Nhơn giá chỉ 1,8 tỷ. View biển sở hữu lâu dài</a></td>
+    <td class="price">€66,667</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-le-loi-5-simona-heights/cao-cap-height-quy-nhon-gia-chi-1-8-ty-view-bien-so-huu-lau-dai-pr45365603" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-1pn-2pn-gia-tot-nhat-quoc-pr44826998" target="_blank">Căn ngoại giao Studio 28m2 giá tốt nhất Meypearl Phú Quốc</a></td>
+    <td class="price">€62,963</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-1pn-2pn-gia-tot-nhat-quoc-pr44826998" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/full-gia-2-4-ty-vn-so-huu-tron-oi-view-bien-tai-chao-on-apec-2027-pr45242693" target="_blank">Full giá 2,4 tỷ vnđ - sở hữu trọn đời căn hộ view biển tại Phú Quốc - chào đón A</a></td>
+    <td class="price">€88,889</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/full-gia-2-4-ty-vn-so-huu-tron-oi-view-bien-tai-chao-on-apec-2027-pr45242693" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/song-chuan-resort-5-sao-tai-chi-1-85-ty-tam-iem-apec-2027-pr45354668" target="_blank">Sống chuẩn resort 5 sao tại Meypearl Harmony chỉ 1,85 tỷ tâm điểm Apec 2027</a></td>
+    <td class="price">€68,519</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/song-chuan-resort-5-sao-tai-chi-1-85-ty-tam-iem-apec-2027-pr45354668" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/con-sot-1n-1-view-bien-gia-full-ck-32-5-2-ty-htls-0-48-thang-han-goc-lh-em-pr45364283" target="_blank">Còn sót căn 1N+1 view biển giá full ck (32,5%) 2 tỷ, HTLS 0% 48 tháng ân hạn gốc</a></td>
+    <td class="price">€77,778</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/con-sot-1n-1-view-bien-gia-full-ck-32-5-2-ty-htls-0-48-thang-han-goc-lh-em-pr45364283" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Phu Quoc</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/chi-650tr-so-huu-1pn-view-bien-htls-0-trong-48-thang-pr45360855" target="_blank">Chỉ 650tr sở hữu căn 1PN+ Meypearl Phú Quốc - View biển - HTLS 0% trong 48 tháng</a></td>
+    <td class="price">€107,407</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/chi-650tr-so-huu-1pn-view-bien-htls-0-trong-48-thang-pr45360855" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/view-bien-bieu-tuong-moi-cua-nhon-pr40072714" target="_blank">2,9 tỷ căn view biển Sailing 3 suất nội bộ giá rẻ nhất thị trường</a></td>
+    <td class="price">€107,407</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/view-bien-bieu-tuong-moi-cua-nhon-pr40072714" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/re-nhat-bien-2pn-3pn-gia-tu-2-77-3-5-ty-tang-noi-that-nhu-hinh-that-pr45270851" target="_blank">Rẻ nhất căn hộ biển Simona Heights 2PN - 3PN giá từ 2.77 - 3.5 tỷ (Tặng nội thất</a></td>
+    <td class="price">€102,593</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/re-nhat-bien-2pn-3pn-gia-tu-2-77-3-5-ty-tang-noi-that-nhu-hinh-that-pr45270851" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/height-hang-sang-view-bien-tai-quy-nhon-vi-tri-oc-ban-pr45359548" target="_blank">Simona Height - Căn hộ hạng sang view biển tại Quy Nhơn - vị trí độc bản</a></td>
+    <td class="price">€111,111</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/height-hang-sang-view-bien-tai-quy-nhon-vi-tri-oc-ban-pr45359548" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Quy Nhon</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/bien-so-hong-lau-dai-re-nhat-tp-quy-nhon-tang-full-noi-that-cao-cap-pr45333288" target="_blank">CĂN HỘ BIỂN SỔ HỒNG LÂU DÀI RẺ NHẤT TP QUY NHƠN ( TẶNG FULL NỘI THẤT CAO CẤP)</a></td>
+    <td class="price">€74,074</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/bien-so-hong-lau-dai-re-nhat-tp-quy-nhon-tang-full-noi-that-cao-cap-pr45333288" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Da Lat</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-gap-a-lat-pr45295733" target="_blank">Bán gấp căn hộ chung cư Ngô Quyền Đà Lạt</a></td>
+    <td class="price">€90,741</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-gap-a-lat-pr45295733" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Con Dao</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2pn-60m2-chi-tu-2-ty-thanh-toan-50-nhan-nha-o-cho-thue-chiet-khau-den-15-pr43757126" target="_blank">2,1 tỷ sở hữu căn 2PN/58m2 Maison Grand. Thanh toán 50% nhận nhà ở/cho thuê</a></td>
+    <td class="price">€81,111</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2pn-60m2-chi-tu-2-ty-thanh-toan-50-nhan-nha-o-cho-thue-chiet-khau-den-15-pr43757126" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Con Dao</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2-25-ty-2pn-tai-thanh-toan-chi-50-nhan-nha-o-cho-thue-ngay-chiet-khau-en-7-pr45186130" target="_blank">2,25 tỷ/căn 2PN tại Maison Grand. Thanh toán chỉ 50% nhận nhà ở/ cho thuê ngay. </a></td>
+    <td class="price">€83,333</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2-25-ty-2pn-tai-thanh-toan-chi-50-nhan-nha-o-cho-thue-ngay-chiet-khau-en-7-pr45186130" target="_blank">Listing</a></td>
+</tr>
+<tr data-status="pending">
+    <td><span class="score-badge score-high">5.5</span></td>
+    <td class="location">Con Dao</td>
+    <td class="listing-title"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-2pn-tai-gia-1-85-ty-50m2-suat-ngoai-giao-gia-tot-nhat-lh-093986586-pr45272199" target="_blank">Bán căn hộ 2PN tại Maison Grand Phú Mỹ giá 1,85 tỷ 50m2 suất ngoại giao giá tốt </a></td>
+    <td class="price">€68,519</td>
+    <td class="broker-name">—</td>
+    <td class="phone-masked"></td>
+    <td>Phone</td>
+    <td><span class="status-badge status-pending">pending</span></td>
+    <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-2pn-tai-gia-1-85-ty-50m2-suat-ngoai-giao-gia-tot-nhat-lh-093986586-pr45272199" target="_blank">Listing</a></td>
+</tr>
+
+</tbody>
+</table>
+
+<p class="last-updated">Data from contacts.json &mdash; 2026-03-23 00:00 UTC</p>
+
+<script>
+function filterStatus(status) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('#dashboard tbody tr').forEach(row => {
+        if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+let sortDir = {};
+function sortTable(col) {
+    const tbody = document.querySelector('#dashboard tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    sortDir[col] = !sortDir[col];
+    rows.sort((a, b) => {
+        let aVal = a.cells[col].innerText;
+        let bVal = b.cells[col].innerText;
+        let aNum = parseFloat(aVal.replace(/[^0-9.-]/g, ''));
+        let bNum = parseFloat(bVal.replace(/[^0-9.-]/g, ''));
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+            return sortDir[col] ? aNum - bNum : bNum - aNum;
+        }
+        return sortDir[col] ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+    rows.forEach(r => tbody.appendChild(r));
+}
+</script>
+</body>
+</html>
