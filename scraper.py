@@ -182,12 +182,147 @@ def extract_listing_urls_from_search(page_data, portal_name, base_url):
 
 
 # ---------------------------------------------------------------------------
+# Portal-specific structured parsers
+# ---------------------------------------------------------------------------
+
+def _parse_batdongsan_structured(markdown, vnd_per_eur):
+    """
+    Parse the 'Đặc điểm bất động sản' structured section from batdongsan pages.
+    Returns a dict of extracted fields, or empty dict if section not found.
+    """
+    result = {}
+
+    # Find the structured property details section
+    section_start = markdown.find('Đặc điểm bất động sản')
+    if section_start < 0:
+        # Try the summary bar that appears earlier
+        section_start = markdown.find('Khoảng giá')
+        if section_start < 0:
+            return result
+
+    # Take a generous chunk from the section
+    section = markdown[section_start:section_start + 800]
+
+    # Price: "Khoảng giáX,X tỷ" or "Khoảng giáXXX triệu"
+    # Vietnamese uses comma as decimal separator: "2,7 tỷ" = 2.7 billion VND
+    price_match = re.search(r'Khoảng giá\s*([\d,\.]+)\s*(tỷ|triệu)', section)
+    if price_match:
+        raw_num = price_match.group(1)
+        # Handle Vietnamese decimal: "2,7" -> 2.7, "10,5" -> 10.5
+        # But also "1.500" -> 1500 (dot as thousand separator)
+        if ',' in raw_num and raw_num.count(',') == 1:
+            # Single comma: treat as decimal separator (Vietnamese style)
+            val = float(raw_num.replace(',', '.'))
+        else:
+            val = _clean_number(raw_num)
+        unit = price_match.group(2)
+        if unit == 'tỷ':
+            result['price_eur'] = round(val * 1_000_000_000 / vnd_per_eur)
+        elif unit == 'triệu':
+            result['price_eur'] = round(val * 1_000_000 / vnd_per_eur)
+        result['price_raw'] = f"{raw_num} {unit}"
+
+    # Area: "Diện tíchXX m²"
+    area_match = re.search(r'Diện tích\s*([\d,\.]+)\s*m²', section)
+    if area_match:
+        val = float(area_match.group(1))
+        if 10 <= val <= 1000:
+            result['size_sqm'] = val
+
+    # Bedrooms: "Số phòng ngủX phòng" or "Phòng ngủX PN"
+    br_match = re.search(r'(?:Số phòng ngủ|Phòng ngủ)\s*(\d+)', section)
+    if br_match:
+        result['bedrooms'] = int(br_match.group(1))
+
+    # Bathrooms: "Số phòng tắm, vệ sinhX phòng"
+    bath_match = re.search(r'(?:Số phòng tắm|phòng tắm|vệ sinh)\s*(\d+)', section)
+    if bath_match:
+        result['bathrooms'] = int(bath_match.group(1))
+
+    # Legal status: "Pháp lýXXX"
+    legal_match = re.search(r'Pháp lý\s*(.+?)(?:\n|$|Nội thất|Thông tin)', section)
+    if legal_match:
+        legal_text = legal_match.group(1).strip()
+        if 'sổ hồng' in legal_text.lower() or 'sổ đỏ' in legal_text.lower():
+            result['legal_status'] = 'Собственность'
+        elif 'hợp đồng' in legal_text.lower():
+            result['legal_status'] = 'Договор купли-продажи'
+
+    # Furnishing: "Nội thấtXXX"
+    furn_match = re.search(r'Nội thất\s*(.+?)(?:\n|$|Thông tin|Đặc điểm)', section)
+    if furn_match:
+        furn_text = furn_match.group(1).strip().lower()
+        if 'full' in furn_text or 'đầy đủ' in furn_text:
+            result['furnishing'] = 'Полная меблировка'
+        elif 'cơ bản' in furn_text or 'basic' in furn_text:
+            result['furnishing'] = 'Базовая'
+        elif 'không' in furn_text:
+            result['furnishing'] = 'Без мебели'
+        elif furn_text:
+            result['furnishing'] = 'Меблировано'
+
+    # Direction: "Hướng nhàXXX"
+    dir_match = re.search(r'Hướng nhà\s*(.+?)(?:\n|$|Hướng ban)', section)
+    if dir_match:
+        result['direction'] = dir_match.group(1).strip()
+
+    return result
+
+
+def _parse_dotproperty_structured(markdown, vnd_per_eur):
+    """Parse structured data from dotproperty listing pages."""
+    result = {}
+
+    # dotproperty usually has "฿X,XXX,XXX" or "$XXX,XXX" prices
+    # and "X Bedrooms · X Bathrooms · XX sqm" format
+    beds_match = re.search(r'(\d+)\s*(?:Bedroom|Bed)', markdown)
+    if beds_match:
+        result['bedrooms'] = int(beds_match.group(1))
+
+    baths_match = re.search(r'(\d+)\s*(?:Bathroom|Bath)', markdown)
+    if baths_match:
+        result['bathrooms'] = int(baths_match.group(1))
+
+    sqm_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:sqm|m²|SqM)', markdown)
+    if sqm_match:
+        val = float(sqm_match.group(1))
+        if 10 <= val <= 1000:
+            result['size_sqm'] = val
+
+    return result
+
+
+def _parse_fazwaz_structured(markdown, vnd_per_eur):
+    """Parse structured data from fazwaz listing pages."""
+    result = {}
+
+    # fazwaz has structured sections like "X Beds · X Baths · XX SqM"
+    beds_match = re.search(r'(\d+)\s*Bed', markdown)
+    if beds_match:
+        result['bedrooms'] = int(beds_match.group(1))
+
+    baths_match = re.search(r'(\d+)\s*Bath', markdown)
+    if baths_match:
+        result['bathrooms'] = int(baths_match.group(1))
+
+    sqm_match = re.search(r'(\d+(?:\.\d+)?)\s*SqM', markdown)
+    if sqm_match:
+        val = float(sqm_match.group(1))
+        if 10 <= val <= 1000:
+            result['size_sqm'] = val
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Pass 2: Parse a single listing page for property details
 # ---------------------------------------------------------------------------
 
 def parse_single_listing(page_data, listing_url, portal_name, location_key, config):
     """
     Pass 2: Extract property details from an individual listing page.
+    Uses portal-specific structured parsers for accurate data extraction,
+    falling back to generic regex extraction for non-supported portals.
     Returns a listing dict or None if the page doesn't look like a valid apartment listing.
     """
     markdown = page_data.get("markdown", "")
@@ -201,13 +336,23 @@ def parse_single_listing(page_data, listing_url, portal_name, location_key, conf
     if not _is_apartment_page(markdown):
         return None
 
-    # Extract title from the page
+    # Extract title from metadata first (most reliable), then from page content
     title = _extract_page_title(markdown, page_data)
     if not title or len(title) < 5:
         return None
 
-    # Extract price
-    price_eur = extract_price(markdown, vnd_per_eur)
+    # --- Portal-specific structured extraction ---
+    structured = {}
+    url_lower = listing_url.lower()
+    if 'batdongsan.com.vn' in url_lower:
+        structured = _parse_batdongsan_structured(markdown, vnd_per_eur)
+    elif 'dotproperty' in url_lower:
+        structured = _parse_dotproperty_structured(markdown, vnd_per_eur)
+    elif 'fazwaz' in url_lower:
+        structured = _parse_fazwaz_structured(markdown, vnd_per_eur)
+
+    # Use structured data with fallback to generic regex extraction
+    price_eur = structured.get('price_eur') or extract_price(markdown, vnd_per_eur)
     if not price_eur:
         return None
 
@@ -215,13 +360,13 @@ def parse_single_listing(page_data, listing_url, portal_name, location_key, conf
     if price_eur > budget_max * 3:
         return None
 
-    # Extract other fields
-    size_sqm = extract_size(markdown)
-    bedrooms = extract_bedrooms(markdown)
-    bathrooms = extract_bathrooms(markdown)
+    size_sqm = structured.get('size_sqm') or extract_size(markdown)
+    bedrooms = structured.get('bedrooms') if 'bedrooms' in structured else extract_bedrooms(markdown)
+    bathrooms = structured.get('bathrooms') if 'bathrooms' in structured else extract_bathrooms(markdown)
+    legal_status = structured.get('legal_status') or extract_legal_status(markdown)
+    furnishing = structured.get('furnishing') or extract_furnishing(markdown)
     developer = extract_developer(markdown, config.get('known_developers', {}))
-    legal_status = extract_legal_status(markdown)
-    furnishing = extract_furnishing(markdown)
+    price_raw = structured.get('price_raw') or extract_raw_price(markdown)
 
     # Translate title to Russian
     title_ru = translate_to_russian(title) if not is_mostly_ascii(title) else title
@@ -235,7 +380,7 @@ def parse_single_listing(page_data, listing_url, portal_name, location_key, conf
         'portal': portal_name,
         'location_key': location_key,
         'price_eur': price_eur,
-        'price_raw': extract_raw_price(markdown),
+        'price_raw': price_raw,
         'size_sqm': size_sqm,
         'bedrooms': bedrooms,
         'bathrooms': bathrooms,
@@ -386,9 +531,14 @@ def extract_price(text, vnd_per_eur=27000):
             return round(val)
 
     # VND billions (tỷ) -> EUR
+    # Vietnamese uses comma as decimal: "2,7 tỷ" = 2.7 billion
     vnd_bil = re.search(r'([\d,\.]+)\s*(?:tỷ|ty|billion|bil)\b', text_lower)
     if vnd_bil:
-        val = _clean_number(vnd_bil.group(1))
+        raw_num = vnd_bil.group(1)
+        if ',' in raw_num and raw_num.count(',') == 1 and len(raw_num.split(',')[1]) <= 2:
+            val = float(raw_num.replace(',', '.'))
+        else:
+            val = _clean_number(raw_num)
         eur = val * 1_000_000_000 / vnd_per_eur
         if eur > 500:
             return round(eur)
@@ -396,7 +546,11 @@ def extract_price(text, vnd_per_eur=27000):
     # VND millions (triệu) -> EUR
     vnd_mil = re.search(r'([\d,\.]+)\s*(?:triệu|trieu|million vnd|tr)\b', text_lower)
     if vnd_mil:
-        val = _clean_number(vnd_mil.group(1))
+        raw_num = vnd_mil.group(1)
+        if ',' in raw_num and raw_num.count(',') == 1 and len(raw_num.split(',')[1]) <= 2:
+            val = float(raw_num.replace(',', '.'))
+        else:
+            val = _clean_number(raw_num)
         eur = val * 1_000_000 / vnd_per_eur
         if eur > 500:
             return round(eur)
