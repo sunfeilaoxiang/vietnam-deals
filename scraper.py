@@ -205,7 +205,10 @@ def _parse_batdongsan_structured(markdown, vnd_per_eur):
 
     # Price: "Khoảng giáX,X tỷ" or "Khoảng giáXXX triệu"
     # Vietnamese uses comma as decimal separator: "2,7 tỷ" = 2.7 billion VND
-    price_match = re.search(r'Khoảng giá\s*([\d,\.]+)\s*(tỷ|triệu)', section)
+    # IMPORTANT: Prefer tỷ over triệu — triệu in Khoảng giá is often price/m²
+    price_match_ty = re.search(r'Khoảng giá\s*([\d,\.]+)\s*tỷ', section)
+    price_match_trieu = re.search(r'Khoảng giá\s*([\d,\.]+)\s*triệu', section)
+    price_match = price_match_ty or price_match_trieu
     if price_match:
         raw_num = price_match.group(1)
         # Handle Vietnamese decimal: "2,7" -> 2.7, "10,5" -> 10.5
@@ -215,12 +218,16 @@ def _parse_batdongsan_structured(markdown, vnd_per_eur):
             val = float(raw_num.replace(',', '.'))
         else:
             val = _clean_number(raw_num)
-        unit = price_match.group(2)
-        if unit == 'tỷ':
+        if price_match_ty:
             result['price_eur'] = round(val * 1_000_000_000 / vnd_per_eur)
-        elif unit == 'triệu':
-            result['price_eur'] = round(val * 1_000_000 / vnd_per_eur)
-        result['price_raw'] = f"{raw_num} {unit}"
+            result['price_raw'] = f"{raw_num} tỷ"
+        else:
+            # triệu: only accept if value is realistic for total price (>= 500 triệu = ~€18.5k)
+            eur_val = round(val * 1_000_000 / vnd_per_eur)
+            if eur_val >= 18000:
+                result['price_eur'] = eur_val
+                result['price_raw'] = f"{raw_num} triệu"
+            # else: skip — likely price/m² or deposit, let generic parser try
 
     # Area: "Diện tíchXX m²"
     area_match = re.search(r'Diện tích\s*([\d,\.]+)\s*m²', section)
@@ -358,6 +365,11 @@ def parse_single_listing(page_data, listing_url, portal_name, location_key, conf
 
     # Skip if way over budget (>3x) — likely bad parse
     if price_eur > budget_max * 3:
+        return None
+
+    # Minimum price floor: no real apartment sells for < €20,000
+    # Values below this are typically price/m², deposits, or monthly installments
+    if price_eur < 20000:
         return None
 
     size_sqm = structured.get('size_sqm') or extract_size(markdown)
@@ -544,6 +556,8 @@ def extract_price(text, vnd_per_eur=27000):
             return round(eur)
 
     # VND millions (triệu) -> EUR
+    # Careful: many pages show "triệu/m²" (price per sqm), not total price
+    # Only accept if result is >= €18,000 (= 500 triệu), which is a realistic min apartment price
     vnd_mil = re.search(r'([\d,\.]+)\s*(?:triệu|trieu|million vnd|tr)\b', text_lower)
     if vnd_mil:
         raw_num = vnd_mil.group(1)
@@ -552,7 +566,7 @@ def extract_price(text, vnd_per_eur=27000):
         else:
             val = _clean_number(raw_num)
         eur = val * 1_000_000 / vnd_per_eur
-        if eur > 500:
+        if eur >= 18000:
             return round(eur)
 
     # VND with đ or VND suffix
