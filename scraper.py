@@ -46,20 +46,29 @@ def load_config(config_path="config.json"):
 # Firecrawl API
 # ---------------------------------------------------------------------------
 
-def firecrawl_scrape(url, api_key, formats=None, timeout=60):
+def firecrawl_scrape(url, api_key, formats=None, timeout=60, max_age=None):
     """
     Scrape a single URL via Firecrawl v1 and return the response data.
-    Default format: markdown + links.  Costs 1 credit per call.
+    Default format: markdown + links.  Costs 1 credit per call (0 if cached).
+
+    Args:
+        max_age: Cache max age in milliseconds. If set, Firecrawl returns cached
+                 results when available (up to 500% faster, no credit cost).
+                 E.g. 86400000 = 24 hours.
     """
     if formats is None:
         formats = ["markdown", "links"]
 
-    payload = json.dumps({
+    body = {
         "url": url,
         "formats": formats,
         "timeout": 30000,
         "waitFor": 3000,
-    }).encode()
+    }
+    if max_age is not None:
+        body["maxAge"] = max_age
+
+    payload = json.dumps(body).encode()
 
     ctx = ssl.create_default_context()
     req = urllib.request.Request(
@@ -703,11 +712,19 @@ def generate_listing_id(listing):
 # Main two-pass search round
 # ---------------------------------------------------------------------------
 
-def run_search_round(config):
+def run_search_round(config, seen_listing_ids=None, target_limit=None, credit_limit=None):
     """
     Run one complete search round using the two-pass approach:
     Pass 1: Scrape search pages → collect individual listing URLs
     Pass 2: Scrape each listing page → extract accurate property data
+
+    Args:
+        seen_listing_ids: Set/dict of already-seen listing IDs. URLs matching
+                          these will be skipped in Pass 2 (saves credits).
+        target_limit:     Max number of scrape_targets to process in Pass 1.
+                          Use for dry-run/testing (e.g. --limit 3).
+        credit_limit:     Hard cap on total Firecrawl credits per run.
+                          Stops scraping when reached.
     """
     firecrawl_key = os.environ.get('FIRECRAWL_API_KEY', '')
     if not firecrawl_key:
@@ -719,16 +736,40 @@ def run_search_round(config):
         print("ERROR: No scrape_targets configured!")
         return []
 
+    # Apply target limit for dry-run mode
+    if target_limit is not None:
+        scrape_targets = scrape_targets[:target_limit]
+        print(f"  [DRY-RUN] Limited to {target_limit} scrape targets")
+
+    # Default credit limit: 200 per run (safety net)
+    if credit_limit is None:
+        credit_limit = config.get("credit_limit_per_run", 200)
+
     credits_used = 0
     budget_max = config.get("budget_max_eur", 150000)
 
+    # Build set of already-seen URLs for pre-scrape dedup
+    seen_url_hashes = set()
+    if seen_listing_ids:
+        # Convert seen listing IDs to URL hashes for fast lookup
+        # seen_listing_ids values may contain 'url' if we store it
+        for lid, info in seen_listing_ids.items():
+            if isinstance(info, dict) and 'url' in info:
+                seen_url_hashes.add(info['url'].rstrip('/').lower())
+
     # ---------------------------------------------------------------
     # Pass 1: Collect listing URLs from search pages
+    # Uses maxAge=86400000 (24h) cache to avoid re-scraping unchanged pages
     # ---------------------------------------------------------------
     print("\n  === PASS 1: Collecting listing URLs from search pages ===")
-    listing_urls_by_loc = {}  # {(url, loc_key, portal_name, base_url)}
+    PASS1_CACHE_MS = 86_400_000  # 24 hours — search pages rarely change faster
+    listing_urls_by_loc = {}
 
     for target in scrape_targets:
+        if credits_used >= credit_limit:
+            print(f"\n  ⚠ Credit limit ({credit_limit}) reached in Pass 1. Stopping.")
+            break
+
         loc_key = target["location_key"]
         portal_name = target["portal"]
         page_url = target["url"]
@@ -739,7 +780,10 @@ def run_search_round(config):
         print(f"  URL: {page_url}")
 
         try:
-            page_data = firecrawl_scrape(page_url, firecrawl_key)
+            page_data = firecrawl_scrape(
+                page_url, firecrawl_key,
+                max_age=PASS1_CACHE_MS  # Use 24h cache for search pages
+            )
             credits_used += 1
 
             if not page_data:
@@ -765,22 +809,36 @@ def run_search_round(config):
     # Deduplicate URLs across portals (same listing may appear on multiple search pages)
     all_url_entries = []
     seen_urls = set()
+    skipped_already_seen = 0
     for loc_key, entries in listing_urls_by_loc.items():
         for entry in entries:
             url_normalized = entry['url'].rstrip('/').lower()
-            if url_normalized not in seen_urls:
-                seen_urls.add(url_normalized)
-                all_url_entries.append({**entry, 'location_key': loc_key})
+            if url_normalized in seen_urls:
+                continue
+            seen_urls.add(url_normalized)
+
+            # PRE-SCRAPE DEDUP: Skip URLs we've already scraped in previous runs
+            url_hash = hashlib.md5(url_normalized.encode()).hexdigest()[:12]
+            if url_hash in (seen_listing_ids or {}):
+                skipped_already_seen += 1
+                continue
+            if url_normalized in seen_url_hashes:
+                skipped_already_seen += 1
+                continue
+
+            all_url_entries.append({**entry, 'location_key': loc_key})
 
     total_urls = len(all_url_entries)
-    print(f"\n  Pass 1 complete: {total_urls} unique listing URLs found")
+    print(f"\n  Pass 1 complete: {total_urls} new listing URLs to scrape")
+    if skipped_already_seen:
+        print(f"  ⏭ Skipped {skipped_already_seen} already-seen listings (saved {skipped_already_seen} credits!)")
     print(f"  Credits used (search pages): {credits_used}")
 
     # Credit budget check: cap individual scrapes to stay within reason
-    # Reserve ~30 credits for search pages, use the rest for individual listings
-    max_listing_scrapes = min(total_urls, 120)  # cap at 120 per run
+    remaining_credits = credit_limit - credits_used
+    max_listing_scrapes = min(total_urls, 120, remaining_credits)
     if total_urls > max_listing_scrapes:
-        print(f"  Capping to {max_listing_scrapes} listing scrapes (of {total_urls} found)")
+        print(f"  Capping to {max_listing_scrapes} listing scrapes (of {total_urls} found, {remaining_credits} credits remaining)")
         # Prioritize: spread evenly across locations
         by_loc = {}
         for entry in all_url_entries:
@@ -798,12 +856,17 @@ def run_search_round(config):
     all_listings = []
 
     for i, entry in enumerate(all_url_entries):
+        if credits_used >= credit_limit:
+            print(f"\n  ⚠ Credit limit ({credit_limit}) reached in Pass 2. Stopping.")
+            print(f"    Scraped {i} of {len(all_url_entries)} listings before limit.")
+            break
+
         url = entry['url']
         loc_key = entry['location_key']
         portal = entry['portal']
 
         if (i + 1) % 10 == 0 or i == 0:
-            print(f"\n  [{i+1}/{len(all_url_entries)}] Scraping listings...")
+            print(f"\n  [{i+1}/{len(all_url_entries)}] Scraping listings... ({credits_used}/{credit_limit} credits used)")
 
         try:
             page_data = firecrawl_scrape(url, firecrawl_key)

@@ -2,8 +2,15 @@
 """
 Vietnam Property Deal Finder - Main Orchestrator
 Runs the daily search, scores listings, deduplicates, and generates the website.
+
+Usage:
+    python main.py                  # Full daily run (default credit limit: 200)
+    python main.py --dry-run        # Test with 3 targets, 50 credit cap
+    python main.py --limit 5        # Only process first 5 scrape targets
+    python main.py --credits 100    # Set credit limit to 100
 """
 
+import argparse
 import json
 import sys
 from datetime import datetime
@@ -17,10 +24,35 @@ from scraper import (
 from site_generator import generate_site
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Vietnam Property Deal Finder")
+    parser.add_argument('--dry-run', action='store_true',
+                        help='Test mode: 3 targets, 50 credit cap, no site generation')
+    parser.add_argument('--limit', type=int, default=None,
+                        help='Max number of scrape_targets to process in Pass 1')
+    parser.add_argument('--credits', type=int, default=None,
+                        help='Max Firecrawl credits per run (default: 200)')
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+
+    # Resolve dry-run defaults
+    target_limit = args.limit
+    credit_limit = args.credits
+    if args.dry_run:
+        target_limit = target_limit or 3
+        credit_limit = credit_limit or 50
+        print("\n  🧪 DRY-RUN MODE — limited targets and credits")
+
     print(f"\n{'#'*60}")
     print(f"  Vietnam Property Deal Finder")
     print(f"  Run date: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    if target_limit:
+        print(f"  Target limit: {target_limit}")
+    if credit_limit:
+        print(f"  Credit limit: {credit_limit}")
     print(f"{'#'*60}\n")
 
     # Load config
@@ -37,9 +69,14 @@ def main():
     print(f"Previously seen listings: {len(seen)}")
     print(f"Published rounds: {len(published.get('rounds', []))}")
 
-    # Phase 1: Search
+    # Phase 1: Search — pass seen listings for pre-scrape dedup
     print("\n--- Phase 1: Searching portals ---")
-    raw_listings = run_search_round(config)
+    raw_listings = run_search_round(
+        config,
+        seen_listing_ids=seen,
+        target_limit=target_limit,
+        credit_limit=credit_limit,
+    )
     print(f"\nRaw listings found: {len(raw_listings)}")
 
     # Phase 2: Deduplicate
@@ -51,7 +88,8 @@ def main():
             new_listings.append(listing)
             seen[lid] = {
                 'first_seen': datetime.now().strftime('%Y-%m-%d'),
-                'title': listing.get('title', '')[:80]
+                'title': listing.get('title', '')[:80],
+                'url': listing.get('url', ''),  # Store URL for pre-scrape dedup
             }
 
     print(f"New unique listings: {len(new_listings)}")
@@ -115,6 +153,11 @@ def main():
     save_published_listings(published, str(data_dir))
 
     # Phase 6: Generate website
+    if args.dry_run:
+        print("\n--- Phase 6: Skipped (dry-run mode) ---")
+        print("  Data saved. Site generation skipped in dry-run mode.")
+        return 0
+
     print("\n--- Phase 6: Generating website ---")
     try:
         output_dir = Path(__file__).parent / "docs"  # GitHub Pages serves from /docs

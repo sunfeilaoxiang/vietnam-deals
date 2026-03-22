@@ -1,4 +1,5 @@
 {
+  "credit_limit_per_run": 200,
   "budget_max_eur": 150000,
   "score_threshold": 5.5,
   "vnd_per_eur": 27000,
