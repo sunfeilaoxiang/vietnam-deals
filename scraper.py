@@ -251,7 +251,7 @@ def _parse_batdongsan_structured(markdown, vnd_per_eur):
     # Area: "Diện tíchXX m²"
     area_match = re.search(r'Diện tích\s*([\d,\.]+)\s*m²', section)
     if area_match:
-        val = float(area_match.group(1))
+        val = float(area_match.group(1).replace(',', '.'))
         if 10 <= val <= 1000:
             result['size_sqm'] = val
 
@@ -309,9 +309,9 @@ def _parse_dotproperty_structured(markdown, vnd_per_eur):
     if baths_match:
         result['bathrooms'] = int(baths_match.group(1))
 
-    sqm_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:sqm|m²|SqM)', markdown)
+    sqm_match = re.search(r'(\d+(?:[,\.]\d+)?)\s*(?:sqm|m²|SqM)', markdown)
     if sqm_match:
-        val = float(sqm_match.group(1))
+        val = float(sqm_match.group(1).replace(',', '.'))
         if 10 <= val <= 1000:
             result['size_sqm'] = val
 
@@ -331,9 +331,9 @@ def _parse_fazwaz_structured(markdown, vnd_per_eur):
     if baths_match:
         result['bathrooms'] = int(baths_match.group(1))
 
-    sqm_match = re.search(r'(\d+(?:\.\d+)?)\s*SqM', markdown)
+    sqm_match = re.search(r'(\d+(?:[,\.]\d+)?)\s*SqM', markdown)
     if sqm_match:
-        val = float(sqm_match.group(1))
+        val = float(sqm_match.group(1).replace(',', '.'))
         if 10 <= val <= 1000:
             result['size_sqm'] = val
 
@@ -623,14 +623,14 @@ def extract_raw_price(text):
 
 def extract_size(text):
     patterns = [
-        r'(\d+(?:\.\d+)?)\s*(?:sqm|m²|m2|sq\.?\s*m)',
-        r'(\d+(?:\.\d+)?)\s*(?:square\s*meter)',
-        r'(\d+(?:\.\d+)?)\s*SqM',
+        r'(\d+(?:[,\.]\d+)?)\s*(?:sqm|m²|m2|sq\.?\s*m)',
+        r'(\d+(?:[,\.]\d+)?)\s*(?:square\s*meter)',
+        r'(\d+(?:[,\.]\d+)?)\s*SqM',
     ]
     for pat in patterns:
         m = re.search(pat, text, re.IGNORECASE)
         if m:
-            val = float(m.group(1))
+            val = float(m.group(1).replace(',', '.'))
             if 10 <= val <= 1000:
                 return val
     return None
