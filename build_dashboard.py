@@ -24,6 +24,31 @@ def build_dashboard(data_dir="data", output_dir="."):
 
     rows = []
     for lid, c in contacts.items():
+        title = (c.get("listing_title") or "")[:80]
+
+        # Extract bedrooms from title or fields
+        bedrooms = c.get("bedrooms") or ""
+        if not bedrooms:
+            import re
+            br_match = re.search(r'(\d)\s*(?:BR|PN|phòng ngủ|bedroom|pn)', title, re.IGNORECASE)
+            if br_match:
+                bedrooms = br_match.group(1)
+            elif 'studio' in title.lower():
+                bedrooms = "S"
+            elif '1PN' in title or '1pn' in title:
+                bedrooms = "1"
+            elif '2PN' in title or '2pn' in title:
+                bedrooms = "2"
+            elif '3PN' in title or '3pn' in title:
+                bedrooms = "3"
+
+        # Extract area from title or fields
+        area = c.get("area") or ""
+        if not area:
+            area_match = re.search(r'(\d{2,3})\s*m[2²]', title, re.IGNORECASE)
+            if area_match:
+                area = area_match.group(1)
+
         rows.append({
             "listing_id": lid,
             "broker_name": c.get("broker_name") or "",
@@ -35,7 +60,7 @@ def build_dashboard(data_dir="data", output_dir="."):
             "portal": c.get("portal") or "",
             "location": c.get("location", ""),
             "price_eur": c.get("price_eur"),
-            "listing_title": (c.get("listing_title") or "")[:80],
+            "listing_title": title,
             "listing_url": c.get("listing_url") or "",
             "listing_score": c.get("listing_score", 0),
             "outreach_status": c.get("outreach_status") or "pending",
@@ -44,6 +69,8 @@ def build_dashboard(data_dir="data", output_dir="."):
             "response_date": c.get("response_date") or "",
             "response_notes": c.get("response_notes") or "",
             "source": c.get("source") or "",
+            "bedrooms": bedrooms,
+            "area": area,
         })
 
     rows.sort(key=lambda x: x.get("listing_score", 0), reverse=True)
@@ -106,10 +133,15 @@ def build_dashboard(data_dir="data", output_dir="."):
         else:
             source_html = f'<span class="source-badge source-scraper">{r["portal"][:8]}</span>'
 
+        br_display = r["bedrooms"] or "—"
+        area_display = f'{r["area"]}m²' if r["area"] else "—"
+
         table_rows += f'''<tr data-status="{status}">
     <td><span class="score-badge {score_class}">{score:.1f}</span></td>
     <td class="location">{loc}</td>
     <td class="listing-title">{title_html}</td>
+    <td style="text-align:center">{br_display}</td>
+    <td style="text-align:right">{area_display}</td>
     <td class="price">{price}</td>
     <td class="broker-name">{broker}</td>
     <td class="{phone_class}">{r["broker_phone"]}</td>
@@ -257,12 +289,14 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
     <th onclick="sortTable(0)">Score</th>
     <th onclick="sortTable(1)">City</th>
     <th onclick="sortTable(2)">Listing</th>
-    <th onclick="sortTable(3)">Price (EUR)</th>
-    <th onclick="sortTable(4)">Broker</th>
-    <th onclick="sortTable(5)">Phone</th>
-    <th onclick="sortTable(6)">Channel</th>
-    <th onclick="sortTable(7)">Status</th>
-    <th onclick="sortTable(8)">Source</th>
+    <th onclick="sortTable(3)">BR</th>
+    <th onclick="sortTable(4)">m²</th>
+    <th onclick="sortTable(5)">Price (EUR)</th>
+    <th onclick="sortTable(6)">Broker</th>
+    <th onclick="sortTable(7)">Phone</th>
+    <th onclick="sortTable(8)">Channel</th>
+    <th onclick="sortTable(9)">Status</th>
+    <th onclick="sortTable(10)">Source</th>
     <th>Links</th>
 </tr>
 </thead>
