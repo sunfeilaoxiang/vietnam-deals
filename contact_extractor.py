@@ -107,7 +107,10 @@ def extract_batdongsan_contacts(page, listing_url, timeout=10000):
         try:
             name_el = page.query_selector('a[href*="guru.batdongsan.com.vn/pa/"]')
             if name_el:
-                result["broker_name"] = name_el.inner_text().strip()
+                name_text = name_el.inner_text().strip()
+                # Ensure it's actual text, not binary/image data
+                if name_text and len(name_text) < 100 and name_text.isprintable():
+                    result["broker_name"] = name_text
                 result["broker_profile_url"] = name_el.get_attribute("href")
         except Exception:
             pass
@@ -200,7 +203,10 @@ def extract_batdongsan_contacts(page, listing_url, timeout=10000):
         # --- Zalo link ---
         zalo_match = re.search(r'(https?://(?:chat\.)?zalo\.me/\S+)', content)
         if zalo_match:
-            result["zalo_url"] = zalo_match.group(1)
+            # Sanitize: strip trailing quotes, backslashes, HTML artifacts
+            zalo_url = zalo_match.group(1).rstrip('"\'\\>')
+            zalo_url = re.sub(r'["\\\s>].*$', '', zalo_url)
+            result["zalo_url"] = zalo_url
 
         # --- Determine contact method ---
         if result["broker_phone_full"]:
@@ -244,7 +250,9 @@ def extract_dotproperty_contacts(page, listing_url, timeout=10000):
             # dotproperty shows agent name prominently
             name_el = page.query_selector('[class*="agent-name"], [class*="AgentName"]')
             if name_el:
-                result["broker_name"] = name_el.inner_text().strip()
+                name_text = name_el.inner_text().strip()
+                if name_text and len(name_text) < 100 and name_text.isprintable():
+                    result["broker_name"] = name_text
         except Exception:
             pass
 
@@ -327,7 +335,7 @@ def extract_dotproperty_contacts(page, listing_url, timeout=10000):
         # --- Inquiry form URL ---
         form_match = re.search(r'(https?://www\.dotproperty\.com\.vn/en/enquire/\S+)', content)
         if form_match:
-            result["form_url"] = form_match.group(1)
+            result["form_url"] = form_match.group(1).rstrip('"\'\\>')
         else:
             # Construct from listing URL
             listing_id_match = re.search(r'_(\d+)$', listing_url)
