@@ -5,7 +5,6 @@ FazWaz is a JS SPA that Firecrawl can't scrape.
 This script uses Playwright to render pages and extract listings.
 
 Runs as an additional step in GitHub Actions after the main scraper.
-Outputs listings in the same format as scraper.py for merging.
 """
 
 import json
@@ -16,7 +15,6 @@ from datetime import datetime
 from pathlib import Path
 
 
-# FazWaz search targets (same cities as main scraper)
 FAZWAZ_TARGETS = [
     {"location_key": "phu_quoc", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/kien-giang/phu-quoc", "min_br": 1, "max_br": 1},
     {"location_key": "quy_nhon", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/binh-dinh/quy-nhon", "min_br": 2, "max_br": 99},
@@ -28,66 +26,155 @@ BUDGET_MAX_EUR = 150000
 VND_PER_EUR = 27000
 
 
-def extract_listings_from_search(page, target_url, location_key, min_br, max_br):
-    """Navigate to FazWaz search page and extract all listing data."""
-    listings = []
-
-    print(f"  Loading {target_url}...")
-    page.goto(target_url, wait_until="domcontentloaded", timeout=30000)
-    page.wait_for_timeout(5000)  # Let React render
-
-    # Dismiss cookie popups
-    for selector in ['button:has-text("DECLINE ALL")', 'button:has-text("REJECT ALL")', 'button:has-text("Accept")']:
+def dismiss_popups(page):
+    """Dismiss all cookie/consent popups on FazWaz."""
+    selectors = [
+        'button:has-text("DECLINE ALL")',
+        'button:has-text("REJECT ALL")',
+        'button:has-text("Decline All")',
+        'button:has-text("Reject All")',
+        'button:has-text("Accept")',
+        'button:has-text("AGREE")',
+        'button:has-text("OK")',
+        'button:has-text("SAVE & EXIT")',
+        'button:has-text("Save & Exit")',
+        '[class*="cookie"] button',
+        '[class*="consent"] button',
+        '[class*="privacy"] button',
+    ]
+    dismissed = 0
+    for selector in selectors:
         try:
-            btn = page.query_selector(selector)
-            if btn and btn.is_visible():
-                btn.click()
-                page.wait_for_timeout(1000)
+            els = page.query_selector_all(selector)
+            for el in els:
+                if el.is_visible():
+                    el.click()
+                    dismissed += 1
+                    page.wait_for_timeout(500)
         except Exception:
             pass
+    # Also try pressing Escape
+    if dismissed == 0:
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+    return dismissed
 
-    # Scroll to load all listings (FazWaz may lazy-load)
-    for _ in range(5):
-        page.evaluate("window.scrollBy(0, 1000)")
-        page.wait_for_timeout(1000)
 
-    # Extract listing URLs from the rendered page
+def extract_listings_from_search(page, target_url, location_key, min_br, max_br):
+    """Navigate to FazWaz search page and extract all listing URLs."""
+    print(f"  Loading {target_url}...")
+    try:
+        page.goto(target_url, wait_until="domcontentloaded", timeout=30000)
+    except Exception as e:
+        print(f"  ERROR loading page: {e}")
+        return []
+
+    # Wait longer for JS to render
+    page.wait_for_timeout(8000)
+
+    # Dismiss cookie popups aggressively
+    dismiss_popups(page)
+    page.wait_for_timeout(2000)
+    dismiss_popups(page)
+
+    # Scroll to trigger lazy loading
+    for _ in range(8):
+        page.evaluate("window.scrollBy(0, 800)")
+        page.wait_for_timeout(800)
+
+    # Scroll back up
+    page.evaluate("window.scrollTo(0, 0)")
+    page.wait_for_timeout(1000)
+
+    # Extract listing URLs
     listing_urls = page.evaluate("""
         () => {
             var urls = new Set();
             document.querySelectorAll('a[href*="/property-sales/"]').forEach(a => {
-                if (a.href.match(/u\\d{4,}/)) urls.add(a.href);
+                if (a.href.match(/[uU]\\d{4,}/)) urls.add(a.href);
             });
-            // Also check for other listing URL patterns
             document.querySelectorAll('a[href*="/property/"]').forEach(a => {
                 if (a.href.match(/\\d{6,}/)) urls.add(a.href);
+            });
+            // Also try data-href or onclick patterns
+            document.querySelectorAll('[data-href*="fazwaz"]').forEach(el => {
+                if (el.dataset.href.match(/[uU]\\d{4,}/)) urls.add(el.dataset.href);
             });
             return [...urls];
         }
     """)
 
-    print(f"  Found {len(listing_urls)} listing URLs")
+    # Deduplicate by listing ID
+    seen_ids = set()
+    unique_urls = []
+    for url in listing_urls:
+        id_match = re.search(r'[uU](\d{4,})', url)
+        if id_match:
+            lid = id_match.group(1)
+            if lid not in seen_ids:
+                seen_ids.add(lid)
+                unique_urls.append(url)
+        else:
+            unique_urls.append(url)
 
-    # If no listing URLs found via links, try extracting data directly from cards
-    if not listing_urls:
-        print("  Trying card extraction...")
-        card_data = page.evaluate("""
-            () => {
-                var cards = [];
-                // Try various card selectors
-                var allText = document.body.innerText;
-                // Split by price patterns to find card boundaries
-                var chunks = allText.split(/€[\\d,]+/);
-                return {textLength: allText.length, chunks: chunks.length, sample: allText.substring(0, 1000)};
-            }
-        """)
-        print(f"  Page text: {card_data.get('textLength', 0)} chars")
+    print(f"  Found {len(unique_urls)} listing URLs")
+    return unique_urls
 
-    return listing_urls
+
+def parse_from_title(title):
+    """Extract bedrooms, price, location from FazWaz page title.
+    Example: '1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for €4,570 | U2121608'
+    """
+    result = {}
+
+    # Bedrooms
+    br_match = re.search(r'(\d+)\s*Bedroom', title, re.IGNORECASE)
+    if br_match:
+        result["bedrooms"] = int(br_match.group(1))
+
+    # Price EUR
+    eur_match = re.search(r'€([\d,]+)', title)
+    if eur_match:
+        try:
+            result["price_eur"] = int(eur_match.group(1).replace(",", ""))
+        except ValueError:
+            pass
+
+    # Price VND
+    vnd_match = re.search(r'₫\s*([\d,.]+)\s*(billion|million|tỷ|triệu)', title, re.IGNORECASE)
+    if vnd_match:
+        try:
+            val = float(vnd_match.group(1).replace(",", ""))
+            unit = vnd_match.group(2).lower()
+            if unit in ("billion", "tỷ"):
+                result["price_vnd"] = int(val * 1_000_000_000)
+                if "price_eur" not in result:
+                    result["price_eur"] = int(val * 1_000_000_000 / VND_PER_EUR)
+            elif unit in ("million", "triệu"):
+                result["price_vnd"] = int(val * 1_000_000)
+        except ValueError:
+            pass
+
+    # Property type
+    if "Condo" in title:
+        result["type"] = "Condo"
+    elif "Apartment" in title:
+        result["type"] = "Apartment"
+    elif "Villa" in title:
+        result["type"] = "Villa"
+
+    # Location from title
+    loc_match = re.search(r'in\s+(.+?)(?:\s+for\s+|$)', title)
+    if loc_match:
+        result["location_text"] = loc_match.group(1).strip()
+
+    return result
 
 
 def parse_listing_page(page, url, location_key):
-    """Visit an individual FazWaz listing and extract property data."""
+    """Visit a FazWaz listing and extract property data."""
     listing = {
         "url": url,
         "portal": "fazwaz",
@@ -108,121 +195,106 @@ def parse_listing_page(page, url, location_key):
 
     try:
         page.goto(url, wait_until="domcontentloaded", timeout=20000)
-        page.wait_for_timeout(3000)
+        page.wait_for_timeout(5000)
 
-        # Dismiss popups
-        for selector in ['button:has-text("DECLINE ALL")', 'button:has-text("REJECT ALL")', 'button:has-text("Accept")']:
-            try:
-                btn = page.query_selector(selector)
-                if btn and btn.is_visible():
-                    btn.click()
-                    page.wait_for_timeout(500)
-            except Exception:
-                pass
+        dismiss_popups(page)
 
         # Extract listing ID from URL
         id_match = re.search(r'[uU](\d{4,})', url)
         if id_match:
             listing["listing_id"] = f"fazwaz_{id_match.group(1)}"
 
-        # Get page title
-        title = page.title()
+        # Get page title — this is the most reliable data source on FazWaz
+        title = page.title() or ""
         listing["title"] = title
         listing["title_original"] = title
 
-        # Extract structured data from page
-        data = page.evaluate("""
-            () => {
-                var result = {};
+        # Parse data from title first (most reliable)
+        title_data = parse_from_title(title)
+        if title_data.get("bedrooms"):
+            listing["bedrooms"] = title_data["bedrooms"]
+        if title_data.get("price_eur"):
+            listing["price_eur"] = title_data["price_eur"]
+        if title_data.get("price_vnd"):
+            listing["price_vnd"] = title_data["price_vnd"]
 
-                // Title
-                var h1 = document.querySelector('h1');
-                if (h1) result.title = h1.innerText.trim();
+        # Try extracting more from the rendered page
+        try:
+            data = page.evaluate("""
+                () => {
+                    var result = {};
+                    var bodyText = document.body.innerText || '';
 
-                // Price - look for EUR price
-                var priceEls = document.querySelectorAll('[class*="price"], [class*="Price"]');
-                priceEls.forEach(el => {
-                    var text = el.innerText;
-                    var eurMatch = text.match(/€([\\d,]+)/);
-                    if (eurMatch) result.price_eur = eurMatch[1].replace(/,/g, '');
-                    var vndMatch = text.match(/₫([\\d,.]+)/);
-                    if (vndMatch) result.price_vnd = vndMatch[1].replace(/,/g, '');
-                });
+                    // Only parse if page actually rendered (more than just nav)
+                    if (bodyText.length < 500) return result;
 
-                // Also search full page text for price
-                var bodyText = document.body.innerText;
-                if (!result.price_eur) {
+                    // Price
                     var eurMatch = bodyText.match(/€([\\d,]+)/);
                     if (eurMatch) result.price_eur = eurMatch[1].replace(/,/g, '');
+
+                    // Bedrooms
+                    var brMatch = bodyText.match(/(\\d+)\\s*(?:Bedroom|BR|Bed)/i);
+                    if (brMatch) result.bedrooms = parseInt(brMatch[1]);
+
+                    // Bathrooms
+                    var bathMatch = bodyText.match(/(\\d+)\\s*(?:Bathroom|Bath)/i);
+                    if (bathMatch) result.bathrooms = parseInt(bathMatch[1]);
+
+                    // Area
+                    var areaMatch = bodyText.match(/(\\d+(?:\\.\\d+)?)\\s*(?:SqM|m²|sqm)/i);
+                    if (areaMatch) result.area = parseFloat(areaMatch[1]);
+
+                    // Foreign quota
+                    if (bodyText.includes('Foreign Quota')) result.foreign_ok = true;
+
+                    // Project name
+                    var projMatch = bodyText.match(/(?:Project|at)\\s*:\\s*(.+?)(?:\\n|$)/i);
+                    if (projMatch) result.project = projMatch[1].trim().substring(0, 60);
+
+                    // WhatsApp
+                    var waLink = document.querySelector('a[href*="wa.me"]');
+                    if (waLink) result.whatsapp = waLink.href;
+
+                    // Agent
+                    var agentEl = document.querySelector('[class*="agent-name"], [class*="AgentName"]');
+                    if (agentEl) result.agent = agentEl.innerText.trim().substring(0, 60);
+
+                    return result;
                 }
+            """)
 
-                // Bedrooms, bathrooms, area
-                var brMatch = bodyText.match(/(\\d+)\\s*(?:Bedroom|BR|Bed)/i);
-                if (brMatch) result.bedrooms = parseInt(brMatch[1]);
+            # Fill in any data not already from title
+            if not listing["price_eur"] and data.get("price_eur"):
+                try:
+                    listing["price_eur"] = int(data["price_eur"])
+                except (ValueError, TypeError):
+                    pass
+            if not listing["bedrooms"] and data.get("bedrooms"):
+                listing["bedrooms"] = data["bedrooms"]
+            if data.get("bathrooms"):
+                listing["bathrooms"] = data["bathrooms"]
+            if data.get("area"):
+                listing["area_sqm"] = data["area"]
+            if data.get("project"):
+                listing["developer"] = data["project"]
+            if data.get("foreign_ok"):
+                listing["legal_status"] = "foreign_eligible"
+            if data.get("agent"):
+                listing["broker_name"] = data["agent"]
+            if data.get("whatsapp"):
+                listing["whatsapp_url"] = data["whatsapp"]
 
-                var bathMatch = bodyText.match(/(\\d+)\\s*(?:Bathroom|Bath)/i);
-                if (bathMatch) result.bathrooms = parseInt(bathMatch[1]);
+        except Exception as e:
+            print(f"    JS evaluate failed (using title data): {e}")
 
-                var areaMatch = bodyText.match(/(\\d+(?:\\.\\d+)?)\\s*(?:SqM|m²|sqm)/i);
-                if (areaMatch) result.area = parseFloat(areaMatch[1]);
-
-                // Developer/project
-                var projEl = document.querySelector('[class*="project"], [class*="Project"]');
-                if (projEl) result.project = projEl.innerText.trim().substring(0, 60);
-
-                // Foreign quota tag
-                if (bodyText.includes('Foreign Quota')) result.foreign_ok = true;
-
-                // Floor
-                var floorMatch = bodyText.match(/Floor\\s*(\\d+)/i);
-                if (floorMatch) result.floor = parseInt(floorMatch[1]);
-
-                // Contact info
-                var contactEl = document.querySelector('[class*="agent"], [class*="Agent"]');
-                if (contactEl) result.agent = contactEl.innerText.trim().substring(0, 60);
-
-                // WhatsApp
-                var waLink = document.querySelector('a[href*="wa.me"]');
-                if (waLink) result.whatsapp = waLink.href;
-
-                // Form URL
-                result.form_url = window.location.href;
-
-                return result;
-            }
-        """)
-
-        if data.get("title"):
-            listing["title"] = data["title"]
-            listing["title_original"] = data["title"]
-
-        if data.get("price_eur"):
-            try:
-                listing["price_eur"] = int(data["price_eur"])
-                listing["price_vnd"] = listing["price_eur"] * VND_PER_EUR
-            except (ValueError, TypeError):
-                pass
-
-        if data.get("bedrooms"):
-            listing["bedrooms"] = data["bedrooms"]
-        if data.get("bathrooms"):
-            listing["bathrooms"] = data["bathrooms"]
-        if data.get("area"):
-            listing["area_sqm"] = data["area"]
-            if listing["price_eur"] and listing["area_sqm"]:
-                listing["price_per_sqm_eur"] = round(listing["price_eur"] / listing["area_sqm"])
-
-        if data.get("project"):
-            listing["developer"] = data["project"]
-        if data.get("foreign_ok"):
-            listing["legal_status"] = "foreign_eligible"
-        if data.get("agent"):
-            listing["broker_name"] = data["agent"]
-        if data.get("whatsapp"):
-            listing["whatsapp_url"] = data["whatsapp"]
+        # Calculate derived fields
+        if listing["price_eur"] and not listing["price_vnd"]:
+            listing["price_vnd"] = listing["price_eur"] * VND_PER_EUR
+        if listing["price_eur"] and listing["area_sqm"]:
+            listing["price_per_sqm_eur"] = round(listing["price_eur"] / listing["area_sqm"])
 
         if not listing["listing_id"]:
-            listing["listing_id"] = f"fazwaz_{hash(url) % 100000000}"
+            listing["listing_id"] = f"fazwaz_{abs(hash(url)) % 100000000}"
 
     except Exception as e:
         print(f"    ERROR parsing {url[:60]}: {e}")
@@ -231,14 +303,13 @@ def parse_listing_page(page, url, location_key):
 
 
 def run_fazwaz_scraper(data_dir="data", max_listings_per_target=15):
-    """Main entry point for FazWaz scraping."""
+    """Main entry point."""
     from playwright.sync_api import sync_playwright
 
     print(f"\n{'='*60}")
     print(f"  FazWaz Scraper — {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print(f"{'='*60}\n")
 
-    # Load existing published listings to avoid duplicates
     pub_file = Path(data_dir) / "published_listings.json"
     if pub_file.exists():
         with open(pub_file, "r", encoding="utf-8-sig") as f:
@@ -246,7 +317,6 @@ def run_fazwaz_scraper(data_dir="data", max_listings_per_target=15):
     else:
         published = {"rounds": []}
 
-    # Collect existing listing IDs
     existing_ids = set()
     for round_data in published.get("rounds", []):
         for listing in round_data.get("listings", []):
@@ -271,41 +341,38 @@ def run_fazwaz_scraper(data_dir="data", max_listings_per_target=15):
 
             print(f"\n--- {loc.upper()} ({url}) ---")
 
-            # Get listing URLs from search page
             listing_urls = extract_listings_from_search(page, url, loc, min_br, max_br)
-
-            # Limit per target
             listing_urls = listing_urls[:max_listings_per_target]
 
-            # Parse each listing
             for i, lurl in enumerate(listing_urls):
-                # Check for duplicate
                 id_match = re.search(r'[uU](\d{4,})', lurl)
                 lid = f"fazwaz_{id_match.group(1)}" if id_match else None
                 if lid and lid in existing_ids:
-                    print(f"  [{i+1}/{len(listing_urls)}] Skip (already seen): {lurl[:60]}")
+                    print(f"  [{i+1}/{len(listing_urls)}] Skip (already seen): {lurl[-30:]}")
                     continue
 
-                print(f"  [{i+1}/{len(listing_urls)}] Parsing: {lurl[:60]}")
+                print(f"  [{i+1}/{len(listing_urls)}] Parsing: {lurl[-50:]}")
                 listing = parse_listing_page(page, lurl, loc)
 
                 # Apply filters
                 if listing.get("price_eur") and listing["price_eur"] > BUDGET_MAX_EUR:
-                    print(f"    Skip: over budget (€{listing['price_eur']})")
+                    print(f"    Skip: over budget (EUR {listing['price_eur']})")
                     continue
 
                 br = listing.get("bedrooms")
-                if br and (br < min_br or br > max_br):
+                if br is not None and (br < min_br or br > max_br):
                     print(f"    Skip: {br}BR not in range {min_br}-{max_br}")
                     continue
 
                 if listing.get("listing_id"):
                     all_new_listings.append(listing)
-                    price_display = f"€{listing['price_eur']}" if listing.get("price_eur") else "price unknown"
-                    print(f"    OK: {listing['title'][:50]} | {price_display} | {listing.get('bedrooms', '?')}BR")
+                    price_display = f"EUR {listing['price_eur']}" if listing.get("price_eur") else "price unknown"
+                    br_display = f"{listing.get('bedrooms', '?')}BR"
+                    area_display = f"{listing.get('area_sqm', '?')}m2"
+                    print(f"    OK: {listing['title'][:50]} | {price_display} | {br_display} | {area_display}")
                     existing_ids.add(listing["listing_id"])
 
-                time.sleep(1)  # Rate limiting
+                time.sleep(1)
 
         page.close()
         context.close()
@@ -316,19 +383,17 @@ def run_fazwaz_scraper(data_dir="data", max_listings_per_target=15):
     print(f"{'='*60}\n")
 
     if all_new_listings:
-        # Add to published listings as a new round
         round_data = {
             "date": datetime.now().strftime("%Y-%m-%d"),
             "timestamp": datetime.now().isoformat(),
             "source": "fazwaz_playwright",
-            "total_searched": sum(1 for _ in FAZWAZ_TARGETS),
+            "total_searched": len(FAZWAZ_TARGETS),
             "new_found": len(all_new_listings),
             "published_count": len(all_new_listings),
             "listings": all_new_listings,
         }
         published.setdefault("rounds", []).append(round_data)
 
-        # Save
         Path(data_dir).mkdir(exist_ok=True)
         with open(pub_file, "w", encoding="utf-8") as f:
             json.dump(published, f, indent=2, ensure_ascii=False)
