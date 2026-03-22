@@ -65,11 +65,35 @@ td { padding: 10px 12px; vertical-align: middle; }
 .phone-masked { color: #6b7280; font-style: italic; }
 .phone-full { color: #10b981; }
 .last-updated { color: #475569; font-size: 12px; margin-top: 16px; }
+.search-bar { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; }
+.search-bar input {
+    background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+    padding: 8px 14px; border-radius: 6px; font-size: 13px; width: 300px;
+}
+.search-bar input:focus { outline: none; border-color: #3b82f6; }
+.search-bar .count { color: #64748b; font-size: 13px; }
+.pagination {
+    display: flex; gap: 8px; align-items: center; margin-top: 16px; margin-bottom: 8px;
+}
+.pagination button {
+    background: #1e293b; border: 1px solid #334155; color: #94a3b8;
+    padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.pagination button:hover { border-color: #60a5fa; color: #e2e8f0; }
+.pagination button:disabled { opacity: 0.3; cursor: default; }
+.pagination .page-info { color: #64748b; font-size: 13px; }
+.source-badge {
+    display: inline-block; padding: 2px 6px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+}
+.source-scraper { background: #1e3a5f; color: #60a5fa; }
+.source-excel { background: #3b1764; color: #c084fc; }
+.source-manual { background: #064e3b; color: #6ee7b7; }
 </style>
 </head>
 <body>
 <h1>Vietnam Property Outreach</h1>
-<p class="subtitle">Broker contact tracker &mdash; updated 2026-03-23 00:27 UTC</p>
+<p class="subtitle">Broker contact tracker &mdash; updated 2026-03-23 00:29 UTC</p>
 
 <div class="stats-bar">
     <div class="stat-card"><div class="label">Total Listings</div><div class="value">54</div></div>
@@ -88,6 +112,23 @@ td { padding: 10px 12px; vertical-align: middle; }
     <button class="filter-btn" onclick="filterStatus('meeting')">Meeting</button>
 </div>
 
+<div class="search-bar">
+    <input type="text" id="searchBox" placeholder="Search listings, brokers, cities..." oninput="applyFilters()">
+    <span class="count" id="visibleCount"></span>
+</div>
+
+<div class="pagination" id="paginationTop">
+    <button onclick="changePage(-1)" id="prevBtn">Prev</button>
+    <span class="page-info" id="pageInfo">Page 1</span>
+    <button onclick="changePage(1)" id="nextBtn">Next</button>
+    <select onchange="changePageSize(this.value)" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:12px;">
+        <option value="25">25 per page</option>
+        <option value="50">50 per page</option>
+        <option value="100">100 per page</option>
+        <option value="999">Show all</option>
+    </select>
+</div>
+
 <table id="dashboard">
 <thead>
 <tr>
@@ -99,6 +140,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <th onclick="sortTable(5)">Phone</th>
     <th onclick="sortTable(6)">Channel</th>
     <th onclick="sortTable(7)">Status</th>
+    <th onclick="sortTable(8)">Source</th>
     <th>Links</th>
 </tr>
 </thead>
@@ -112,6 +154,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Form</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">dotprope</span></td>
     <td class="contact-links"><a href="https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-ba-ria-vung-tau_9554732" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -123,6 +166,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked">0901007***</td>
     <td>Zalo</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nguyen-tat-thanh-phuong-ly-thuong-kiet-1-grand-center-quy-nhon/ban-2pn-2wc-so-hong-lau-dai-huong-bien-dong-nam-cat-lo-600-trieu-pr44689813" target="_blank">Listing</a> <a href="https://zalo.me/SzGcZlLFf042TSCSuOk9Pt64pEVlouaJVYlmeeAfsY_lfaWIQtg"" target="_blank">Zalo</a></td>
 </tr>
 <tr data-status="pending">
@@ -134,6 +178,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/au-tu-nghi-ket-hop-vua-giu-gia-tri-truyen-oi-vua-tao-ra-dong-tien-toi-a-pr45367101" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -145,6 +190,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-nam-ho-phuong-11_1-sun-garden-da-lat/ban-moi-xay-dau-lat-pr43871329" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="contacted">
@@ -156,6 +202,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-full">+84919814868</td>
     <td>Zalo</td>
     <td><span class="status-badge status-contacted">contacted</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://www.dotproperty.com.vn/ads/c%E1%BA%A7n-b%C3%A1n-c%C4%83n-h%E1%BB%99-1-ph%C3%B2ng-ng%E1%BB%A7-t%E1%BA%A1i-meyhomes-capital-ph%C3%BA-qu%E1%BB%91c-d%C6%B0%C6%A1ng-t%C6%A1-phu-qu%C3%B4c-ki%C3%AAn-giang_81da64302d38-7cff-60e5-a0c7-d548f792" target="_blank">Listing</a> <a href="https://zalo.me/84919814868" target="_blank">Zalo</a> <a href="https://wa.me/84919814868" target="_blank">WA</a></td>
 </tr>
 <tr data-status="pending">
@@ -167,6 +214,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/du-lich-residence-view-bien-so-hong-lau-dai-pr45365948" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -178,6 +226,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/ban-lo-manh-cao-cap-view-bien-pr38720421" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -189,6 +238,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/ban-gap-1pn-1-ban-cong-view-bien-gia-tot-nhat-tai-meyhomes-quoc-pr45145977" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -200,6 +250,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/view-bien-quy-nhon-so-o-lau-dai-mien-phi-3-nam-phi-quan-ly-ck-en-11-pr45274886" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -211,6 +262,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-huynh-tan-phat-phuong-nhon-binh-khu-do-thi-an-phu-thinh/ban-quy-loai-3-phong-ngu-view-cua-bien-quy-cuc-ep-pr45315228" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -222,6 +274,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-cao-cap-so-hong-lau-dai-full-noi-that-cao-cap-gia-chi-tu-1-85-ti-pr45297017" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -233,6 +286,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/tu-c-t-chi-2-2-ty-view-phao-hoa-full-noi-that-tt-700tr-nhan-nha-cho-thue-25tr-th-pr45350546" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -244,6 +298,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-the-sunset/ban-studio-quy-ngoai-giao-view-bien-ep-nhat-phu-quoc-huong-mat-gia-cuc-tot-30m2-2-2ty-pr45255144" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -255,6 +310,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-ban-cat-lo-2-ty-studio-32m2-phu-quoc-dong-tien-15tr-thang-pr44843139" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -266,6 +322,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/2-3-ty-full-so-huu-bien-s4-phu-quoc-so-hong-lau-dai-cho-thue-uoc-luon-pr45290291" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -277,6 +334,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-ngoai-giao-2pn-goc-view-bien-tang-ep-66-68m2-gia-tot-nhat-quoc-pr45235760" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -288,6 +346,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-sun-grand-city-hillside-residence/ban-cat-lo-1-ty-view-bien-phu-quoc-dt-56m2-gia-4-ty-dong-tien-30tr-thang-pr44843604" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -299,6 +358,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-so-hong-rieng-ke-goc-thoang-dep-lau-2-chi-2-150-ty-thuong-luong-pr45108945" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -310,6 +370,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-hung-vuong-2-phuong-10_4-391/ban-goc-chi-3-ty-co-thang-may-63m2-so-hong-lau-dai-vay-ngan-hang-de-dang-pr45294064" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -321,6 +382,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/re-nhat-1-4-ty-khong-co-thu-2-nhanh-tay-a-pr45235046" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -332,6 +394,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-yersin-phuong-9_2-391/ban-chua-qua-tay-ai-chu-au-tien-uoc-cap-tai-inh-1-490-ty-pr45307213" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -343,6 +406,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/so-hong-rieng-lau-dai-tang-thap-cuc-hiem-nha-moi-vao-o-ngay-quyen-pr45283491" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -354,6 +418,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/10-suat-chiet-khau-hon-15-cuoi-cung-dac-dia-nhat-nhon-pr44880402" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -365,6 +430,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/ban-cao-cap-view-truc-dien-bien-02-phong-ngu-gia-2-42-ti-pr44907702" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -376,6 +442,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-long-van-long-my-phuong-tran-quang-dieu-iec-residences-quy-nhon/thong-bao-tiep-nhan-so-noxh-toa-ct02-tp-bien-nhon-pr45153643" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -387,6 +454,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dai-lo-cua-lap-an-thoi-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-studio-32m-ban-cat-2-ty-phu-quoc-pr45302277" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -398,6 +466,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-le-loi-5-simona-heights/cao-cap-height-quy-nhon-gia-chi-1-8-ty-view-bien-so-huu-lau-dai-pr45365603" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -409,6 +478,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/quy-1pn-2pn-gia-tot-nhat-quoc-pr44826998" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -420,6 +490,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/full-gia-2-4-ty-vn-so-huu-tron-oi-view-bien-tai-chao-on-apec-2027-pr45242693" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -431,6 +502,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/song-chuan-resort-5-sao-tai-chi-1-85-ty-tam-iem-apec-2027-pr45354668" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -442,6 +514,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/con-sot-1n-1-view-bien-gia-full-ck-32-5-2-ty-htls-0-48-thang-han-goc-lh-em-pr45364283" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -453,6 +526,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-meypearl-harmony-phu-quoc/chi-650tr-so-huu-1pn-view-bien-htls-0-trong-48-thang-pr45360855" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -464,6 +538,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/view-bien-bieu-tuong-moi-cua-nhon-pr40072714" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -475,6 +550,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/re-nhat-bien-2pn-3pn-gia-tu-2-77-3-5-ty-tang-noi-that-nhu-hinh-that-pr45270851" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -486,6 +562,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/height-hang-sang-view-bien-tai-quy-nhon-vi-tri-oc-ban-pr45359548" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -497,6 +574,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-le-loi-5-simona-heights/bien-so-hong-lau-dai-re-nhat-tp-quy-nhon-tang-full-noi-that-cao-cap-pr45333288" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -508,6 +586,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-ngo-quyen-phuong-6_3-391/ban-gap-a-lat-pr45295733" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -519,6 +598,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2pn-60m2-chi-tu-2-ty-thanh-toan-50-nhan-nha-o-cho-thue-chiet-khau-den-15-pr43757126" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -530,6 +610,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/2-25-ty-2pn-tai-thanh-toan-chi-50-nhan-nha-o-cho-thue-ngay-chiet-khau-en-7-pr45186130" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -541,6 +622,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>Phone</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-scraper">batdongs</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-quoc-lo-51-phuong-phu-my_1-maison-grand-phu-my/ban-2pn-tai-gia-1-85-ty-50m2-suat-ngoai-giao-gia-tot-nhat-lh-093986586-pr45272199" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -552,6 +634,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://www.dotproperty.com.vn/en/ads/1-bedroom-condo-for-sale-in-meyhomes-capital-ph%C3%BA-qu%E1%BB%91c-duong-to-kien-giang_81da64302d38-7cff-60e5-a0c7-d548f792" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -563,6 +646,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://www.dotproperty.com.vn/en/ads/1-bedroom-condo-for-sale-in-meyhomes-capital-ph%C3%BA-qu%E1%BB%91c-duong-to-kien-giang_a0c4651b1d94-c0ef-e5d5-951d-deac8fc1" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -574,6 +658,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dt-975-phuong-an-thoi_1-prj-meypearl-harmony-phu-quoc/tong-hop-cac-studio-va-studio-dang-ban-tai-gia-chi-tu-1-8-ty-pr45100339" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -585,6 +670,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-an-thoi_1-prj-meypearl-harmony-phu-quoc/-so-huu-lau-dai-cdt-tan-a-dai-thanh-pr44861353" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -596,6 +682,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-meypearl-harmony-phu-quoc" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -607,6 +694,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-meyhomes-capital-phu-quoc" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -618,6 +706,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-sun-grand-city-hillside-an-thoi-kien-giang_7922225" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -629,6 +718,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-sun-grand-city-hillside-residence" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -640,6 +730,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-prj-sun-grand-city-hillside-residence/chinh-chu-ban-cat-lo-so-do-lau-dai-thi-tran-dia-trung-hai-tp-phu-quoc-pr41406797" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -651,6 +742,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-phuong-an-thoi_1-prj-sun-grand-city-hillside-residence/chinh-chu-ban-the-sea-cua-sungroup-phu-quoc-pr43260147" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -662,6 +754,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-altara-residences/2pn" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -673,6 +766,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/ban-can-ho-chung-cu-altara-residences" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="pending">
@@ -684,6 +778,7 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-masked"></td>
     <td>—</td>
     <td><span class="status-badge status-pending">pending</span></td>
+    <td><span class="source-badge source-excel">Excel</span></td>
     <td class="contact-links"><a href="https://batdongsan.com.vn/du-an-khu-phuc-hop-quy-nhon-bdd/altara-residences-pj4315" target="_blank">Listing</a></td>
 </tr>
 <tr data-status="contacted">
@@ -695,25 +790,71 @@ td { padding: 10px 12px; vertical-align: middle; }
     <td class="phone-full">+84971327149</td>
     <td>Zalo</td>
     <td><span class="status-badge status-contacted">contacted</span></td>
+    <td><span class="source-badge source-manual">Manual</span></td>
     <td class="contact-links"><a href="https://zalo.me/0971327149" target="_blank">Zalo</a></td>
 </tr>
 
 </tbody>
 </table>
 
-<p class="last-updated">Data from contacts.json &mdash; 2026-03-23 00:27 UTC</p>
+<p class="last-updated">Data from contacts.json &mdash; 2026-03-23 00:29 UTC</p>
 
 <script>
+let currentPage = 1;
+let pageSize = 25;
+let currentStatus = 'all';
+let searchQuery = '';
+
+function getFilteredRows() {
+    const rows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
+    return rows.filter(row => {
+        const statusMatch = currentStatus === 'all' || row.dataset.status === currentStatus;
+        const text = row.innerText.toLowerCase();
+        const searchMatch = !searchQuery || text.includes(searchQuery.toLowerCase());
+        return statusMatch && searchMatch;
+    });
+}
+
+function applyFilters() {
+    searchQuery = document.getElementById('searchBox').value;
+    currentPage = 1;
+    renderPage();
+}
+
 function filterStatus(status) {
+    currentStatus = status;
+    currentPage = 1;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
-    document.querySelectorAll('#dashboard tbody tr').forEach(row => {
-        if (status === 'all' || row.dataset.status === status) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
+    renderPage();
+}
+
+function renderPage() {
+    const allRows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
+    const filtered = getFilteredRows();
+    const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    allRows.forEach(r => r.style.display = 'none');
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    filtered.slice(start, end).forEach(r => r.style.display = '');
+
+    document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+    document.getElementById('prevBtn').disabled = currentPage <= 1;
+    document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+    document.getElementById('visibleCount').textContent = `${filtered.length} of ${allRows.length} listings`;
+}
+
+function changePage(delta) {
+    currentPage += delta;
+    renderPage();
+}
+
+function changePageSize(size) {
+    pageSize = parseInt(size);
+    currentPage = 1;
+    renderPage();
 }
 
 let sortDir = {};
@@ -732,7 +873,11 @@ function sortTable(col) {
         return sortDir[col] ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
     });
     rows.forEach(r => tbody.appendChild(r));
+    renderPage();
 }
+
+// Init
+renderPage();
 </script>
 </body>
 </html>
