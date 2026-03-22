@@ -1,8 +1,8 @@
-﻿name: Daily Property Scan
+name: Daily Property Scan
 
 on:
   schedule:
-    # Run at 5:00 AM UTC every day
+    # Run at 5:00 AM UTC every day (12:00 noon Vietnam time)
     - cron: '0 5 * * *'
   workflow_dispatch:  # Allow manual trigger from GitHub UI
 
@@ -24,17 +24,48 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run property scanner
+      - name: Run property scanner (Step 1 — Firecrawl)
         env:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
           cd ${{ github.workspace }}
           python main.py
 
+      - name: Install Playwright for contact extraction
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps chromium
+
+      - name: Decode portal cookies
+        run: |
+          mkdir -p cookies
+          if [ -n "${{ secrets.BATDONGSAN_COOKIES }}" ]; then
+            echo '${{ secrets.BATDONGSAN_COOKIES }}' | base64 -d > cookies/batdongsan.json
+            echo "Decoded batdongsan cookies"
+          else
+            echo "No batdongsan cookies configured — will extract without login"
+          fi
+          if [ -n "${{ secrets.DOTPROPERTY_COOKIES }}" ]; then
+            echo '${{ secrets.DOTPROPERTY_COOKIES }}' | base64 -d > cookies/dotproperty.json
+            echo "Decoded dotproperty cookies"
+          else
+            echo "No dotproperty cookies configured — will extract without login"
+          fi
+
+      - name: Extract broker contacts (Step 2 — Playwright)
+        env:
+          DATA_DIR: data
+          COOKIES_DIR: cookies
+          MAX_CONTACTS_PER_RUN: "50"
+        run: |
+          cd ${{ github.workspace }}
+          python contact_extractor.py
+
       - name: Commit and push results
         run: |
           git config user.name "Vietnam Deal Bot"
           git config user.email "bot@vietnam-deals.github.io"
           git add data/ docs/
-          git diff --staged --quiet || git commit -m "Daily scan: $(date +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "Daily scan + contacts: $(date +%Y-%m-%d)"
           git push
