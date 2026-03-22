@@ -31,6 +31,12 @@ jobs:
           cd ${{ github.workspace }}
           python main.py
 
+
+      - name: Run FazWaz scraper (Playwright)
+        run: python fazwaz_scraper.py
+        env:
+          DATA_DIR: data
+          FAZWAZ_MAX_PER_TARGET: "15"
       - name: Install Playwright for contact extraction
         run: |
           pip install playwright
