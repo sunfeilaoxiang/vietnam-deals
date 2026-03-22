@@ -31,12 +31,6 @@ jobs:
           cd ${{ github.workspace }}
           python main.py
 
-
-      - name: Run FazWaz scraper (Playwright)
-        run: python fazwaz_scraper.py
-        env:
-          DATA_DIR: data
-          FAZWAZ_MAX_PER_TARGET: "15"
       - name: Install Playwright for contact extraction
         run: |
           pip install playwright
@@ -58,6 +52,12 @@ jobs:
           else
             echo "No dotproperty cookies configured — will extract without login"
           fi
+
+      - name: Run FazWaz scraper (Playwright)
+        run: python fazwaz_scraper.py
+        env:
+          DATA_DIR: data
+          FAZWAZ_MAX_PER_TARGET: "15"
 
       - name: Extract broker contacts (Step 2 — Playwright)
         env:
