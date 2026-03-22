@@ -43,6 +43,7 @@ def build_dashboard(data_dir="data", output_dir="."):
             "outreach_channel": c.get("outreach_channel") or "",
             "response_date": c.get("response_date") or "",
             "response_notes": c.get("response_notes") or "",
+            "source": c.get("source") or "",
         })
 
     rows.sort(key=lambda x: x.get("listing_score", 0), reverse=True)
@@ -96,6 +97,15 @@ def build_dashboard(data_dir="data", output_dir="."):
         title_safe = r["listing_title"].replace('"', '&quot;').replace('<', '&lt;')
         title_html = f'<a href="{r["listing_url"]}" target="_blank">{title_safe}</a>' if r["listing_url"] else title_safe
 
+        # Source badge
+        source = r.get("source", "")
+        if "excel" in source or r["portal"] == "excel":
+            source_html = '<span class="source-badge source-excel">Excel</span>'
+        elif "manual" in source:
+            source_html = '<span class="source-badge source-manual">Manual</span>'
+        else:
+            source_html = f'<span class="source-badge source-scraper">{r["portal"][:8]}</span>'
+
         table_rows += f'''<tr data-status="{status}">
     <td><span class="score-badge {score_class}">{score:.1f}</span></td>
     <td class="location">{loc}</td>
@@ -105,6 +115,7 @@ def build_dashboard(data_dir="data", output_dir="."):
     <td class="{phone_class}">{r["broker_phone"]}</td>
     <td>{channel}</td>
     <td><span class="status-badge status-{status}">{status}</span></td>
+    <td>{source_html}</td>
     <td class="contact-links">{links_html}</td>
 </tr>
 '''
@@ -176,6 +187,30 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
 .phone-masked {{ color: #6b7280; font-style: italic; }}
 .phone-full {{ color: #10b981; }}
 .last-updated {{ color: #475569; font-size: 12px; margin-top: 16px; }}
+.search-bar {{ margin-bottom: 16px; display: flex; gap: 12px; align-items: center; }}
+.search-bar input {{
+    background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+    padding: 8px 14px; border-radius: 6px; font-size: 13px; width: 300px;
+}}
+.search-bar input:focus {{ outline: none; border-color: #3b82f6; }}
+.search-bar .count {{ color: #64748b; font-size: 13px; }}
+.pagination {{
+    display: flex; gap: 8px; align-items: center; margin-top: 16px; margin-bottom: 8px;
+}}
+.pagination button {{
+    background: #1e293b; border: 1px solid #334155; color: #94a3b8;
+    padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
+}}
+.pagination button:hover {{ border-color: #60a5fa; color: #e2e8f0; }}
+.pagination button:disabled {{ opacity: 0.3; cursor: default; }}
+.pagination .page-info {{ color: #64748b; font-size: 13px; }}
+.source-badge {{
+    display: inline-block; padding: 2px 6px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+}}
+.source-scraper {{ background: #1e3a5f; color: #60a5fa; }}
+.source-excel {{ background: #3b1764; color: #c084fc; }}
+.source-manual {{ background: #064e3b; color: #6ee7b7; }}
 </style>
 </head>
 <body>
@@ -199,6 +234,23 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
     <button class="filter-btn" onclick="filterStatus('meeting')">Meeting</button>
 </div>
 
+<div class="search-bar">
+    <input type="text" id="searchBox" placeholder="Search listings, brokers, cities..." oninput="applyFilters()">
+    <span class="count" id="visibleCount"></span>
+</div>
+
+<div class="pagination" id="paginationTop">
+    <button onclick="changePage(-1)" id="prevBtn">Prev</button>
+    <span class="page-info" id="pageInfo">Page 1</span>
+    <button onclick="changePage(1)" id="nextBtn">Next</button>
+    <select onchange="changePageSize(this.value)" style="background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:4px 8px;border-radius:4px;font-size:12px;">
+        <option value="25">25 per page</option>
+        <option value="50">50 per page</option>
+        <option value="100">100 per page</option>
+        <option value="999">Show all</option>
+    </select>
+</div>
+
 <table id="dashboard">
 <thead>
 <tr>
@@ -210,6 +262,7 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
     <th onclick="sortTable(5)">Phone</th>
     <th onclick="sortTable(6)">Channel</th>
     <th onclick="sortTable(7)">Status</th>
+    <th onclick="sortTable(8)">Source</th>
     <th>Links</th>
 </tr>
 </thead>
@@ -221,16 +274,61 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
 <p class="last-updated">Data from contacts.json &mdash; {now}</p>
 
 <script>
+let currentPage = 1;
+let pageSize = 25;
+let currentStatus = 'all';
+let searchQuery = '';
+
+function getFilteredRows() {{
+    const rows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
+    return rows.filter(row => {{
+        const statusMatch = currentStatus === 'all' || row.dataset.status === currentStatus;
+        const text = row.innerText.toLowerCase();
+        const searchMatch = !searchQuery || text.includes(searchQuery.toLowerCase());
+        return statusMatch && searchMatch;
+    }});
+}}
+
+function applyFilters() {{
+    searchQuery = document.getElementById('searchBox').value;
+    currentPage = 1;
+    renderPage();
+}}
+
 function filterStatus(status) {{
+    currentStatus = status;
+    currentPage = 1;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
-    document.querySelectorAll('#dashboard tbody tr').forEach(row => {{
-        if (status === 'all' || row.dataset.status === status) {{
-            row.style.display = '';
-        }} else {{
-            row.style.display = 'none';
-        }}
-    }});
+    renderPage();
+}}
+
+function renderPage() {{
+    const allRows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
+    const filtered = getFilteredRows();
+    const totalPages = Math.ceil(filtered.length / pageSize) || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    allRows.forEach(r => r.style.display = 'none');
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    filtered.slice(start, end).forEach(r => r.style.display = '');
+
+    document.getElementById('pageInfo').textContent = `Page ${{currentPage}} of ${{totalPages}}`;
+    document.getElementById('prevBtn').disabled = currentPage <= 1;
+    document.getElementById('nextBtn').disabled = currentPage >= totalPages;
+    document.getElementById('visibleCount').textContent = `${{filtered.length}} of ${{allRows.length}} listings`;
+}}
+
+function changePage(delta) {{
+    currentPage += delta;
+    renderPage();
+}}
+
+function changePageSize(size) {{
+    pageSize = parseInt(size);
+    currentPage = 1;
+    renderPage();
 }}
 
 let sortDir = {{}};
@@ -249,7 +347,11 @@ function sortTable(col) {{
         return sortDir[col] ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
     }});
     rows.forEach(r => tbody.appendChild(r));
+    renderPage();
 }}
+
+// Init
+renderPage();
 </script>
 </body>
 </html>'''
