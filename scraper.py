@@ -203,13 +203,23 @@ def _parse_batdongsan_structured(markdown, vnd_per_eur):
     # Take a generous chunk from the section
     section = markdown[section_start:section_start + 800]
 
+    # Check for "Thỏa thuận" (price upon agreement / negotiable)
+    # This means no fixed price — we should NOT fall back to body text extraction.
+    # Search in the section AND the full page (summary bar may appear before section).
+    thoa_thuan = re.search(r'Khoảng giá\s*Th[oỏ]a\s*thu[aậ]n', section, re.IGNORECASE)
+    if not thoa_thuan:
+        thoa_thuan = re.search(r'Khoảng giá\s*Th[oỏ]a\s*thu[aậ]n', markdown, re.IGNORECASE)
+    if thoa_thuan:
+        result['price_negotiable'] = True
+        # Don't set price_eur — signal to caller that price is genuinely unknown
+
     # Price: "Khoảng giáX,X tỷ" or "Khoảng giáXXX triệu"
     # Vietnamese uses comma as decimal separator: "2,7 tỷ" = 2.7 billion VND
     # IMPORTANT: Prefer tỷ over triệu — triệu in Khoảng giá is often price/m²
     price_match_ty = re.search(r'Khoảng giá\s*([\d,\.]+)\s*tỷ', section)
     price_match_trieu = re.search(r'Khoảng giá\s*([\d,\.]+)\s*triệu', section)
     price_match = price_match_ty or price_match_trieu
-    if price_match:
+    if price_match and not result.get('price_negotiable'):
         raw_num = price_match.group(1)
         # Handle Vietnamese decimal: "2,7" -> 2.7, "10,5" -> 10.5
         # But also "1.500" -> 1500 (dot as thousand separator)
@@ -357,6 +367,11 @@ def parse_single_listing(page_data, listing_url, portal_name, location_key, conf
         structured = _parse_dotproperty_structured(markdown, vnd_per_eur)
     elif 'fazwaz' in url_lower:
         structured = _parse_fazwaz_structured(markdown, vnd_per_eur)
+
+    # If structured parser found "Thỏa thuận" (price upon agreement), skip this listing.
+    # Do NOT fall back to generic extraction — body text prices are unreliable marketing numbers.
+    if structured.get('price_negotiable'):
+        return None
 
     # Use structured data with fallback to generic regex extraction
     price_eur = structured.get('price_eur') or extract_price(markdown, vnd_per_eur)
