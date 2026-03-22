@@ -1435,6 +1435,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-22",
+      "timestamp": "2026-03-22T10:49:00.456444",
+      "total_searched": 78,
+      "new_found": 3,
+      "published_count": 1,
+      "listings": [
+        {
+          "title": "Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc",
+          "title_original": "Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-dai-lo-cua-lap-an-thoi-phuong-an-thoi_1-sun-grand-city-hillside-residence/duy-nhat-studio-32m-ban-cat-2-ty-phu-quoc-pr45302277",
+          "portal": "batdongsan-p2",
+          "location_key": "phu_quoc",
+          "price_eur": 74074,
+          "price_raw": "2 tỷ",
+          "size_sqm": 32.0,
+          "bedrooms": 2,
+          "bathrooms": 1,
+          "developer": "Sun Group",
+          "legal_status": "Собственность",
+          "furnishing": "Полная меблировка",
+          "description": "- !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 0 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 1 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 2 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 3 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 4",
+          "description_original": "- !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 0 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 1 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 2 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 3 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 4",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 0 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 1 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 2 - !Duy nhất căn studio 32m2 bán cắt lỗ 2 tỷ - Hillside Phú Quốc - Ảnh 3 - !Duy nhất ",
+          "listing_id": "f2f2888a4b2e",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 4,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 6,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 74074,
+            "size_sqm": 32.0,
+            "bedrooms": 2,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
