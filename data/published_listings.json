@@ -1448,6 +1448,55 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-22",
+      "timestamp": "2026-03-22T10:04:20.380506",
+      "total_searched": 87,
+      "new_found": 10,
+      "published_count": 1,
+      "listings": [
+        {
+          "title": "Продам с огромным убытком элитную квартиру Алтара с видом на море.",
+          "title_original": "Bán lỗ mạnh căn hộ cao cấp Altara view biển",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-tran-hung-dao-phuong-hai-cang-altara-residences/ban-lo-manh-cao-cap-view-bien-pr38720421",
+          "portal": "batdongsan-p2",
+          "location_key": "quy_nhon",
+          "price_eur": 62593,
+          "price_raw": "1,69 tỷ",
+          "size_sqm": 61.0,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "developer": null,
+          "legal_status": "Собственность",
+          "furnishing": "Полная меблировка",
+          "description": "- !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 0 - !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 1 - !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 2 - !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 3 Altara Residences, улица Чан Хунг Дао, район Хай Кан, город Куинён, Бинь Динь",
+          "description_original": "- !Bán lỗ mạnh căn hộ cao cấp Altara view biển - Ảnh 0 - !Bán lỗ mạnh căn hộ cao cấp Altara view biển - Ảnh 1 - !Bán lỗ mạnh căn hộ cao cấp Altara view biển - Ảnh 2 - !Bán lỗ mạnh căn hộ cao cấp Altara view biển - Ảnh 3 Altara Residences, Đường Trần Hưng Đạo, Phường Hải Cảng, Thành phố Quy Nhơn, Bình Định",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 0 - !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 1 - !Продано с большим убытком в роскошной квартире Altara с видом на море - Фото 2 - !Продано с большим убытком в роскошной квартире Alta",
+          "listing_id": "2517b4b2b40b",
+          "score": 5.7,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 62593,
+            "size_sqm": 61.0,
+            "bedrooms": 2,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
