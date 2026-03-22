@@ -1,7 +1,7 @@
 """
-Vietnam Property Scraper — Firecrawl Edition
-Scrapes property portals directly using Firecrawl API to extract
-individual listing data with real URLs, prices, and property details.
+Vietnam Property Scraper — Firecrawl Two-Pass Edition
+Pass 1: Scrape search/listing pages to collect individual listing URLs.
+Pass 2: Scrape each individual listing page to get accurate property data.
 """
 
 import json
@@ -88,7 +88,6 @@ def firecrawl_scrape(url, api_key, formats=None, timeout=60):
 # Listing-type filters
 # ---------------------------------------------------------------------------
 
-# Vietnamese terms for non-apartment property types to SKIP
 LAND_SKIP_TERMS = [
     'bán đất', 'ban dat', 'đất nền', 'dat nen', 'đất thổ', 'dat tho',
     'land for sale', 'đất đẹp', 'lô đất', 'lo dat',
@@ -99,61 +98,66 @@ LAND_SKIP_TERMS = [
     'warehouse', 'kho xưởng', 'factory',
 ]
 
-# Price range filter text to skip (batdongsan sidebar filters)
-PRICE_RANGE_SKIP = [
-    'dưới 500', 'duoi 500', '500 - 800', '800 triệu - 1',
-    '1 - 2 tỷ', '2 - 3 tỷ', '3 - 5 tỷ', '5 - 7 tỷ',
-    '7 - 10 tỷ', '10 - 20 tỷ', '20 - 30 tỷ', '30 - 40 tỷ',
-    '40 - 60 tỷ', 'trên 60 tỷ', 'tren 60',
-]
 
-
-def _is_apartment_listing(block, title):
-    """Check if this block is about an apartment/condo, not land or villa."""
-    text = f"{block} {title}".lower()
-
-    # Skip if it's clearly land/villa/shophouse
+def _is_apartment_page(text):
+    """Check if a page is about an apartment/condo, not land or villa."""
+    text_lower = text.lower()
     for term in LAND_SKIP_TERMS:
-        if term in text:
-            # But allow if it also mentions apartment/condo
-            if any(apt in text for apt in ['căn hộ', 'can ho', 'apartment', 'condo', 'chung cư', 'chung cu']):
+        if term in text_lower:
+            if any(apt in text_lower for apt in ['căn hộ', 'can ho', 'apartment', 'condo', 'chung cư', 'chung cu']):
                 continue
             return False
-
-    # Skip price range filter blocks
-    for term in PRICE_RANGE_SKIP:
-        if term in text and len(block.strip()) < 100:
-            return False
-
     return True
 
 
 # ---------------------------------------------------------------------------
-# Parsing listings from scraped pages
+# Pass 1: Extract individual listing URLs from search pages
 # ---------------------------------------------------------------------------
 
-def parse_listings_from_page(page_data, portal_name, location_key, base_url, config):
+def _is_individual_listing_url(url_lower, portal_name=''):
+    """Check if a URL looks like an individual property listing page."""
+    # batdongsan: individual listings have prXXXXX or end in .html with a slug
+    if 'batdongsan.com.vn' in url_lower:
+        return bool(re.search(r'pr\d{5,}', url_lower))
+    # dotproperty: listings have _NNNNNNN at end
+    if 'dotproperty' in url_lower:
+        return bool(re.search(r'_\d{5,}$|/\d{5,}$', url_lower))
+    # fazwaz: listings have /property-sales/ or u followed by digits
+    if 'fazwaz' in url_lower:
+        return bool(re.search(r'/property-sales/|u\d{5,}', url_lower))
+    # vietnam-real.estate: listings have /property/ with deep slug
+    if 'vietnam-real.estate' in url_lower:
+        path = re.sub(r'https?://[^/]+', '', url_lower).strip('/')
+        segments = [s for s in path.split('/') if s]
+        return len(segments) >= 3
+    # tranio: listings have /vietnam/ with numeric ID
+    if 'tranio.com' in url_lower:
+        return bool(re.search(r'/\d{5,}', url_lower))
+    # nhatot: individual listings have numeric ID path
+    if 'nhatot.com' in url_lower:
+        return bool(re.search(r'/\d{8,}\.htm', url_lower))
+    # Generic: must have numeric ID and decent path depth
+    path = re.sub(r'https?://[^/]+', '', url_lower).strip('/')
+    segments = [s for s in path.split('/') if s]
+    return len(segments) >= 2 and bool(re.search(r'\d{5,}', url_lower))
+
+
+def extract_listing_urls_from_search(page_data, portal_name, base_url):
     """
-    Parse individual property listings from Firecrawl markdown + links output.
-    Returns a list of listing dicts.
+    Pass 1: Extract all individual listing URLs from a search results page.
+    Returns a list of absolute URLs.
     """
-    markdown = page_data.get("markdown", "")
     links = page_data.get("links", [])
+    markdown = page_data.get("markdown", "")
+    found_urls = set()
 
-    if not markdown:
-        return []
-
-    vnd_per_eur = config.get("vnd_per_eur", 27000)
-    budget_max = config.get("budget_max_eur", 138000)
-    listings = []
-
-    # Collect all links that look like individual listing pages
-    listing_links = []
+    # From the links array
     for link in links:
         url = link if isinstance(link, str) else link.get("url", link.get("href", ""))
         if not url:
             continue
         url_lower = url.lower()
+        # Skip obviously non-listing URLs
         if any(skip in url_lower for skip in [
             '/tag/', '/tags/', '/category/', '/search', '/tim-kiem',
             'apartments-for-sale', 'condos-for-sale', 'property-for-sale',
@@ -165,174 +169,152 @@ def parse_listings_from_page(page_data, portal_name, location_key, base_url, con
         ]):
             continue
         if _is_individual_listing_url(url_lower, portal_name):
-            listing_links.append(url)
+            found_urls.add(url)
 
-    # Split markdown into blocks per listing
-    blocks = re.split(r'\n(?=#{1,3}\s|\*\*\[|\[\!\[|---\n|___\n|\* \*\*|\[!\[)', markdown)
-
-    seen_urls = set()
-    for block in blocks:
-        try:
-            if len(block.strip()) < 30:
-                continue
-
-            title = _extract_title_from_block(block)
-            if not title or len(title) < 5:
-                continue
-
-            # Skip non-apartment listings
-            if not _is_apartment_listing(block, title):
-                print(f"    Skipped (not apartment): {title[:50]}")
-                continue
-
-            price_eur = extract_price(block, vnd_per_eur)
-            if not price_eur:
-                continue
-
-            # Skip if way over budget (>3x) — likely bad parse
-            if price_eur > budget_max * 3:
-                continue
-
-            # Find a listing link
-            listing_url = _find_listing_url_in_block(block, listing_links, base_url)
-            if not listing_url:
-                continue
-
-            # Deduplicate within page
-            if listing_url in seen_urls:
-                continue
-            seen_urls.add(listing_url)
-
-            size_sqm = extract_size(block)
-            bedrooms = extract_bedrooms(block)
-            bathrooms = extract_bathrooms(block)
-            developer = extract_developer(block, config.get('known_developers', {}))
-            legal_status = extract_legal_status(block)
-            furnishing = extract_furnishing(block)
-
-            # Translate title to Russian
-            title_ru = translate_to_russian(title) if not is_mostly_ascii(title) else title
-            desc_snippet = block[:300].strip()
-            desc_ru = translate_to_russian(desc_snippet) if not is_mostly_ascii(desc_snippet) else desc_snippet
-
-            listing = {
-                'title': title_ru,
-                'title_original': title,
-                'url': listing_url,
-                'portal': portal_name,
-                'location_key': location_key,
-                'price_eur': price_eur,
-                'price_raw': extract_raw_price(block),
-                'size_sqm': size_sqm,
-                'bedrooms': bedrooms,
-                'bathrooms': bathrooms,
-                'developer': developer,
-                'legal_status': legal_status,
-                'furnishing': furnishing,
-                'description': desc_ru,
-                'description_original': desc_snippet,
-                'sea_proximity': None,
-                'found_date': datetime.now().strftime('%Y-%m-%d'),
-                'source_snippet': desc_ru[:300],
-            }
-            listing['listing_id'] = generate_listing_id(listing)
-            listings.append(listing)
-        except Exception as e:
-            print(f"    WARNING: Error parsing block: {e}")
-            continue
-
-    return listings
-
-
-def _is_individual_listing_url(url_lower, portal_name):
-    """Check if a URL looks like an individual property listing."""
-    # batdongsan: individual listings have prXXXXX or end in .html
-    if 'batdongsan.com.vn' in url_lower:
-        return bool(re.search(r'pr\d{5,}|\.html', url_lower))
-    # dotproperty: listings have _NNNNNNN at end
-    if 'dotproperty' in url_lower:
-        return bool(re.search(r'_\d{5,}$|/\d{5,}$', url_lower))
-    # fazwaz: listings have /property-sales/ or u followed by digits
-    if 'fazwaz' in url_lower:
-        return bool(re.search(r'/property-sales/|u\d{5,}', url_lower))
-    # vietnam-real.estate: listings have /property/ with slug
-    if 'vietnam-real.estate' in url_lower:
-        path = re.sub(r'https?://[^/]+', '', url_lower).strip('/')
-        segments = [s for s in path.split('/') if s]
-        return len(segments) >= 3
-    # tranio: listings have /vietnam/ with specific property
-    if 'tranio.com' in url_lower:
-        return bool(re.search(r'/\d{5,}', url_lower))
-    # asia.villas: individual listings
-    if 'asia.villas' in url_lower:
-        return bool(re.search(r'/\d{5,}|/property/', url_lower))
-    # Generic: must have numeric ID and decent path depth
-    path = re.sub(r'https?://[^/]+', '', url_lower).strip('/')
-    segments = [s for s in path.split('/') if s]
-    return len(segments) >= 2 and bool(re.search(r'\d{5,}', url_lower))
-
-
-def _find_listing_url_in_block(block, listing_links, base_url):
-    """Find the most relevant individual listing URL for a markdown block."""
-    # Look for markdown links in the block: [text](url)
-    md_links = re.findall(r'\[([^\]]*)\]\(([^)]+)\)', block)
+    # Also extract URLs from markdown links: [text](url)
+    md_links = re.findall(r'\[([^\]]*)\]\(([^)]+)\)', markdown)
     for _text, url in md_links:
         url_full = url if url.startswith('http') else base_url.rstrip('/') + '/' + url.lstrip('/')
-        if url_full in listing_links or _is_individual_listing_url(url_full.lower(), ''):
-            return url_full
+        if _is_individual_listing_url(url_full.lower(), portal_name):
+            found_urls.add(url_full)
 
-    # Look for bare URLs in the block
-    bare_urls = re.findall(r'https?://[^\s\)]+', block)
-    for url in bare_urls:
-        if url in listing_links or _is_individual_listing_url(url.lower(), ''):
-            return url
-
-    # Try to match block content to a listing link by keyword overlap
-    block_lower = block.lower()
-    best_url = None
-    best_score = 0
-    for url in listing_links:
-        path_words = re.findall(r'[a-z]{3,}', url.lower().split('/')[-1])
-        score = sum(1 for w in path_words if w in block_lower)
-        if score > best_score:
-            best_score = score
-            best_url = url
-    if best_score >= 2:
-        return best_url
-
-    return None
+    return list(found_urls)
 
 
-def _extract_title_from_block(block):
-    """Extract a title from a markdown block."""
-    # Try markdown heading
-    heading = re.search(r'^#{1,3}\s+(.+)$', block, re.MULTILINE)
-    if heading:
-        title = heading.group(1).strip()
+# ---------------------------------------------------------------------------
+# Pass 2: Parse a single listing page for property details
+# ---------------------------------------------------------------------------
+
+def parse_single_listing(page_data, listing_url, portal_name, location_key, config):
+    """
+    Pass 2: Extract property details from an individual listing page.
+    Returns a listing dict or None if the page doesn't look like a valid apartment listing.
+    """
+    markdown = page_data.get("markdown", "")
+    if not markdown or len(markdown.strip()) < 50:
+        return None
+
+    vnd_per_eur = config.get("vnd_per_eur", 27000)
+    budget_max = config.get("budget_max_eur", 150000)
+
+    # Check if this is actually an apartment listing
+    if not _is_apartment_page(markdown):
+        return None
+
+    # Extract title from the page
+    title = _extract_page_title(markdown, page_data)
+    if not title or len(title) < 5:
+        return None
+
+    # Extract price
+    price_eur = extract_price(markdown, vnd_per_eur)
+    if not price_eur:
+        return None
+
+    # Skip if way over budget (>3x) — likely bad parse
+    if price_eur > budget_max * 3:
+        return None
+
+    # Extract other fields
+    size_sqm = extract_size(markdown)
+    bedrooms = extract_bedrooms(markdown)
+    bathrooms = extract_bathrooms(markdown)
+    developer = extract_developer(markdown, config.get('known_developers', {}))
+    legal_status = extract_legal_status(markdown)
+    furnishing = extract_furnishing(markdown)
+
+    # Translate title to Russian
+    title_ru = translate_to_russian(title) if not is_mostly_ascii(title) else title
+    desc_snippet = _extract_description(markdown)
+    desc_ru = translate_to_russian(desc_snippet) if not is_mostly_ascii(desc_snippet) else desc_snippet
+
+    listing = {
+        'title': title_ru,
+        'title_original': title,
+        'url': listing_url,
+        'portal': portal_name,
+        'location_key': location_key,
+        'price_eur': price_eur,
+        'price_raw': extract_raw_price(markdown),
+        'size_sqm': size_sqm,
+        'bedrooms': bedrooms,
+        'bathrooms': bathrooms,
+        'developer': developer,
+        'legal_status': legal_status,
+        'furnishing': furnishing,
+        'description': desc_ru,
+        'description_original': desc_snippet,
+        'sea_proximity': None,
+        'found_date': datetime.now().strftime('%Y-%m-%d'),
+        'source_snippet': desc_ru[:300],
+    }
+    listing['listing_id'] = generate_listing_id(listing)
+    return listing
+
+
+def _extract_page_title(markdown, page_data=None):
+    """Extract the main title from a single listing page."""
+    # Try metadata title first (Firecrawl sometimes returns it)
+    if page_data:
+        meta = page_data.get("metadata", {})
+        title = meta.get("title", "")
+        if title and len(title) > 5:
+            # Clean up common suffixes
+            title = re.sub(r'\s*[-|·]\s*(Batdongsan|BatDongSan|dotproperty|FazWaz|Nhà Tốt|nhatot).*$', '', title, flags=re.IGNORECASE)
+            if len(title) > 5:
+                return title.strip()[:200]
+
+    # Try first H1 heading
+    h1 = re.search(r'^#\s+(.+)$', markdown, re.MULTILINE)
+    if h1:
+        title = h1.group(1).strip()
+        title = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', title)
+        if len(title) > 5:
+            return title[:200]
+
+    # Try first H2 heading
+    h2 = re.search(r'^##\s+(.+)$', markdown, re.MULTILINE)
+    if h2:
+        title = h2.group(1).strip()
         title = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', title)
         if len(title) > 5:
             return title[:200]
 
     # Try first bold text
-    bold = re.search(r'\*\*([^*]+)\*\*', block)
-    if bold and len(bold.group(1).strip()) > 5:
+    bold = re.search(r'\*\*([^*]{5,})\*\*', markdown)
+    if bold:
         return bold.group(1).strip()[:200]
 
-    # Try first markdown link text
-    link = re.search(r'\[([^\]]{5,})\]', block)
-    if link:
-        text = link.group(1).strip()
-        # Skip image alt text
-        if not text.startswith('Ảnh') and not text.startswith('!'):
-            return text[:200]
-
-    # First non-empty line that's not an image
-    for line in block.split('\n'):
+    # First substantial line
+    for line in markdown.split('\n'):
         line = line.strip().lstrip('#').strip()
         if len(line) > 10 and not line.startswith('![') and not line.startswith('|'):
             return line[:200]
 
     return None
+
+
+def _extract_description(markdown):
+    """Extract a clean description snippet from the listing page."""
+    lines = markdown.split('\n')
+    desc_parts = []
+    for line in lines:
+        line = line.strip()
+        # Skip images, headers, links-only lines, very short lines
+        if not line or line.startswith('![') or line.startswith('#') or len(line) < 20:
+            continue
+        # Skip navigation/menu-like lines
+        if line.count('[') > 3:
+            continue
+        # Clean markdown formatting
+        clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', line)
+        clean = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean)
+        clean = clean.strip()
+        if len(clean) > 20:
+            desc_parts.append(clean)
+            if len(' '.join(desc_parts)) > 300:
+                break
+    return ' '.join(desc_parts)[:500] if desc_parts else ''
 
 
 # ---------------------------------------------------------------------------
@@ -367,7 +349,7 @@ def is_mostly_ascii(text):
 
 
 # ---------------------------------------------------------------------------
-# Field extractors
+# Field extractors (used on individual listing pages — more reliable)
 # ---------------------------------------------------------------------------
 
 def extract_price(text, vnd_per_eur=27000):
@@ -530,32 +512,38 @@ def extract_furnishing(text):
 
 
 def generate_listing_id(listing):
-    key = f"{listing.get('title_original', listing.get('title', ''))}|{listing.get('url', '')}".lower().strip()
+    key = f"{listing.get('url', '')}".lower().strip()
     return hashlib.md5(key.encode()).hexdigest()[:12]
 
 
 # ---------------------------------------------------------------------------
-# Main search round — Firecrawl edition
+# Main two-pass search round
 # ---------------------------------------------------------------------------
 
 def run_search_round(config):
     """
-    Run one complete search round by scraping portal listing pages
-    directly with Firecrawl.
+    Run one complete search round using the two-pass approach:
+    Pass 1: Scrape search pages → collect individual listing URLs
+    Pass 2: Scrape each listing page → extract accurate property data
     """
     firecrawl_key = os.environ.get('FIRECRAWL_API_KEY', '')
     if not firecrawl_key:
         print("ERROR: FIRECRAWL_API_KEY not set!")
         return []
 
-    all_listings = []
     scrape_targets = config.get("scrape_targets", [])
-
     if not scrape_targets:
         print("ERROR: No scrape_targets configured!")
         return []
 
     credits_used = 0
+    budget_max = config.get("budget_max_eur", 150000)
+
+    # ---------------------------------------------------------------
+    # Pass 1: Collect listing URLs from search pages
+    # ---------------------------------------------------------------
+    print("\n  === PASS 1: Collecting listing URLs from search pages ===")
+    listing_urls_by_loc = {}  # {(url, loc_key, portal_name, base_url)}
 
     for target in scrape_targets:
         loc_key = target["location_key"]
@@ -564,43 +552,106 @@ def run_search_round(config):
         base_url = target.get("base_url", re.match(r'https?://[^/]+', page_url).group(0))
         loc_config = config['locations'].get(loc_key, {})
 
-        print(f"\n{'='*50}")
-        print(f"  Scraping: {portal_name} → {loc_config.get('label_en', loc_key)}")
+        print(f"\n  Scraping: {portal_name} → {loc_config.get('label_en', loc_key)}")
         print(f"  URL: {page_url}")
-        print(f"{'='*50}")
 
         try:
             page_data = firecrawl_scrape(page_url, firecrawl_key)
             credits_used += 1
 
             if not page_data:
-                print(f"  No data returned")
+                print(f"    No data returned")
                 continue
 
-            md_len = len(page_data.get("markdown", ""))
-            n_links = len(page_data.get("links", []))
-            print(f"  Got {md_len} chars markdown, {n_links} links")
+            urls = extract_listing_urls_from_search(page_data, portal_name, base_url)
+            print(f"    Found {len(urls)} listing URLs")
 
-            listings = parse_listings_from_page(
-                page_data, portal_name, loc_key, base_url, config
-            )
-            print(f"  Extracted {len(listings)} apartment listings")
+            for url in urls:
+                listing_urls_by_loc.setdefault(loc_key, []).append({
+                    'url': url,
+                    'portal': portal_name,
+                    'base_url': base_url,
+                })
 
-            for lst in listings:
-                br = lst.get('bedrooms')
-                br_str = f"{br}BR" if br is not None else "?BR"
-                sz = lst.get('size_sqm')
-                sz_str = f"{sz}m²" if sz else "?m²"
-                print(f"    ✓ €{lst['price_eur']:,} | {br_str} | {sz_str} | {lst['title_original'][:50]}")
-
-            all_listings.extend(listings)
-            time.sleep(1)
+            time.sleep(0.5)
 
         except Exception as e:
-            print(f"  WARNING: Failed to scrape {portal_name}/{loc_key}: {e}")
+            print(f"    WARNING: Failed to scrape search page {portal_name}/{loc_key}: {e}")
             continue
 
-    print(f"\n  Total Firecrawl credits used this run: {credits_used}")
+    # Deduplicate URLs across portals (same listing may appear on multiple search pages)
+    all_url_entries = []
+    seen_urls = set()
+    for loc_key, entries in listing_urls_by_loc.items():
+        for entry in entries:
+            url_normalized = entry['url'].rstrip('/').lower()
+            if url_normalized not in seen_urls:
+                seen_urls.add(url_normalized)
+                all_url_entries.append({**entry, 'location_key': loc_key})
+
+    total_urls = len(all_url_entries)
+    print(f"\n  Pass 1 complete: {total_urls} unique listing URLs found")
+    print(f"  Credits used (search pages): {credits_used}")
+
+    # Credit budget check: cap individual scrapes to stay within reason
+    # Reserve ~30 credits for search pages, use the rest for individual listings
+    max_listing_scrapes = min(total_urls, 120)  # cap at 120 per run
+    if total_urls > max_listing_scrapes:
+        print(f"  Capping to {max_listing_scrapes} listing scrapes (of {total_urls} found)")
+        # Prioritize: spread evenly across locations
+        by_loc = {}
+        for entry in all_url_entries:
+            by_loc.setdefault(entry['location_key'], []).append(entry)
+        per_loc = max(5, max_listing_scrapes // len(by_loc))
+        capped = []
+        for loc_key, entries in by_loc.items():
+            capped.extend(entries[:per_loc])
+        all_url_entries = capped[:max_listing_scrapes]
+
+    # ---------------------------------------------------------------
+    # Pass 2: Scrape individual listing pages
+    # ---------------------------------------------------------------
+    print(f"\n  === PASS 2: Scraping {len(all_url_entries)} individual listing pages ===")
+    all_listings = []
+
+    for i, entry in enumerate(all_url_entries):
+        url = entry['url']
+        loc_key = entry['location_key']
+        portal = entry['portal']
+
+        if (i + 1) % 10 == 0 or i == 0:
+            print(f"\n  [{i+1}/{len(all_url_entries)}] Scraping listings...")
+
+        try:
+            page_data = firecrawl_scrape(url, firecrawl_key)
+            credits_used += 1
+
+            if not page_data:
+                continue
+
+            listing = parse_single_listing(
+                page_data, url, portal, loc_key, config
+            )
+
+            if listing:
+                br = listing.get('bedrooms')
+                br_str = f"{br}BR" if br is not None else "?BR"
+                sz = listing.get('size_sqm')
+                sz_str = f"{sz}m²" if sz else "?m²"
+                print(f"    ✓ €{listing['price_eur']:,} | {br_str} | {sz_str} | {listing['title_original'][:50]}")
+                all_listings.append(listing)
+            else:
+                print(f"    ✗ Skipped: {url[:80]}")
+
+            # Rate limiting: small delay between requests
+            time.sleep(0.5)
+
+        except Exception as e:
+            print(f"    WARNING: Failed to scrape listing {url[:60]}: {e}")
+            continue
+
+    print(f"\n  Pass 2 complete: {len(all_listings)} valid listings extracted")
+    print(f"  Total Firecrawl credits used this run: {credits_used}")
     return all_listings
 
 
