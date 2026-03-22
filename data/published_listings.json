@@ -1484,6 +1484,135 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-22",
+      "timestamp": "2026-03-22T17:11:17.551858",
+      "total_searched": 19,
+      "new_found": 19,
+      "published_count": 3,
+      "listings": [
+        {
+          "title": "2,9 миллиарда единиц с видом на море, самая дешевая внутренняя емкость на рынке",
+          "title_original": "2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/10-suat-chiet-khau-hon-15-cuoi-cung-dac-dia-nhat-nhon-pr44880402",
+          "portal": "batdongsan-sailing",
+          "location_key": "quy_nhon",
+          "price_eur": 107407,
+          "price_raw": "2,9 tỷ",
+          "size_sqm": 60.0,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "developer": null,
+          "legal_status": "Собственность",
+          "furnishing": "Базовая",
+          "description": "- !2,9 миллиарда Квартиры с видом на море под парусом с самой дешевой внутренней стоимостью на рынке - Фото 0 - Квартиры с видом на море под парусом с самой дешевой внутренней емкостью на рынке - Фото 1 - Квартиры с видом на море под парусом с самой дешевой внутренней емкостью на рынке - Фото 1 - Квартиры с видом на море под парусом с самой дешевой внутренней емкостью на рынке - Фото 2 - Квартиры с видом на море под парусом с самой дешевой внутренней вместимостью на рынке - Фото 3 - Квартиры с видом на море под парусом с самой дешевой внутренней вместимостью на рынке - Фото 3 - !2.9 миллиарда Квартиры под парусом с видом на море с самой дешевой внутренней вместимостью на рынке емкость на рынке - Фото 4",
+          "description_original": "- !2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường - Ảnh 0 - !2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường - Ảnh 1 - !2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường - Ảnh 2 - !2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường - Ảnh 3 - !2,9 tỷ căn view biển Sailing suất nội bộ giá rẻ nhất thị trường - Ảnh 4",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !2,9 миллиарда Квартиры с видом на море под парусом с самой дешевой внутренней стоимостью на рынке - Фото 0 - Квартиры с видом на море под парусом с самой дешевой внутренней емкостью на рынке - Фото 1 - Квартиры с видом на море под парусом с самой дешевой внутренней емкостью на рынке - Фото 1 - Кв",
+          "listing_id": "de1aeea0f6e2",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 107407,
+            "size_sqm": 60.0,
+            "bedrooms": 2,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "Продается квартира в CC The Sailing Quy Nhon с прямым видом на море, юго-восточное направление: 2 спальни. Цена 2,59 миллиарда",
+          "title_original": "Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-le-duan-phuong-ly-thuong-kiet-1-the-sailing-quy-nhon/ban-cao-cap-view-truc-dien-bien-02-phong-ngu-gia-2-42-ti-pr44907702",
+          "portal": "batdongsan-sailing",
+          "location_key": "quy_nhon",
+          "price_eur": 95926,
+          "price_raw": "2,59 tỷ",
+          "size_sqm": 65.0,
+          "bedrooms": 2,
+          "bathrooms": 2,
+          "developer": null,
+          "legal_status": "Собственность",
+          "furnishing": "Полная меблировка",
+          "description": "- !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 0 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 1 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 2",
+          "description_original": "- !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 0 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 1 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 2",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 0 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòng ngủ. Giá 2,59 tỉ - Ảnh 1 - !Bán căn hộ CC The Sailing Quy Nhơn view trực diện biển, hướng đông nam: 02 phòn",
+          "listing_id": "3917ccf018cf",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 95926,
+            "size_sqm": 65.0,
+            "bedrooms": 2,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "Уведомление о получении заявления на получение социального жилья IEC в здании CT02, прибрежный город Куинён",
+          "title_original": "Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn",
+          "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-duong-long-van-long-my-phuong-tran-quang-dieu-iec-residences-quy-nhon/thong-bao-tiep-nhan-so-noxh-toa-ct02-tp-bien-nhon-pr45153643",
+          "portal": "batdongsan-iec",
+          "location_key": "quy_nhon",
+          "price_eur": 23519,
+          "price_raw": "635 triệu",
+          "size_sqm": 47.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Собственность",
+          "furnishing": null,
+          "description": "- !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 0 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 1 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 2 IEC Residences Quy Nhơn, Đường Long Vân - Long Mỹ, Phường Trần Quang Diệu, Thành phố Quy Nhơn, Bình Định",
+          "description_original": "- !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 0 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 1 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 2 IEC Residences Quy Nhơn, Đường Long Vân - Long Mỹ, Phường Trần Quang Diệu, Thành phố Quy Nhơn, Bình Định",
+          "sea_proximity": null,
+          "found_date": "2026-03-22",
+          "source_snippet": "- !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 0 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 1 - !Thông báo tiếp nhận hồ sơ NOXH IEC tòa CT02 TP biển Quy Nhơn - Ảnh 2 IEC Residences Quy Nhơn, Đường Long Vân - Long Mỹ, Phường Trần Quang Diệu, Thành phố",
+          "listing_id": "c513107a8fc1",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 23519,
+            "size_sqm": 47.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
