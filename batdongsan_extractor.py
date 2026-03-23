@@ -47,20 +47,34 @@ def normalize_phone(phone_str):
 
 
 def scrape_phone_from_page(page):
+    """
+    Extract phone number from page after clicking Hien so.
+    Tries tel: links first, then bare number patterns.
+    Returns normalized phone string or None.
+    """
     content = page.content()
+
+    # tel: href - most reliable
     tel_match = re.search(r'href="tel:(\+?84\d{8,10}|0\d{9,10})"', content)
     if tel_match:
         return normalize_phone(tel_match.group(1))
+
+    # Bare 10-digit Vietnamese phone (no asterisks)
     for m in re.finditer(r'(0\d{2,3}[\s.]?\d{3}[\s.]?\d{3,4})', content):
         candidate = m.group(1)
         if '*' not in candidate:
             cleaned = re.sub(r'[\s.]', '', candidate)
             if len(cleaned) >= 10:
                 return normalize_phone(cleaned)
+
     return None
 
 
 def click_reveal_phone(page):
+    """
+    Try known selectors for the Hien so / Xem so button on batdongsan.
+    Returns True if a button was clicked.
+    """
     selectors = [
         'button:has-text("Hi\u1ec7n s\u1ed1")',
         'a:has-text("Hi\u1ec7n s\u1ed1")',
@@ -103,12 +117,16 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
     with open(contacts_file, encoding="utf-8-sig") as f:
         contacts_db = json.load(f)
 
+    # Find batdongsan entries that need phone extraction:
+    # - broker_phone is null/missing, OR
+    # - no_cookies is True (extracted without login), OR
+    # - broker_phone_full is False and phone looks masked
     targets = []
     for lid, entry in contacts_db["contacts"].items():
         if entry.get("portal") != "batdongsan":
             continue
         if entry.get("broker_phone_full"):
-            continue
+            continue  # Already have a full phone
         url = entry.get("listing_url", "")
         if not url or "batdongsan.com.vn" not in url:
             continue
@@ -139,11 +157,13 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
             locale="vi-VN",
         )
 
+        # Add cookies
         try:
             context.add_cookies(cookies)
             print(f"  Added {len(cookies)} cookies to browser context\n")
         except Exception as e:
             print(f"  WARNING: context.add_cookies failed: {e}")
+            # Try adding individually, skipping bad ones
             good = 0
             for ck in cookies:
                 try:
@@ -154,6 +174,8 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
             print(f"  Added {good}/{len(cookies)} cookies individually\n")
 
         page = context.new_page()
+
+        # Intercept API responses that contain phone numbers
         last_api_phone = {}
 
         def on_response(response):
@@ -175,24 +197,32 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
         for i, (lid, entry) in enumerate(targets):
             url = entry["listing_url"]
             print(f"[{i+1}/{len(targets)}] {url[:80]}")
+
             last_api_phone.clear()
 
             try:
                 page.goto(url, wait_until="domcontentloaded", timeout=20000)
                 page.wait_for_timeout(2500)
 
+                # Check login state
                 current_url = page.url
                 if "login" in current_url or "dang-nhap" in current_url:
                     print("  ERROR: Session expired / not logged in. Aborting.")
                     break
 
+                # Click reveal button
                 clicked = click_reveal_phone(page)
                 if clicked:
                     page.wait_for_timeout(2000)
 
+                # 1. Check API intercept
                 phone = last_api_phone.get('value')
+
+                # 2. Scrape from page DOM
                 if not phone:
                     phone = scrape_phone_from_page(page)
+
+                # 3. Try inner_text scan
                 if not phone:
                     try:
                         body_text = page.inner_text("body")
@@ -215,6 +245,7 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
                     e["contact_method"] = "whatsapp"
                     e["phone_extracted_at"] = datetime.now().isoformat()
 
+                    # Update broker dedup index
                     broker_name = e.get("broker_name")
                     if phone not in contacts_db["brokers"]:
                         contacts_db["brokers"][phone] = {
@@ -227,6 +258,7 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
                     else:
                         if lid not in contacts_db["brokers"][phone]["listings"]:
                             contacts_db["brokers"][phone]["listings"].append(lid)
+
                     updated += 1
                 else:
                     print(f"  x No phone found (clicked={clicked})")
@@ -242,6 +274,7 @@ def run_batdongsan_extraction(data_dir="data", cookies_dir="cookies"):
         context.close()
         browser.close()
 
+    # Recount stats from scratch
     full = sum(1 for e in contacts_db["contacts"].values() if e.get("broker_phone_full"))
     masked = sum(
         1 for e in contacts_db["contacts"].values()
