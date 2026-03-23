@@ -2674,6 +2674,95 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-23",
+      "timestamp": "2026-03-23T10:18:05.728043",
+      "total_searched": 2,
+      "new_found": 2,
+      "published_count": 2,
+      "listings": [
+        {
+          "title": "1 Bedroom Apartment for Sale in Duong To, Kien Giang for $76,000 | U2121654",
+          "title_original": "1 Bedroom Apartment for Sale in Duong To, Kien Giang for $76,000 | U2121654",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-duong-to-kien-giang-u2121654",
+          "portal": "fazwaz",
+          "location_key": "phu_quoc",
+          "price_eur": 55936,
+          "price_raw": "$76,000",
+          "size_sqm": 36.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Иностр. квота",
+          "furnishing": "Базовая",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 🌴 5 REASONS TO INVEST IN PHU QUOC REAL ESTATE IN 2025 Duong To, Phu Quoc, Kien Giang Duong To, Phu Quoc, Kien Giang 12](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-duong-to-kien-giang-u2121654#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 🌴 5 REASONS TO INVEST IN PHU QUOC REAL ESTATE IN 2025 Duong To, Phu Quoc, Kien Giang Duong To, Phu Quoc, Kien Giang 12](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-duong-to-kien-giang-u2121654#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 🌴 5 REASONS TO INVEST IN PHU QUOC REAL ESTATE IN 2025 Duong To, Phu Quoc, Kien Giang Duong To, Phu Quoc, Kien Giang 12](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-duong-to-kien-giang-u212",
+          "listing_id": "1a821d155031",
+          "score": 5.7,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 55936,
+            "size_sqm": 36.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $108,000 | U2072620",
+          "title_original": "1 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $108,000 | U2072620",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2072620",
+          "portal": "fazwaz",
+          "location_key": "phu_quoc",
+          "price_eur": 79488,
+          "price_raw": "$108,000",
+          "size_sqm": 49.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Аренда 50 лет",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2072620#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2072620#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-s",
+          "listing_id": "5d55bc447f8c",
+          "score": 5.7,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 79488,
+            "size_sqm": 49.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
