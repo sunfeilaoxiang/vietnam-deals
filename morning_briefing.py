@@ -27,7 +27,7 @@ GITHUB_HEADERS = {
 }
 
 # Telegram credentials (from Documents/Claude/Projects/Telegram hook/config.json)
-TELEGRAM_TOKEN   = "8693866142:AAFex6INm69lxkEYvPySCxsTaNB-Xre3juI"
+TELEGRAM_TOKEN   = "TELEGRAM_BOT_TOKEN"
 TELEGRAM_CHAT_ID = 505364158
 
 DASHBOARD_URL = "https://sunfeilaoxiang.github.io/vietnam-deals/outreach_dashboard.html"
