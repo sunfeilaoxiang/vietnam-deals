@@ -25,7 +25,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "ad522aa80f26": {
       "listing_id": "ad522aa80f26",
@@ -52,7 +53,8 @@
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": false,
-      "phone_extracted_at": "2026-03-23T10:20:01.908393"
+      "phone_extracted_at": "2026-03-23T10:20:01.908393",
+      "preferred_channel": "zalo"
     },
     "18f404a04b01": {
       "listing_id": "18f404a04b01",
@@ -78,7 +80,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "2d9b7bdc92d9": {
       "listing_id": "2d9b7bdc92d9",
@@ -104,7 +107,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "decf1c44da7c": {
       "listing_id": "decf1c44da7c",
@@ -130,7 +134,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "2517b4b2b40b": {
       "listing_id": "2517b4b2b40b",
@@ -156,7 +161,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "60d4b55b2c34": {
       "listing_id": "60d4b55b2c34",
@@ -182,7 +188,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "3daf6bf0f711": {
       "listing_id": "3daf6bf0f711",
@@ -208,7 +215,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "c951efbae23e": {
       "listing_id": "c951efbae23e",
@@ -234,7 +242,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "e982ebf0e115": {
       "listing_id": "e982ebf0e115",
@@ -260,7 +269,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "7d99f400e2ec": {
       "listing_id": "7d99f400e2ec",
@@ -286,7 +296,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "ae706787b929": {
       "listing_id": "ae706787b929",
@@ -312,7 +323,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "969e037fd04d": {
       "listing_id": "969e037fd04d",
@@ -338,7 +350,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "33b2125fa065": {
       "listing_id": "33b2125fa065",
@@ -364,7 +377,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "01af114951fe": {
       "listing_id": "01af114951fe",
@@ -390,7 +404,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "78f10582d5ce": {
       "listing_id": "78f10582d5ce",
@@ -416,7 +431,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "b406f8284105": {
       "listing_id": "b406f8284105",
@@ -442,7 +458,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "11c4b29b916b": {
       "listing_id": "11c4b29b916b",
@@ -468,7 +485,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "0767838756ed": {
       "listing_id": "0767838756ed",
@@ -494,7 +512,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "5680ea72bea5": {
       "listing_id": "5680ea72bea5",
@@ -520,7 +539,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "ff24f5bd94db": {
       "listing_id": "ff24f5bd94db",
@@ -546,7 +566,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "de1aeea0f6e2": {
       "listing_id": "de1aeea0f6e2",
@@ -572,7 +593,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "3917ccf018cf": {
       "listing_id": "3917ccf018cf",
@@ -598,7 +620,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "c513107a8fc1": {
       "listing_id": "c513107a8fc1",
@@ -624,7 +647,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "f2f2888a4b2e": {
       "listing_id": "f2f2888a4b2e",
@@ -650,7 +674,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "bdd9f24f28ac": {
       "listing_id": "bdd9f24f28ac",
@@ -677,7 +702,8 @@
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": false,
-      "phone_extracted_at": "2026-03-23T11:59:13.033524"
+      "phone_extracted_at": "2026-03-23T11:59:13.033524",
+      "preferred_channel": "zalo"
     },
     "d76aedff9a97": {
       "listing_id": "d76aedff9a97",
@@ -703,7 +729,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "630e8f6ce8bc": {
       "listing_id": "630e8f6ce8bc",
@@ -729,7 +756,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "10e09b7c02fe": {
       "listing_id": "10e09b7c02fe",
@@ -755,7 +783,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "832ed037896f": {
       "listing_id": "832ed037896f",
@@ -781,7 +810,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "216a7d822db7": {
       "listing_id": "216a7d822db7",
@@ -807,7 +837,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "490651e1d3ad": {
       "listing_id": "490651e1d3ad",
@@ -833,7 +864,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "48ab0695f0cd": {
       "listing_id": "48ab0695f0cd",
@@ -859,7 +891,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "010a6a762e2d": {
       "listing_id": "010a6a762e2d",
@@ -885,7 +918,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "112af37e41b5": {
       "listing_id": "112af37e41b5",
@@ -911,7 +945,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "158ff87a3c0a": {
       "listing_id": "158ff87a3c0a",
@@ -937,7 +972,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "d3dc2b4e1c05": {
       "listing_id": "d3dc2b4e1c05",
@@ -963,7 +999,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "0f1d55e28ef0": {
       "listing_id": "0f1d55e28ef0",
@@ -989,7 +1026,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "23f8bbdcfd2e": {
       "listing_id": "23f8bbdcfd2e",
@@ -1015,7 +1053,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "manual_meyhomes_pq_1br_artus": {
       "listing_id": "manual_meyhomes_pq_1br_artus",
@@ -1041,7 +1080,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "manual_excel_outreach"
+      "source": "manual_excel_outreach",
+      "preferred_channel": "zalo"
     },
     "manual_thao_nguyen_test": {
       "listing_id": "manual_thao_nguyen_test",
@@ -1067,7 +1107,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "manual_test_outreach"
+      "source": "manual_test_outreach",
+      "preferred_channel": "zalo"
     },
     "excel_deal1_c60c4cf9": {
       "listing_id": "excel_deal1_c60c4cf9",
@@ -1093,7 +1134,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal1_6b216b76": {
       "listing_id": "excel_deal1_6b216b76",
@@ -1119,7 +1161,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "scraper+excel"
+      "source": "scraper+excel",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal1_83f3a7d1": {
       "listing_id": "excel_deal1_83f3a7d1",
@@ -1145,7 +1188,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal1_5330ab35": {
       "listing_id": "excel_deal1_5330ab35",
@@ -1171,7 +1215,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal1_c68b813f": {
       "listing_id": "excel_deal1_c68b813f",
@@ -1197,7 +1242,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal1_d53121ea": {
       "listing_id": "excel_deal1_d53121ea",
@@ -1223,7 +1269,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "scraper+excel"
+      "source": "scraper+excel",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal1_7e4dd4c9": {
       "listing_id": "excel_deal1_7e4dd4c9",
@@ -1249,7 +1296,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal2_cc726a34": {
       "listing_id": "excel_deal2_cc726a34",
@@ -1275,7 +1323,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "scraper+excel"
+      "source": "scraper+excel",
+      "preferred_channel": "zalo"
     },
     "excel_deal4_ea117220": {
       "listing_id": "excel_deal4_ea117220",
@@ -1301,7 +1350,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal4_f87c1dcc": {
       "listing_id": "excel_deal4_f87c1dcc",
@@ -1327,7 +1377,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal5_34f636a6": {
       "listing_id": "excel_deal5_34f636a6",
@@ -1353,7 +1404,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal5_f2f036d7": {
       "listing_id": "excel_deal5_f2f036d7",
@@ -1379,7 +1431,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal5_8b3ff52f": {
       "listing_id": "excel_deal5_8b3ff52f",
@@ -1405,7 +1458,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal5_2fd0eb9e": {
       "listing_id": "excel_deal5_2fd0eb9e",
@@ -1431,7 +1485,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal5_21c3f3f1": {
       "listing_id": "excel_deal5_21c3f3f1",
@@ -1457,7 +1512,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal6_cedbd035": {
       "listing_id": "excel_deal6_cedbd035",
@@ -1483,7 +1539,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "scraper+excel"
+      "source": "scraper+excel",
+      "preferred_channel": "zalo"
     },
     "excel_deal6_6f6117ef": {
       "listing_id": "excel_deal6_6f6117ef",
@@ -1509,7 +1566,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal6_930026a4": {
       "listing_id": "excel_deal6_930026a4",
@@ -1535,7 +1593,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal6_45dd6e05": {
       "listing_id": "excel_deal6_45dd6e05",
@@ -1561,7 +1620,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal7_ffc7bda3": {
       "listing_id": "excel_deal7_ffc7bda3",
@@ -1587,7 +1647,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal8_95a0797f": {
       "listing_id": "excel_deal8_95a0797f",
@@ -1613,7 +1674,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal8_82fdc667": {
       "listing_id": "excel_deal8_82fdc667",
@@ -1639,7 +1701,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "whatsapp"
     },
     "excel_deal9_nourl": {
       "listing_id": "excel_deal9_nourl",
@@ -1665,7 +1728,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "excel_deal10_nourl": {
       "listing_id": "excel_deal10_nourl",
@@ -1691,7 +1755,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "excel_shortlist"
+      "source": "excel_shortlist",
+      "preferred_channel": "zalo"
     },
     "5de6729c0cdc": {
       "listing_id": "5de6729c0cdc",
@@ -1717,7 +1782,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "1e8d2535f0bb": {
       "listing_id": "1e8d2535f0bb",
@@ -1743,7 +1809,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "35ae9291e6d2": {
       "listing_id": "35ae9291e6d2",
@@ -1769,7 +1836,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "ae3c81d2af05": {
       "listing_id": "ae3c81d2af05",
@@ -1795,7 +1863,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "fceef82aba3c": {
       "listing_id": "fceef82aba3c",
@@ -1821,7 +1890,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "b578ea41fa0f": {
       "listing_id": "b578ea41fa0f",
@@ -1847,7 +1917,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "28027381b5d2": {
       "listing_id": "28027381b5d2",
@@ -1873,7 +1944,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "12f2f0ca1831": {
       "listing_id": "12f2f0ca1831",
@@ -1899,7 +1971,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "b5969b68e3aa": {
       "listing_id": "b5969b68e3aa",
@@ -1925,7 +1998,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "dd8a2327c879": {
       "listing_id": "dd8a2327c879",
@@ -1951,7 +2025,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "b7c4d8734395": {
       "listing_id": "b7c4d8734395",
@@ -1977,7 +2052,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "zalo"
     },
     "fazwaz_2146431": {
       "listing_id": "fazwaz_2146431",
@@ -2003,7 +2079,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_1701800": {
       "listing_id": "fazwaz_1701800",
@@ -2029,7 +2106,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2098168": {
       "listing_id": "fazwaz_2098168",
@@ -2055,7 +2133,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2096261": {
       "listing_id": "fazwaz_2096261",
@@ -2081,7 +2160,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2072383": {
       "listing_id": "fazwaz_2072383",
@@ -2107,7 +2187,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2072620": {
       "listing_id": "fazwaz_2072620",
@@ -2133,7 +2214,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2134269": {
       "listing_id": "fazwaz_2134269",
@@ -2159,7 +2241,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2073423": {
       "listing_id": "fazwaz_2073423",
@@ -2185,7 +2268,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2117635": {
       "listing_id": "fazwaz_2117635",
@@ -2211,7 +2295,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2126506": {
       "listing_id": "fazwaz_2126506",
@@ -2237,7 +2322,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2122051": {
       "listing_id": "fazwaz_2122051",
@@ -2263,7 +2349,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2137953": {
       "listing_id": "fazwaz_2137953",
@@ -2289,7 +2376,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2139645": {
       "listing_id": "fazwaz_2139645",
@@ -2315,7 +2403,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2143639": {
       "listing_id": "fazwaz_2143639",
@@ -2341,7 +2430,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "fazwaz_2141716": {
       "listing_id": "fazwaz_2141716",
@@ -2367,7 +2457,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "dp_9554732": {
       "listing_id": "dp_9554732",
@@ -2383,7 +2474,8 @@
       "contact_method": "zalo",
       "outreach_status": "contacted",
       "outreach_date": "2026-03-23",
-      "outreach_channel": "zalo"
+      "outreach_channel": "zalo",
+      "preferred_channel": "whatsapp"
     },
     "dp_4397523": {
       "listing_id": "dp_4397523",
@@ -2399,7 +2491,8 @@
       "outreach_status": "contacted",
       "outreach_date": "2026-03-23",
       "outreach_channel": "zalo",
-      "broker_name": "DANH KHOI REAL ESTATE"
+      "broker_name": "DANH KHOI REAL ESTATE",
+      "preferred_channel": "whatsapp"
     },
     "d660e62ac633": {
       "listing_id": "d660e62ac633",
@@ -2424,7 +2517,8 @@
       "outreach_channel": null,
       "response_date": null,
       "response_notes": null,
-      "follow_up_dates": []
+      "follow_up_dates": [],
+      "preferred_channel": "whatsapp"
     },
     "af1d4864cc22": {
       "listing_id": "af1d4864cc22",
@@ -2449,7 +2543,8 @@
       "outreach_channel": null,
       "response_date": null,
       "response_notes": null,
-      "follow_up_dates": []
+      "follow_up_dates": [],
+      "preferred_channel": "whatsapp"
     },
     "4aae1d3b335b": {
       "listing_id": "4aae1d3b335b",
@@ -2475,7 +2570,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "ce461a47b6ca": {
       "listing_id": "ce461a47b6ca",
@@ -2501,7 +2597,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "8780bfc8dfc9": {
       "listing_id": "8780bfc8dfc9",
@@ -2527,7 +2624,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "0ca43b571bd4": {
       "listing_id": "0ca43b571bd4",
@@ -2553,7 +2651,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "4eaac2ec75db": {
       "listing_id": "4eaac2ec75db",
@@ -2579,7 +2678,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "3748d08c29b4": {
       "listing_id": "3748d08c29b4",
@@ -2605,7 +2705,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "1a821d155031": {
       "listing_id": "1a821d155031",
@@ -2631,7 +2732,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "5d55bc447f8c": {
       "listing_id": "5d55bc447f8c",
@@ -2657,7 +2759,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "e058d27c653b": {
       "listing_id": "e058d27c653b",
@@ -2683,7 +2786,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "c8afe3669a06": {
       "listing_id": "c8afe3669a06",
@@ -2709,7 +2813,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": true,
+      "preferred_channel": "whatsapp"
     },
     "1f62b5a044d1": {
       "listing_id": "1f62b5a044d1",
@@ -2735,7 +2840,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "manual_dotproperty"
+      "source": "manual_dotproperty",
+      "preferred_channel": "whatsapp"
     },
     "b937388ab055": {
       "listing_id": "b937388ab055",
@@ -2761,7 +2867,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "manual_dotproperty"
+      "source": "manual_dotproperty",
+      "preferred_channel": "whatsapp"
     },
     "39ffbf772d11": {
       "listing_id": "39ffbf772d11",
@@ -2787,7 +2894,8 @@
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "source": "manual_dotproperty"
+      "source": "manual_dotproperty",
+      "preferred_channel": "whatsapp"
     }
   },
   "brokers": {
