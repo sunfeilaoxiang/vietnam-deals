@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run property scanner (Step 1 — Firecrawl)
+      - name: Run property scanner (Step 1 - Firecrawl)
         env:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
@@ -62,7 +62,7 @@ jobs:
           DATA_DIR: data
           FAZWAZ_MAX_PER_TARGET: "15"
 
-      - name: Extract broker contacts (Step 2 — Playwright)
+      - name: Extract broker contacts (Step 2 - Playwright)
         env:
           DATA_DIR: data
           COOKIES_DIR: cookies
@@ -71,12 +71,20 @@ jobs:
           cd ${{ github.workspace }}
           python contact_extractor.py
 
+      - name: Backfill batdongsan phone numbers
+        env:
+          DATA_DIR: data
+          COOKIES_DIR: cookies
+        run: |
+          cd ${{ github.workspace }}
+          python batdongsan_extractor.py
 
       - name: Build outreach dashboard
         run: python build_dashboard.py
         env:
           DATA_DIR: data
           OUTPUT_DIR: docs
+
       - name: Commit and push results
         run: |
           git config user.name "Vietnam Deal Bot"
