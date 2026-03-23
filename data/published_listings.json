@@ -2505,6 +2505,175 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-23",
+      "timestamp": "2026-03-23T09:51:20.190858",
+      "total_searched": 14,
+      "new_found": 14,
+      "published_count": 4,
+      "listings": [
+        {
+          "title": "1 Bedroom Apartment for Sale at The 5 Way Phu Quoc for $57,000 | U2073423",
+          "title_original": "1 Bedroom Apartment for Sale at The 5 Way Phu Quoc for $57,000 | U2073423",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-the-5-way-phu-quoc-in-ganh-dau-kien-giang-u2073423",
+          "portal": "fazwaz",
+          "location_key": "phu_quoc",
+          "price_eur": 41952,
+          "price_raw": "$57,000",
+          "size_sqm": 37.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Аренда 50 лет",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 16](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-the-5-way-phu-quoc-in-ganh-dau-kien-giang-u2073423#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 16](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-the-5-way-phu-quoc-in-ganh-dau-kien-giang-u2073423#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at The 5 Way Phu Quoc Ganh Dau, Phu Quoc, Kien Giang 16](https://www.fazwaz.vn/property-sales/1-bedroo",
+          "listing_id": "8780bfc8dfc9",
+          "score": 5.9,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 41952,
+            "size_sqm": 37.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $67,100 | U2054330",
+          "title_original": "1 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $67,100 | U2054330",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2054330",
+          "portal": "fazwaz",
+          "location_key": "phu_quoc",
+          "price_eur": 49404,
+          "price_raw": "$67,100",
+          "size_sqm": 31.6,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Аренда 50 лет",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2054330#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2054330#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 1 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-s",
+          "listing_id": "0ca43b571bd4",
+          "score": 5.7,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 49404,
+            "size_sqm": 31.6,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1 Bedroom Apartment for Sale in Nhon Ly, Binh Dinh for $64,600 | U2149387",
+          "title_original": "1 Bedroom Apartment for Sale in Nhon Ly, Binh Dinh for $64,600 | U2149387",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-nhon-ly-binh-dinh-u2149387",
+          "portal": "fazwaz",
+          "location_key": "quy_nhon",
+          "price_eur": 47564,
+          "price_raw": "$64,600",
+          "size_sqm": 49.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": "Hung Thinh",
+          "legal_status": "Иностр. квота",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Japanese Apartment Style - Sea View - 7,8 Hectare Green Park Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-nhon-ly-binh-dinh-u2149387#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Japanese Apartment Style - Sea View - 7,8 Hectare Green Park Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-nhon-ly-binh-dinh-u2149387#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Japanese Apartment Style - Sea View - 7,8 Hectare Green Park Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-nhon-ly-binh-dinh-u21",
+          "listing_id": "4eaac2ec75db",
+          "score": 5.6,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 5,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 6,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 47564,
+            "size_sqm": 49.0,
+            "bedrooms": 1,
+            "sea_proximity": "under_500m",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for $68,400 | U2101869",
+          "title_original": "1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for $68,400 | U2101869",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869",
+          "portal": "fazwaz",
+          "location_key": "quy_nhon",
+          "price_eur": 50324,
+          "price_raw": "$68,400",
+          "size_sqm": 49.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": "Hung Thinh",
+          "legal_status": "Собственность",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz JAPANESE STYLE APARTMENT LONG-TERM OWNERSHIP Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 5](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869#photos) ![Map View](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869#map)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz JAPANESE STYLE APARTMENT LONG-TERM OWNERSHIP Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 5](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869#photos) ![Map View](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869#map)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz JAPANESE STYLE APARTMENT LONG-TERM OWNERSHIP Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 5](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869#photos) ![Map V",
+          "listing_id": "3748d08c29b4",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 3,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 6,
+            "foreign_ownership_clarity": 7,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 50324,
+            "size_sqm": 49.0,
+            "bedrooms": 1,
+            "sea_proximity": "coastal",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
