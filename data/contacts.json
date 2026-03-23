@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T22:52:09.759202",
+  "last_updated": "2026-03-23T23:01:25.548268",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -1940,14 +1940,15 @@
       "form_url": "https://www.dotproperty.com.vn/en/enquire/4397523/1-bedroom-condo-for-sale-in-duong-to-kien-giang",
       "broker_profile_url": null,
       "contact_method": "form",
-      "outreach_status": "pending",
-      "outreach_date": null,
-      "outreach_channel": null,
+      "outreach_status": "no_account",
+      "outreach_date": "2026-03-23T23:01:25.548257",
+      "outreach_channel": "whatsapp",
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "whatsapp"
+      "preferred_channel": "whatsapp",
+      "notes": "Phone not registered in WhatsApp"
     },
     "12f2f0ca1831": {
       "listing_id": "12f2f0ca1831",
@@ -2890,9 +2891,9 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "zalo",
-      "outreach_status": "pending",
-      "outreach_date": null,
-      "outreach_channel": null,
+      "outreach_status": "sent",
+      "outreach_date": "2026-03-23T23:01:25.548226",
+      "outreach_channel": "whatsapp",
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
