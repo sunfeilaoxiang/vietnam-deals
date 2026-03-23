@@ -1,5 +1,23 @@
 # Vietnam Deals - Claude Code Context
 
+## Quick Commands
+- Trigger pipeline: `py C:\Users\dsdar\vietnam-deals-work\trigger_run.py`
+- Check run status: `py C:\Users\dsdar\vietnam-deals-work\check_run.py`
+- Upload secret: `py C:\Users\dsdar\vietnam-deals-work\upload_secret.py SECRET_NAME path\to\file.json`
+- Update contacts on GitHub: `py C:\Users\dsdar\vietnam-deals-work\update_contacts.py`
+- List GitHub secrets: `py C:\Users\dsdar\vietnam-deals-work\check_secrets.py`
+
+## File Structure
+- `main.py` / `scraper.py` — Firecrawl property scraper (Phase 1)
+- `contact_extractor.py` — Playwright contact extraction (Phase 2)
+- `fazwaz_scraper.py` — Playwright FazWaz scraper
+- `build_dashboard.py` — Generates outreach_dashboard.html
+- `data/published_listings.json` — Scraped listings
+- `data/contacts.json` — Extracted broker contacts (93+ entries)
+- `docs/index.html` — Main deals page (GitHub Pages)
+- `docs/outreach_dashboard.html` — Outreach tracker dashboard
+- `.github/workflows/daily_scan.yml` — Daily pipeline
+
 ## Environment
 - Windows 11, Git Bash shell — Bash tool often fails. Write `.py` scripts and run with `py script.py`
 - Never inline Python in cmd.exe — quotes break. Always write to a .py file first
@@ -20,8 +38,9 @@
 
 ## GitHub Repo
 - Owner: sunfeilaoxiang, Repo: vietnam-deals
-- PAT available for API operations
+- PAT: use via Python scripts in vietnam-deals-work/ (stored in script files)
 - Secrets: BATDONGSAN_COOKIES, DOTPROPERTY_COOKIES, FIRECRAWL_API_KEY (raw JSON, NOT base64)
+- When cookies expire: re-extract via Claude in Chrome javascript_tool on logged-in tab, save to .json, run upload_secret.py
 - GitHub Pages serves from docs/ folder
 - Pipeline: daily_scan.yml runs at 05:00 UTC — Firecrawl scrape → Playwright contacts → FazWaz → dashboard build
 - Helper scripts in vietnam-deals-work/: upload_secret.py, trigger_run.py, check_run.py, update_contacts.py
