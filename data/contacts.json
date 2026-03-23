@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T10:23:26.442410",
+  "last_updated": "2026-03-23T12:00:57.623471",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -662,21 +662,22 @@
       "price_eur": 66667,
       "extracted_at": "2026-03-22T17:13:40.652377",
       "broker_name": null,
-      "broker_phone": null,
-      "broker_phone_full": false,
+      "broker_phone": "+842603170101",
+      "broker_phone_full": true,
       "whatsapp_url": null,
       "zalo_url": null,
       "messenger_url": null,
       "form_url": null,
       "broker_profile_url": null,
-      "contact_method": "phone_masked",
+      "contact_method": "whatsapp",
       "outreach_status": "pending",
       "outreach_date": null,
       "outreach_channel": null,
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
-      "no_cookies": true
+      "no_cookies": false,
+      "phone_extracted_at": "2026-03-23T11:59:13.033524"
     },
     "d76aedff9a97": {
       "listing_id": "d76aedff9a97",
@@ -2656,6 +2657,58 @@
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": true
+    },
+    "e058d27c653b": {
+      "listing_id": "e058d27c653b",
+      "listing_url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-ganh-dau-kien-giang-u2072383",
+      "listing_title": "1 Bedroom Apartment for Sale in Ganh Dau, Kien Giang for $57,000 | U2072383",
+      "listing_score": 5.9,
+      "location": "phu_quoc",
+      "portal": "fazwaz",
+      "price_eur": 41952,
+      "extracted_at": "2026-03-23T11:58:50.056462",
+      "broker_name": null,
+      "broker_phone": null,
+      "broker_phone_full": false,
+      "whatsapp_url": null,
+      "zalo_url": null,
+      "messenger_url": null,
+      "form_url": "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-ganh-dau-kien-giang-u2072383",
+      "broker_profile_url": null,
+      "contact_method": "form",
+      "outreach_status": "pending",
+      "outreach_date": null,
+      "outreach_channel": null,
+      "response_date": null,
+      "response_notes": null,
+      "follow_up_dates": [],
+      "no_cookies": true
+    },
+    "c8afe3669a06": {
+      "listing_id": "c8afe3669a06",
+      "listing_url": "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2081174",
+      "listing_title": "1 Bedroom Condo for Sale at Meyhomes Capital Phú Quốc for $63,100 | U2081174",
+      "listing_score": 5.7,
+      "location": "phu_quoc",
+      "portal": "fazwaz",
+      "price_eur": 46460,
+      "extracted_at": "2026-03-23T11:58:54.143298",
+      "broker_name": null,
+      "broker_phone": null,
+      "broker_phone_full": false,
+      "whatsapp_url": null,
+      "zalo_url": null,
+      "messenger_url": null,
+      "form_url": "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2081174",
+      "broker_profile_url": null,
+      "contact_method": "form",
+      "outreach_status": "pending",
+      "outreach_date": null,
+      "outreach_channel": null,
+      "response_date": null,
+      "response_notes": null,
+      "follow_up_dates": [],
+      "no_cookies": true
     }
   },
   "brokers": {
@@ -2664,14 +2717,15 @@
       "phone": "+842603170101",
       "first_seen": "2026-03-23T10:20:01.908404",
       "listings": [
-        "ad522aa80f26"
+        "ad522aa80f26",
+        "bdd9f24f28ac"
       ],
       "portal": "batdongsan"
     }
   },
   "stats": {
-    "total_extracted": 77,
-    "phone_full": 5,
+    "total_extracted": 79,
+    "phone_full": 33,
     "phone_masked": 1,
     "whatsapp_available": 0,
     "form_only": 2
