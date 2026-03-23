@@ -31,7 +31,7 @@
 
 ## Data
 - `data/published_listings.json` — scored listings from scraper
-- `data/contacts.json` — ~103 contacts; ~32 have `broker_phone_full=true` (full unmasked phone) as of 2026-03-23
+- `data/contacts.json` — broker contacts; filter `broker_phone_full=true` for outreach-ready records
 - `C:\Users\dsdar\zalo-mcp\outreach_tracker.json` — local send tracker (Zalo + WhatsApp)
 
 ## Geographic Scope (ALL in scope)
@@ -39,12 +39,13 @@ Phu Quoc, Quy Nhon, Da Lat, Con Dao, Da Nang, Ho Chi Minh
 
 ## Scraper Quirks
 - **batdongsan URL suffixes**: Phu Quoc `-kg`, Quy Nhon `-bdd`, Da Lat `-ldd` — required or redirects to wrong page
-- **batdongsan phone quota**: daily per-account limit (~24 reveals/day). Cookies do NOT bypass. Workaround: browser agent manually clicks "Hien so". Got 24 phones 2026-03-23; listings #25-38 still pending.
-- **FazWaz**: JS SPA — Playwright only (not Firecrawl). Cookie popup blocks results; use extra wait time.
-- **FazWaz parser bug**: price + bedrooms returning "unknown"/None — fix pushed 2026-03-23, unverified.
+- **batdongsan price parsing**: Vietnamese comma decimals — `49,42` not `49.42`. Do not "fix" this to a dot.
+- **batdongsan phone quota**: daily per-account limit (~24 reveals/day). Cookies do NOT bypass it. Workaround: browser agent manually clicks "Hien so" on a logged-in tab.
+- **FazWaz**: JS SPA — Playwright only (not Firecrawl). Cookie popup blocks results; needs extra wait time.
+- **FazWaz parser bug (open)**: price and bedroom fields return "unknown"/None — needs investigation.
 - **Firecrawl credit leak**: dotproperty image CDN URLs waste credits. Dedup BEFORE Pass 2 saves 30-50%.
 
-## Zalo Outreach (/outreach skill)
+## Zalo Outreach (`/outreach` skill)
 - Sends via Zalo Web (`chat.zalo.me`) using Claude in Chrome JS
 - Phone format: local `0903826541`, NOT international `+84903826541`
 - Zalo ignores synthetic events — use native setter + dispatch `input` event
@@ -52,9 +53,8 @@ Phu Quoc, Quy Nhon, Da Lat, Con Dao, Da Nang, Ho Chi Minh
 - If stranger blocks: Add friend fallback (150-char note in textarea)
 - Session expires often — check for "Dang nhap" in title (needs QR re-scan)
 - Zalo account: `+37127709900` / `zalozalo777`
-- 5 brokers messaged 2026-03-23; **Anh Tu replied "Hi Sr" — follow up needed**
 
-## WhatsApp Outreach (/whatsapp-outreach skill) — LIVE as of 2026-03-23
+## WhatsApp Outreach (`/whatsapp-outreach` skill)
 WhatsApp Web already logged in the Claude in Chrome profile. No QR scan needed.
 
 Proven send flow — do not deviate:
@@ -67,8 +67,6 @@ Proven send flow — do not deviate:
 5. Wait 3 seconds, screenshot to verify, update tracker
 
 CRITICAL: Only one WhatsApp tab at a time. Multiple tabs = session conflict = nothing sends.
-
-~25 phones queued, batch not yet fired — priority for next session.
 
 ## Dashboard
 Live: `sunfeilaoxiang.github.io/vietnam-deals/outreach_dashboard.html`
