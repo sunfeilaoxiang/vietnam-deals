@@ -2416,6 +2416,95 @@
           }
         }
       ]
+    },
+    {
+      "date": "2026-03-23",
+      "timestamp": "2026-03-23T08:48:20.535725",
+      "total_searched": 18,
+      "new_found": 18,
+      "published_count": 2,
+      "listings": [
+        {
+          "title": "1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for $49,400 | U2132268",
+          "title_original": "1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for $49,400 | U2132268",
+          "url": "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2132268",
+          "portal": "fazwaz",
+          "location_key": "quy_nhon",
+          "price_eur": 36340,
+          "price_raw": "$49,400",
+          "size_sqm": 50.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": "Hung Thinh",
+          "legal_status": "Иностр. квота",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Căn Hộ Biển - Phong Cách Nhật Lần Đầu Tiên Tại Việt Nam Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2132268#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Căn Hộ Biển - Phong Cách Nhật Lần Đầu Tiên Tại Việt Nam Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2132268#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz Căn Hộ Biển - Phong Cách Nhật Lần Đầu Tiên Tại Việt Nam Nhon Ly, Quy Nhon, Binh Dinh Nhon Ly, Quy Nhon, Binh Dinh 14](https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2132268#pho",
+          "listing_id": "4aae1d3b335b",
+          "score": 5.9,
+          "score_components": {
+            "price_per_sqm": 7,
+            "location_tier": 5,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 5,
+            "air_quality": 6,
+            "developer_reputation": 6,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 36340,
+            "size_sqm": 50.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "2 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $106,000 | U2068816",
+          "title_original": "2 Bedroom Apartment for Sale at Meyhomes Capital Phú Quốc for $106,000 | U2068816",
+          "url": "https://www.fazwaz.vn/property-sales/2-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2068816",
+          "portal": "fazwaz",
+          "location_key": "phu_quoc",
+          "price_eur": 78016,
+          "price_raw": "$106,000",
+          "size_sqm": 48.9,
+          "bedrooms": 2,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": "Аренда 50 лет",
+          "furnishing": "Полная меблировка",
+          "description": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/2-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2068816#photos)",
+          "description_original": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-sales/2-bedroom-apartment-for-sale-at-meyhomes-capital-phu-qu%E1%BB%91c-in-duong-to-kien-giang-u2068816#photos)",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "Exclusive Member-Only Deals Save up to 10% and get access to exclusive deals on FazWaz 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 2 Bedroom Apartment for sale at Meyhomes Capital Phú Quốc Duong To, Phu Quoc, Kien Giang 5](https://www.fazwaz.vn/property-s",
+          "listing_id": "ce461a47b6ca",
+          "score": 5.6,
+          "score_components": {
+            "price_per_sqm": 6,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 4
+          },
+          "parsed_data": {
+            "price_eur": 78016,
+            "size_sqm": 48.9,
+            "bedrooms": 2,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }
