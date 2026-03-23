@@ -2366,6 +2366,37 @@
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": true
+    },
+    "dp_9554732": {
+      "listing_id": "dp_9554732",
+      "listing_url": "https://www.dotproperty.com.vn/can-ban-can-ho-1-phong-ngu-tai-ba-ria-vung-tau_9554732",
+      "listing_title": "1-2PN Căn Hộ Nghỉ Dưỡng Trong Khu Phức Hợp Cao Cấp Hồ Tràm",
+      "listing_score": 5.0,
+      "location": "ba_ria_vung_tau",
+      "portal": "dotproperty",
+      "price_eur": 107407,
+      "broker_name": "Bùi Văn Thái",
+      "broker_phone": "+84903826541",
+      "broker_phone_full": true,
+      "contact_method": "zalo",
+      "outreach_status": "contacted",
+      "outreach_date": "2026-03-23",
+      "outreach_channel": "zalo"
+    },
+    "dp_4397523": {
+      "listing_id": "dp_4397523",
+      "listing_url": "https://www.dotproperty.com.vn/can-ban-can-ho-1-phong-ngu-tai-duong-to-phu-quoc-kien-giang_4397523",
+      "listing_title": "CĂN HỘ NGHĨ DƯỠNG LIỀN KỀ BIỂN CAM KẾT SINH LỜI CK 16%",
+      "listing_score": 5.5,
+      "location": "phu_quoc",
+      "portal": "dotproperty",
+      "price_eur": 70370,
+      "broker_phone": "+84978986914",
+      "broker_phone_full": true,
+      "contact_method": "zalo",
+      "outreach_status": "contacted",
+      "outreach_date": "2026-03-23",
+      "outreach_channel": "zalo"
     }
   },
   "brokers": {},
