@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T22:51:00.086127",
+  "last_updated": "2026-03-23T22:52:09.759202",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -1074,14 +1074,15 @@
       "form_url": null,
       "broker_profile_url": "https://www.dotproperty.com.vn/publisher/artus-real-estate-preferred-partner_3cb69225af4f-07f0-7215-e12f-b1e43000/properties-for-sale",
       "contact_method": "zalo",
-      "outreach_status": "contacted",
+      "outreach_status": "responded",
       "outreach_date": "2026-03-22T23:46:00",
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-23T14:44:00",
+      "response_notes": "Active broker. Replied with detailed pricing: 1BR from 2.5B VND (2.3B w/ 95% upfront). Lease to 2089 for foreigners. Sent project video. We asked for floor plans.",
       "follow_up_dates": [],
       "source": "manual_excel_outreach",
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "interested"
     },
     "manual_thao_nguyen_test": {
       "listing_id": "manual_thao_nguyen_test",
@@ -1101,14 +1102,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "zalo",
-      "outreach_status": "contacted",
+      "outreach_status": "responded",
       "outreach_date": "2026-03-22T21:41:00",
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-23T03:25:00",
+      "response_notes": "Asked if we're interested in The Marq D1 HCMC. Sent listing card: 38B VND, 150m2, 29 Nguyen Dinh Chieu.",
       "follow_up_dates": [],
       "source": "manual_test_outreach",
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "more_info"
     },
     "excel_deal1_c60c4cf9": {
       "listing_id": "excel_deal1_c60c4cf9",
