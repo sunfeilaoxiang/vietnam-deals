@@ -490,6 +490,13 @@ def get_extractor(portal):
     return extractors.get(portal, extract_generic_contacts)
 
 
+def get_preferred_channel(portal):
+    """Return the outreach channel (zalo or whatsapp) for a given portal."""
+    if portal in ('dotproperty', 'fazwaz'):
+        return 'whatsapp'
+    return 'zalo'  # batdongsan and everything else goes via Zalo
+
+
 # ---------------------------------------------------------------------------
 # Main extraction pipeline
 # ---------------------------------------------------------------------------
@@ -579,6 +586,7 @@ def run_contact_extraction(data_dir="data", cookies_dir="cookies", max_per_run=5
                         "listing_score": score,
                         "location": listing.get("location_key", ""),
                         "portal": portal_name,
+                        "preferred_channel": get_preferred_channel(portal_name),
                         "price_eur": listing.get("price_eur"),
                         "extracted_at": datetime.now().isoformat(),
                         **contact_info,
@@ -672,6 +680,7 @@ def run_contact_extraction(data_dir="data", cookies_dir="cookies", max_per_run=5
                         "listing_score": score,
                         "location": listing.get("location_key", ""),
                         "portal": portal,
+                        "preferred_channel": get_preferred_channel(portal),
                         "price_eur": listing.get("price_eur"),
                         "extracted_at": datetime.now().isoformat(),
                         **contact_info,
