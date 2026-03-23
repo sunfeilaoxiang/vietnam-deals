@@ -125,7 +125,8 @@ def extract_listings_from_search(page, target_url, location_key, min_br, max_br)
 
 def parse_from_title(title):
     """Extract bedrooms, price, location from FazWaz page title.
-    Example: '1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for €4,570 | U2121608'
+    Example: '1 Bedroom Condo for Sale in Nhon Ly, Binh Dinh for 139,000,000 ₫ | U2121608'
+    Also handles: '...for €4,570 | U2121608' (EUR format)
     """
     result = {}
 
@@ -134,7 +135,7 @@ def parse_from_title(title):
     if br_match:
         result["bedrooms"] = int(br_match.group(1))
 
-    # Price EUR
+    # Price EUR (€ symbol)
     eur_match = re.search(r'€([\d,]+)', title)
     if eur_match:
         try:
@@ -142,20 +143,36 @@ def parse_from_title(title):
         except ValueError:
             pass
 
-    # Price VND
-    vnd_match = re.search(r'₫\s*([\d,.]+)\s*(billion|million|tỷ|triệu)', title, re.IGNORECASE)
-    if vnd_match:
-        try:
-            val = float(vnd_match.group(1).replace(",", ""))
-            unit = vnd_match.group(2).lower()
-            if unit in ("billion", "tỷ"):
-                result["price_vnd"] = int(val * 1_000_000_000)
-                if "price_eur" not in result:
-                    result["price_eur"] = int(val * 1_000_000_000 / VND_PER_EUR)
-            elif unit in ("million", "triệu"):
-                result["price_vnd"] = int(val * 1_000_000)
-        except ValueError:
-            pass
+    # Price VND — raw format "NUMBER ₫" (number before symbol, no unit suffix)
+    # This is the current FazWaz title format: "for 139,000,000 ₫ |"
+    if "price_eur" not in result:
+        vnd_raw_match = re.search(r'([\d,]+)\s*₫', title)
+        if vnd_raw_match:
+            try:
+                val = int(vnd_raw_match.group(1).replace(",", ""))
+                if val > 1_000_000:  # sanity check — must be at least 1M VND
+                    result["price_vnd"] = val
+                    result["price_eur"] = int(val / VND_PER_EUR)
+            except ValueError:
+                pass
+
+    # Price VND — "₫ NUMBER billion/million" format (symbol before number, with unit)
+    if "price_vnd" not in result:
+        vnd_unit_match = re.search(r'₫\s*([\d,.]+)\s*(billion|million|tỷ|triệu)', title, re.IGNORECASE)
+        if vnd_unit_match:
+            try:
+                val = float(vnd_unit_match.group(1).replace(",", ""))
+                unit = vnd_unit_match.group(2).lower()
+                if unit in ("billion", "tỷ"):
+                    result["price_vnd"] = int(val * 1_000_000_000)
+                    if "price_eur" not in result:
+                        result["price_eur"] = int(val * 1_000_000_000 / VND_PER_EUR)
+                elif unit in ("million", "triệu"):
+                    result["price_vnd"] = int(val * 1_000_000)
+                    if "price_eur" not in result:
+                        result["price_eur"] = int(val * 1_000_000 / VND_PER_EUR)
+            except ValueError:
+                pass
 
     # Property type
     if "Condo" in title:
@@ -228,9 +245,27 @@ def parse_listing_page(page, url, location_key):
                     // Only parse if page actually rendered (more than just nav)
                     if (bodyText.length < 500) return result;
 
-                    // Price
+                    // Price — try EUR first, then VND
                     var eurMatch = bodyText.match(/€([\\d,]+)/);
                     if (eurMatch) result.price_eur = eurMatch[1].replace(/,/g, '');
+
+                    // Price VND — try dedicated price element first (avoids matching price/sqm)
+                    if (!result.price_eur) {
+                        var priceEl = document.querySelector('[class*="sale-price"], [class*="unit-price"], [class*="price-tag"]');
+                        if (priceEl) {
+                            var ptxt = priceEl.innerText || '';
+                            var pelMatch = ptxt.match(/([\\d,]+)\\s*₫/);
+                            if (pelMatch) result.price_vnd = parseInt(pelMatch[1].replace(/,/g, ''));
+                        }
+                        // Fallback: "for X ₫" pattern in body text (skips price/sqm which has "/SqM" after)
+                        if (!result.price_vnd) {
+                            var forVndMatch = bodyText.match(/for\\s+([\\d,]+)\\s*₫/i);
+                            if (forVndMatch) result.price_vnd = parseInt(forVndMatch[1].replace(/,/g, ''));
+                        }
+                        if (result.price_vnd) {
+                            result.price_eur = Math.round(result.price_vnd / 27000).toString();
+                        }
+                    }
 
                     // Bedrooms
                     var brMatch = bodyText.match(/(\\d+)\\s*(?:Bedroom|BR|Bed)/i);
@@ -267,6 +302,13 @@ def parse_listing_page(page, url, location_key):
             if not listing["price_eur"] and data.get("price_eur"):
                 try:
                     listing["price_eur"] = int(data["price_eur"])
+                except (ValueError, TypeError):
+                    pass
+            if not listing["price_vnd"] and data.get("price_vnd"):
+                try:
+                    listing["price_vnd"] = int(data["price_vnd"])
+                    if not listing["price_eur"]:
+                        listing["price_eur"] = int(listing["price_vnd"] / VND_PER_EUR)
                 except (ValueError, TypeError):
                     pass
             if not listing["bedrooms"] and data.get("bedrooms"):
