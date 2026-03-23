@@ -2327,6 +2327,95 @@
           "listing_id": "fazwaz_2141716"
         }
       ]
+    },
+    {
+      "date": "2026-03-23",
+      "timestamp": "2026-03-23T08:12:44.489804",
+      "total_searched": 20,
+      "new_found": 20,
+      "published_count": 2,
+      "listings": [
+        {
+          "title": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+          "title_original": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+          "url": "https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-duong-to-kien-giang_4390956",
+          "portal": "dotproperty",
+          "location_key": "phu_quoc",
+          "price_eur": 70370,
+          "price_raw": "1.9 billion",
+          "size_sqm": 38.0,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": null,
+          "furnishing": null,
+          "description": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "description_original": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial pr",
+          "listing_id": "d660e62ac633",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 5,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 70370,
+            "size_sqm": 38.0,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        },
+        {
+          "title": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+          "title_original": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+          "url": "https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-duong-to-kien-giang_4372961",
+          "portal": "dotproperty",
+          "location_key": "phu_quoc",
+          "price_eur": 70370,
+          "price_raw": "1.9 billion",
+          "size_sqm": null,
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "developer": null,
+          "legal_status": null,
+          "furnishing": null,
+          "description": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "description_original": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial property",
+          "sea_proximity": null,
+          "found_date": "2026-03-23",
+          "source_snippet": "![DotPropertyIcon](https://www.dotproperty.com.vn/en) - Vietnam property for sale - Townhouses for sale - Condominium directory - Vietnam property for rent - Townhouses for rent - Serviced apartments for rent - Apartments for rent - Condominium directory - Commercial Property - Vietnam commercial pr",
+          "listing_id": "af1d4864cc22",
+          "score": 5.5,
+          "score_components": {
+            "price_per_sqm": 5,
+            "location_tier": 6,
+            "sea_proximity": 7,
+            "growth_potential": 6,
+            "regional_development": 6,
+            "air_quality": 5,
+            "developer_reputation": 3,
+            "foreign_ownership_clarity": 3,
+            "bedroom_criteria_fit": 7
+          },
+          "parsed_data": {
+            "price_eur": 70370,
+            "size_sqm": null,
+            "bedrooms": 1,
+            "sea_proximity": "beachfront",
+            "over_budget": false
+          }
+        }
+      ]
     }
   ]
 }

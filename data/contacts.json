@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-22T23:29:05.473859",
+  "last_updated": "2026-03-23T08:14:44.091382",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -2397,14 +2397,64 @@
       "outreach_status": "contacted",
       "outreach_date": "2026-03-23",
       "outreach_channel": "zalo"
+    },
+    "d660e62ac633": {
+      "listing_id": "d660e62ac633",
+      "listing_url": "https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-duong-to-kien-giang_4390956",
+      "listing_title": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+      "listing_score": 5.5,
+      "location": "phu_quoc",
+      "portal": "dotproperty",
+      "price_eur": 70370,
+      "extracted_at": "2026-03-23T08:14:35.578575",
+      "broker_name": null,
+      "broker_phone": null,
+      "broker_phone_full": false,
+      "whatsapp_url": null,
+      "zalo_url": null,
+      "messenger_url": null,
+      "form_url": "https://www.dotproperty.com.vn/en/enquire/4390956/1-bedroom-condo-for-sale-in-duong-to-kien-giang",
+      "broker_profile_url": null,
+      "contact_method": "form",
+      "outreach_status": "pending",
+      "outreach_date": null,
+      "outreach_channel": null,
+      "response_date": null,
+      "response_notes": null,
+      "follow_up_dates": []
+    },
+    "af1d4864cc22": {
+      "listing_id": "af1d4864cc22",
+      "listing_url": "https://www.dotproperty.com.vn/en/1-bedroom-condo-for-sale-in-duong-to-kien-giang_4372961",
+      "listing_title": "1 Bedroom Condo  in Duong To, Kien Giang  ₫ 1.9 billion | Dot Property",
+      "listing_score": 5.5,
+      "location": "phu_quoc",
+      "portal": "dotproperty",
+      "price_eur": 70370,
+      "extracted_at": "2026-03-23T08:14:43.037396",
+      "broker_name": null,
+      "broker_phone": null,
+      "broker_phone_full": false,
+      "whatsapp_url": null,
+      "zalo_url": null,
+      "messenger_url": null,
+      "form_url": "https://www.dotproperty.com.vn/en/enquire/4372961/1-bedroom-condo-for-sale-in-duong-to-kien-giang",
+      "broker_profile_url": null,
+      "contact_method": "form",
+      "outreach_status": "pending",
+      "outreach_date": null,
+      "outreach_channel": null,
+      "response_date": null,
+      "response_notes": null,
+      "follow_up_dates": []
     }
   },
   "brokers": {},
   "stats": {
-    "total_extracted": 67,
+    "total_extracted": 69,
     "phone_full": 0,
     "phone_masked": 0,
     "whatsapp_available": 0,
-    "form_only": 0
+    "form_only": 2
   }
 }
