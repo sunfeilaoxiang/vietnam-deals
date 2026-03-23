@@ -37,21 +37,24 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Decode portal cookies
+      - name: Write portal cookies
         run: |
           mkdir -p cookies
-          if [ -n "${{ secrets.BATDONGSAN_COOKIES }}" ]; then
-            echo '${{ secrets.BATDONGSAN_COOKIES }}' | base64 -d > cookies/batdongsan.json
-            echo "Decoded batdongsan cookies"
+          if [ -n "$BATDONGSAN_COOKIES" ]; then
+            echo "$BATDONGSAN_COOKIES" > cookies/batdongsan.json
+            echo "Wrote batdongsan cookies"
           else
-            echo "No batdongsan cookies configured — will extract without login"
+            echo "No batdongsan cookies configured"
           fi
-          if [ -n "${{ secrets.DOTPROPERTY_COOKIES }}" ]; then
-            echo '${{ secrets.DOTPROPERTY_COOKIES }}' | base64 -d > cookies/dotproperty.json
-            echo "Decoded dotproperty cookies"
+          if [ -n "$DOTPROPERTY_COOKIES" ]; then
+            echo "$DOTPROPERTY_COOKIES" > cookies/dotproperty.json
+            echo "Wrote dotproperty cookies"
           else
-            echo "No dotproperty cookies configured — will extract without login"
+            echo "No dotproperty cookies configured"
           fi
+        env:
+          BATDONGSAN_COOKIES: ${{ secrets.BATDONGSAN_COOKIES }}
+          DOTPROPERTY_COOKIES: ${{ secrets.DOTPROPERTY_COOKIES }}
 
       - name: Run FazWaz scraper (Playwright)
         run: python fazwaz_scraper.py
