@@ -2,3 +2,6 @@
 *.pyc
 .env
 .DS_Store
+morning_briefing.py
+briefing_state.json
+run_sync.bat
