@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-24T07:21:22.850107",
+  "last_updated": "2026-03-24T07:33:33.492487",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -290,14 +290,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "sent",
+      "outreach_status": "responded",
       "outreach_date": null,
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-24T03:00:00",
+      "response_notes": "Sent bilingual (VN+EN) professional response. Sent friend request + 5 property videos. Very engaged.",
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "interested"
     },
     "ae706787b929": {
       "listing_id": "ae706787b929",
@@ -317,14 +318,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "sent",
+      "outreach_status": "responded",
       "outreach_date": null,
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-24T04:44:00",
+      "response_notes": "Introduced as Tuan from The Sunset Sun Phu Quoc. Sent sticker. Asked: can we communicate in Vietnamese with you or your mother?",
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "interested"
     },
     "969e037fd04d": {
       "listing_id": "969e037fd04d",
@@ -344,14 +346,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "sent",
+      "outreach_status": "responded",
       "outreach_date": null,
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-24T04:32:00",
+      "response_notes": "Developer stock, handover end 2027. Foreign national = long-term lease; VN citizen = sales contract then red book. Accepted friend request, sent Hi sticker. Very engaged.",
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "interested"
     },
     "33b2125fa065": {
       "listing_id": "33b2125fa065",
@@ -668,14 +671,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "sent",
+      "outreach_status": "responded",
       "outreach_date": null,
       "outreach_channel": "zalo",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-24T02:38:00",
+      "response_notes": "Said real price is 3 ty total, not 1.7 ty as listed. Replied \"Tat ca deu duoc\" (all available). Casual tone.",
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "more_info"
     },
     "bdd9f24f28ac": {
       "listing_id": "bdd9f24f28ac",
