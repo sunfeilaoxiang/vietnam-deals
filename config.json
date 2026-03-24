@@ -1,194 +1,257 @@
 {
-  "credit_limit_per_run": 200,
-  "budget_max_eur": 150000,
-  "score_threshold": 5.5,
-  "vnd_per_eur": 27000,
-  "currency": "EUR",
-  "currency_symbol": "€",
-  "language": "ru",
-  "locations": {
-    "phu_quoc": {
-      "label": "Фукуок",
-      "label_en": "Phu Quoc",
-      "bedroom_filter": "1BR only",
-      "min_bedrooms": 1,
-      "max_bedrooms": 1,
-      "location_tier": 6,
-      "sea_proximity_default": "beachfront",
-      "air_quality_default": "good",
-      "growth_pct_low": 40,
-      "growth_pct_high": 80,
-      "regional_development_score": 6,
-      "search_keywords": ["phu quoc apartment for sale", "căn hộ phú quốc bán", "phu quoc 1 bedroom apartment price"]
-    },
-    "quy_nhon": {
-      "label": "Куиньон / Биньдинь",
-      "label_en": "Quy Nhon / Binh Dinh",
-      "bedroom_filter": "2BR minimum",
-      "min_bedrooms": 2,
-      "max_bedrooms": 99,
-      "location_tier": 5,
-      "sea_proximity_default": "coastal",
-      "air_quality_default": "very_good",
-      "growth_pct_low": 50,
-      "growth_pct_high": 100,
-      "regional_development_score": 5,
-      "search_keywords": ["quy nhon apartment 2 bedroom for sale price", "căn hộ quy nhơn bán giá", "binh dinh apartment for sale"]
-    },
-    "da_lat": {
-      "label": "Далат",
-      "label_en": "Da Lat",
-      "bedroom_filter": "any",
-      "min_bedrooms": 1,
-      "max_bedrooms": 99,
-      "location_tier": 4,
-      "sea_proximity_default": "inland",
-      "air_quality_default": "excellent",
-      "growth_pct_low": 60,
-      "growth_pct_high": 120,
-      "regional_development_score": 4,
-      "search_keywords": ["da lat apartment for sale price", "căn hộ đà lạt bán giá", "dalat property for sale"]
-    },
-    "con_dao": {
-      "label": "Кондао",
-      "label_en": "Con Dao",
-      "bedroom_filter": "any",
-      "min_bedrooms": 1,
-      "max_bedrooms": 99,
-      "location_tier": 5,
-      "sea_proximity_default": "beachfront",
-      "air_quality_default": "excellent",
-      "growth_pct_low": 40,
-      "growth_pct_high": 80,
-      "regional_development_score": 3,
-      "search_keywords": ["con dao apartment for sale price", "căn hộ côn đảo bán giá", "con dao property for sale"]
-    }
-  },
-  "scoring_weights": {
-    "price_per_sqm": 0.20,
-    "location_tier": 0.15,
-    "sea_proximity": 0.15,
-    "growth_potential": 0.15,
-    "regional_development": 0.10,
-    "air_quality": 0.05,
-    "developer_reputation": 0.10,
-    "foreign_ownership_clarity": 0.05,
-    "bedroom_criteria_fit": 0.05
-  },
-  "portals": [
-    {
-      "name": "batdongsan",
-      "base_url": "https://batdongsan.com.vn",
-      "search_pattern": "batdongsan.com.vn {keyword} apartment for sale under {budget_vnd}"
-    },
-    {
-      "name": "dotproperty",
-      "base_url": "https://dotproperty.com.vn",
-      "search_pattern": "dotproperty.com.vn {keyword} apartment for sale"
-    },
-    {
-      "name": "fazwaz",
-      "base_url": "https://www.fazwaz.vn",
-      "search_pattern": "fazwaz.vn {keyword} apartment for sale foreign ownership"
-    },
-    {
-      "name": "vietnam-real-estate",
-      "base_url": "https://vietnam-real.estate",
-      "search_pattern": "vietnam-real.estate {keyword} property for sale"
-    },
-    {
-      "name": "houseinhanoi",
-      "base_url": "https://houseinhanoi.vn",
-      "search_pattern": "houseinhanoi.vn {keyword} apartment"
-    },
-    {
-      "name": "sunset-town",
-      "base_url": "https://sunset-town.com",
-      "search_pattern": "sunset-town.com phu quoc apartment for sale"
-    }
-  ],
-  "sea_proximity_scores": {
-    "beachfront": 7,
-    "under_200m": 6,
-    "under_500m": 5,
-    "under_1km": 4,
-    "under_2km": 3,
-    "coastal": 3,
-    "inland": 1,
-    "mountain": 2
-  },
-  "air_quality_scores": {
-    "excellent": 7,
-    "very_good": 6,
-    "good": 5,
-    "moderate": 3,
-    "poor": 1
-  },
-  "developer_tiers": {
-    "international_branded": 7,
-    "major_vietnamese": 6,
-    "established_local": 5,
-    "mid_tier": 4,
-    "unknown": 3,
-    "suspicious": 1
-  },
-  "known_developers": {
-    "sun group": "major_vietnamese",
-    "vingroup": "major_vietnamese",
-    "bim group": "major_vietnamese",
-    "novaland": "major_vietnamese",
-    "six senses": "international_branded",
-    "intercontinental": "international_branded",
-    "regent": "international_branded",
-    "marriott": "international_branded",
-    "meyland": "established_local",
-    "artus": "established_local",
-    "vinaliving": "established_local",
-    "hung thinh": "major_vietnamese",
-    "dat xanh": "major_vietnamese",
-    "phu long": "established_local"
-  },
-  "skip_url_patterns": [
-    "/tag/", "/tags/", "/category/", "/search?", "/tim-kiem",
-    "/lich-su-gia", "/apartments-for-sale", "/property-for-sale",
-    "/condos-for-sale", "/properties-for-sale", "/bat-dong-san-ban",
-    "/real-estate-for-sale", "/apartments-for-rent", "/for-rent"
-  ],
-  "scrape_targets": [
-    {"location_key": "phu_quoc", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-phu-quoc-kg", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "phu_quoc", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-phu-quoc-kg/p2", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "phu_quoc", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/ki%C3%AAn-giang/phu-qu%C3%B4c", "base_url": "https://www.dotproperty.com.vn"},
-    {"location_key": "phu_quoc", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/kien-giang/phu-quoc", "base_url": "https://www.fazwaz.vn"},
-    {"location_key": "phu_quoc", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/phu-quoc/", "base_url": "https://vietnam-real.estate"},
-    {"location_key": "phu_quoc", "portal": "sunset-town", "url": "https://sunset-town.com/real-estate/", "base_url": "https://sunset-town.com"},
-    {"location_key": "phu_quoc", "portal": "tranio", "url": "https://tranio.com/vietnam/phu_quoc/", "base_url": "https://tranio.com"},
-    {"location_key": "phu_quoc", "portal": "batdongsan-meypearl", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-meypearl-harmony-phu-quoc", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "phu_quoc", "portal": "batdongsan-grandworld", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-grand-world-phu-quoc", "base_url": "https://batdongsan.com.vn"},
-
-    {"location_key": "quy_nhon", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd/p2", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "batdongsan-sailing", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-the-sailing-quy-nhon", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "batdongsan-iec", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-iec-residences-quy-nhon", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "batdongsan-binh-dinh", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-binh-dinh", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "quy_nhon", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%ACnh-%C4%91%E1%BB%8Bnh/qui-nh%C6%A1n", "base_url": "https://www.dotproperty.com.vn"},
-    {"location_key": "quy_nhon", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/binh-dinh/quy-nhon", "base_url": "https://www.fazwaz.vn"},
-    {"location_key": "quy_nhon", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/quy-nhon/", "base_url": "https://vietnam-real.estate"},
-    {"location_key": "quy_nhon", "portal": "tranio", "url": "https://tranio.com/vietnam/quy_nhon/", "base_url": "https://tranio.com"},
-
-    {"location_key": "da_lat", "portal": "batdongsan", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-ldd", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "da_lat", "portal": "batdongsan-p2", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-ldd/p2", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "da_lat", "portal": "batdongsan-center", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-da-lat-center", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "da_lat", "portal": "batdongsan-haus", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-haus-da-lat", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "da_lat", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/l%C3%A2m-%C4%91%E1%BB%93ng/da-lat", "base_url": "https://www.dotproperty.com.vn"},
-    {"location_key": "da_lat", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/lam-dong/da-lat", "base_url": "https://www.fazwaz.vn"},
-    {"location_key": "da_lat", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/da-lat/", "base_url": "https://vietnam-real.estate"},
-    {"location_key": "da_lat", "portal": "tranio", "url": "https://tranio.com/vietnam/da_lat/", "base_url": "https://tranio.com"},
-    {"location_key": "da_lat", "portal": "nhatot", "url": "https://www.nhatot.com/mua-ban-can-ho-chung-cu-lam-dong", "base_url": "https://www.nhatot.com"},
-
-    {"location_key": "con_dao", "portal": "batdongsan-brvt", "url": "https://batdongsan.com.vn/ban-can-ho-chung-cu-ba-ria-vung-tau", "base_url": "https://batdongsan.com.vn"},
-    {"location_key": "con_dao", "portal": "dotproperty", "url": "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%A0-r%E1%BB%8Ba-v%C5%A9ng-t%C3%A0u", "base_url": "https://www.dotproperty.com.vn"},
-    {"location_key": "con_dao", "portal": "fazwaz", "url": "https://www.fazwaz.vn/condo-for-sale/vietnam/ba-ria-vung-tau", "base_url": "https://www.fazwaz.vn"},
-    {"location_key": "con_dao", "portal": "vietnam-re", "url": "https://vietnam-real.estate/property/con-dao/", "base_url": "https://vietnam-real.estate"},
-    {"location_key": "con_dao", "portal": "tranio", "url": "https://tranio.com/vietnam/ba_ria-vung_tau/", "base_url": "https://tranio.com"}
-  ]
+    "credit_limit_per_run":  200,
+    "budget_max_eur":  150000,
+    "score_threshold":  5.5,
+    "vnd_per_eur":  27000,
+    "currency":  "EUR",
+    "currency_symbol":  "€",
+    "language":  "ru",
+    "locations":  {
+                      "phu_quoc":  {
+                                       "label":  "Фукуок",
+                                       "label_en":  "Phu Quoc",
+                                       "bedroom_filter":  "1BR only",
+                                       "min_bedrooms":  1,
+                                       "max_bedrooms":  1,
+                                       "location_tier":  6,
+                                       "sea_proximity_default":  "beachfront",
+                                       "air_quality_default":  "good",
+                                       "growth_pct_low":  40,
+                                       "growth_pct_high":  80,
+                                       "regional_development_score":  6,
+                                       "search_keywords":  [
+                                                               "phu quoc apartment for sale",
+                                                               "căn hộ phú quốc bán",
+                                                               "phu quoc 1 bedroom apartment price"
+                                                           ]
+                                   },
+                      "quy_nhon":  {
+                                       "label":  "Куиньон / Биньдинь",
+                                       "label_en":  "Quy Nhon / Binh Dinh",
+                                       "bedroom_filter":  "2BR minimum",
+                                       "min_bedrooms":  2,
+                                       "max_bedrooms":  99,
+                                       "location_tier":  5,
+                                       "sea_proximity_default":  "coastal",
+                                       "air_quality_default":  "very_good",
+                                       "growth_pct_low":  50,
+                                       "growth_pct_high":  100,
+                                       "regional_development_score":  5,
+                                       "search_keywords":  [
+                                                               "quy nhon apartment 2 bedroom for sale price",
+                                                               "căn hộ quy nhơn bán giá",
+                                                               "binh dinh apartment for sale"
+                                                           ]
+                                   }
+                  },
+    "scoring_weights":  {
+                            "price_per_sqm":  0.20,
+                            "location_tier":  0.15,
+                            "sea_proximity":  0.15,
+                            "growth_potential":  0.15,
+                            "regional_development":  0.10,
+                            "air_quality":  0.05,
+                            "developer_reputation":  0.10,
+                            "foreign_ownership_clarity":  0.05,
+                            "bedroom_criteria_fit":  0.05
+                        },
+    "portals":  [
+                    {
+                        "name":  "batdongsan",
+                        "base_url":  "https://batdongsan.com.vn",
+                        "search_pattern":  "batdongsan.com.vn {keyword} apartment for sale under {budget_vnd}"
+                    },
+                    {
+                        "name":  "dotproperty",
+                        "base_url":  "https://dotproperty.com.vn",
+                        "search_pattern":  "dotproperty.com.vn {keyword} apartment for sale"
+                    },
+                    {
+                        "name":  "fazwaz",
+                        "base_url":  "https://www.fazwaz.vn",
+                        "search_pattern":  "fazwaz.vn {keyword} apartment for sale foreign ownership"
+                    },
+                    {
+                        "name":  "vietnam-real-estate",
+                        "base_url":  "https://vietnam-real.estate",
+                        "search_pattern":  "vietnam-real.estate {keyword} property for sale"
+                    },
+                    {
+                        "name":  "houseinhanoi",
+                        "base_url":  "https://houseinhanoi.vn",
+                        "search_pattern":  "houseinhanoi.vn {keyword} apartment"
+                    },
+                    {
+                        "name":  "sunset-town",
+                        "base_url":  "https://sunset-town.com",
+                        "search_pattern":  "sunset-town.com phu quoc apartment for sale"
+                    }
+                ],
+    "sea_proximity_scores":  {
+                                 "beachfront":  7,
+                                 "under_200m":  6,
+                                 "under_500m":  5,
+                                 "under_1km":  4,
+                                 "under_2km":  3,
+                                 "coastal":  3,
+                                 "inland":  1,
+                                 "mountain":  2
+                             },
+    "air_quality_scores":  {
+                               "excellent":  7,
+                               "very_good":  6,
+                               "good":  5,
+                               "moderate":  3,
+                               "poor":  1
+                           },
+    "developer_tiers":  {
+                            "international_branded":  7,
+                            "major_vietnamese":  6,
+                            "established_local":  5,
+                            "mid_tier":  4,
+                            "unknown":  3,
+                            "suspicious":  1
+                        },
+    "known_developers":  {
+                             "sun group":  "major_vietnamese",
+                             "vingroup":  "major_vietnamese",
+                             "bim group":  "major_vietnamese",
+                             "novaland":  "major_vietnamese",
+                             "six senses":  "international_branded",
+                             "intercontinental":  "international_branded",
+                             "regent":  "international_branded",
+                             "marriott":  "international_branded",
+                             "meyland":  "established_local",
+                             "artus":  "established_local",
+                             "vinaliving":  "established_local",
+                             "hung thinh":  "major_vietnamese",
+                             "dat xanh":  "major_vietnamese",
+                             "phu long":  "established_local"
+                         },
+    "skip_url_patterns":  [
+                              "/tag/",
+                              "/tags/",
+                              "/category/",
+                              "/search?",
+                              "/tim-kiem",
+                              "/lich-su-gia",
+                              "/apartments-for-sale",
+                              "/property-for-sale",
+                              "/condos-for-sale",
+                              "/properties-for-sale",
+                              "/bat-dong-san-ban",
+                              "/real-estate-for-sale",
+                              "/apartments-for-rent",
+                              "/for-rent"
+                          ],
+    "scrape_targets":  [
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "batdongsan",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-phu-quoc-kg",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "batdongsan-p2",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-phu-quoc-kg/p2",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "dotproperty",
+                               "url":  "https://www.dotproperty.com.vn/en/condos-for-sale/ki%C3%AAn-giang/phu-qu%C3%B4c",
+                               "base_url":  "https://www.dotproperty.com.vn"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "fazwaz",
+                               "url":  "https://www.fazwaz.vn/condo-for-sale/vietnam/kien-giang/phu-quoc",
+                               "base_url":  "https://www.fazwaz.vn"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "vietnam-re",
+                               "url":  "https://vietnam-real.estate/property/phu-quoc/",
+                               "base_url":  "https://vietnam-real.estate"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "sunset-town",
+                               "url":  "https://sunset-town.com/real-estate/",
+                               "base_url":  "https://sunset-town.com"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "tranio",
+                               "url":  "https://tranio.com/vietnam/phu_quoc/",
+                               "base_url":  "https://tranio.com"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "batdongsan-meypearl",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-meypearl-harmony-phu-quoc",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "phu_quoc",
+                               "portal":  "batdongsan-grandworld",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-grand-world-phu-quoc",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "batdongsan",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "batdongsan-p2",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-quy-nhon-bdd/p2",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "batdongsan-sailing",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-the-sailing-quy-nhon",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "batdongsan-iec",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-iec-residences-quy-nhon",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "batdongsan-binh-dinh",
+                               "url":  "https://batdongsan.com.vn/ban-can-ho-chung-cu-binh-dinh",
+                               "base_url":  "https://batdongsan.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "dotproperty",
+                               "url":  "https://www.dotproperty.com.vn/en/condos-for-sale/b%C3%ACnh-%C4%91%E1%BB%8Bnh/qui-nh%C6%A1n",
+                               "base_url":  "https://www.dotproperty.com.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "fazwaz",
+                               "url":  "https://www.fazwaz.vn/condo-for-sale/vietnam/binh-dinh/quy-nhon",
+                               "base_url":  "https://www.fazwaz.vn"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "vietnam-re",
+                               "url":  "https://vietnam-real.estate/property/quy-nhon/",
+                               "base_url":  "https://vietnam-real.estate"
+                           },
+                           {
+                               "location_key":  "quy_nhon",
+                               "portal":  "tranio",
+                               "url":  "https://tranio.com/vietnam/quy_nhon/",
+                               "base_url":  "https://tranio.com"
+                           }
+                       ]
 }
