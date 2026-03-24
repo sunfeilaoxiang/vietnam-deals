@@ -51,6 +51,7 @@ def build_dashboard(data_dir="data", output_dir="."):
 
         rows.append({
             "listing_id": lid,
+            "contact_id": lid[:8],
             "broker_name": c.get("broker_name") or "",
             "broker_phone": c.get("broker_phone") or "",
             "phone_full": c.get("broker_phone_full", False),
@@ -136,6 +137,7 @@ def build_dashboard(data_dir="data", output_dir="."):
         br_display = r["bedrooms"] or "—"
         area_display = f'{r["area"]}m²' if r["area"] else "—"
 
+        contact_id = r["contact_id"]
         table_rows += f'''<tr data-status="{status}">
     <td><span class="score-badge {score_class}">{score:.1f}</span></td>
     <td class="location">{loc}</td>
@@ -148,6 +150,7 @@ def build_dashboard(data_dir="data", output_dir="."):
     <td>{channel}</td>
     <td><span class="status-badge status-{status}">{status}</span></td>
     <td>{source_html}</td>
+    <td class="contact-id">{contact_id}</td>
     <td class="contact-links">{links_html}</td>
 </tr>
 '''
@@ -243,19 +246,20 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
 .source-scraper {{ background: #1e3a5f; color: #60a5fa; }}
 .source-excel {{ background: #3b1764; color: #c084fc; }}
 .source-manual {{ background: #064e3b; color: #6ee7b7; }}
+.contact-id {{ color: #475569; font-family: monospace; font-size: 11px; }}
 </style>
 </head>
 <body>
 <h1>Vietnam Property Outreach</h1>
-<p class="subtitle">Broker contact tracker &mdash; updated {now}</p>
+<p class="subtitle">Broker contact tracker &mdash; updated {{now}}</p>
 
 <div class="stats-bar">
-    <div class="stat-card"><div class="label">Total Listings</div><div class="value">{total}</div></div>
-    <div class="stat-card"><div class="label">Actionable</div><div class="value blue">{actionable}</div></div>
-    <div class="stat-card"><div class="label">Contacted</div><div class="value blue">{contacted}</div></div>
-    <div class="stat-card"><div class="label">Responded</div><div class="value green">{responded}</div></div>
-    <div class="stat-card"><div class="label">Meetings</div><div class="value yellow">{meetings}</div></div>
-    <div class="stat-card"><div class="label">Pending</div><div class="value">{pending}</div></div>
+    <div class="stat-card"><div class="label">Total Listings</div><div class="value">{{total}}</div></div>
+    <div class="stat-card"><div class="label">Actionable</div><div class="value blue">{{actionable}}</div></div>
+    <div class="stat-card"><div class="label">Contacted</div><div class="value blue">{{contacted}}</div></div>
+    <div class="stat-card"><div class="label">Responded</div><div class="value green">{{responded}}</div></div>
+    <div class="stat-card"><div class="label">Meetings</div><div class="value yellow">{{meetings}}</div></div>
+    <div class="stat-card"><div class="label">Pending</div><div class="value">{{pending}}</div></div>
 </div>
 
 <div class="filters">
@@ -297,15 +301,16 @@ td {{ padding: 10px 12px; vertical-align: middle; }}
     <th onclick="sortTable(8)">Channel</th>
     <th onclick="sortTable(9)">Status</th>
     <th onclick="sortTable(10)">Source</th>
+    <th onclick="sortTable(11)">ID</th>
     <th>Links</th>
 </tr>
 </thead>
 <tbody>
-{table_rows}
+{{table_rows}}
 </tbody>
 </table>
 
-<p class="last-updated">Data from contacts.json &mdash; {now}</p>
+<p class="last-updated">Data from contacts.json &mdash; {{now}}</p>
 
 <script>
 let currentPage = 1;
