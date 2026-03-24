@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T23:01:25.548268",
+  "last_updated": "2026-03-24T07:16:48.601301",
   "contacts": {
     "3e26f3e18415": {
       "listing_id": "3e26f3e18415",
@@ -371,9 +371,9 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "no_account",
-      "outreach_date": null,
-      "outreach_channel": null,
+      "outreach_status": "sent",
+      "outreach_date": "2026-03-24T09:12:00",
+      "outreach_channel": "whatsapp",
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
@@ -696,14 +696,15 @@
       "broker_profile_url": null,
       "contact_method": "whatsapp",
       "outreach_status": "no_account",
-      "outreach_date": null,
-      "outreach_channel": null,
+      "outreach_date": "2026-03-24T07:16:48.601301",
+      "outreach_channel": "whatsapp",
       "response_date": null,
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": false,
       "phone_extracted_at": "2026-03-23T11:59:13.033524",
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "notes": "Landline — not on WhatsApp or Zalo"
     },
     "d76aedff9a97": {
       "listing_id": "d76aedff9a97",
@@ -2891,14 +2892,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "zalo",
-      "outreach_status": "sent",
+      "outreach_status": "responded",
       "outreach_date": "2026-03-23T23:01:25.548226",
       "outreach_channel": "whatsapp",
-      "response_date": null,
-      "response_notes": null,
+      "response_date": "2026-03-24T01:42:00",
+      "response_notes": "Replied: 'Hi / I can speak English and Vietnamese / Can you tell me which listing?' — engaged, active broker.",
       "follow_up_dates": [],
       "source": "manual_dotproperty",
-      "preferred_channel": "whatsapp"
+      "preferred_channel": "whatsapp",
+      "response_sentiment": "more_info"
     }
   },
   "brokers": {
