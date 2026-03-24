@@ -3568,7 +3568,49 @@
 
                                                                 ],
                                             "no_cookies":  true
-                                        }
+                                        },
+                     "fazwaz_u2132268":  {
+                                             "listing_title":  "Can Ho Bien - Phong Cach Nhat - Nhon Ly Quy Nhon (FazWaz U2132268)",
+                                             "broker_name":  "FazWaz listing (personal outreach)",
+                                             "broker_phone":  "",
+                                             "location":  "quy_nhon",
+                                             "price_vnd":  1300000000,
+                                             "bedrooms":  1,
+                                             "area_sqm":  50,
+                                             "outreach_status":  "sent",
+                                             "outreach_channel":  "fazwaz_personal",
+                                             "outreach_date":  "2026-03-24",
+                                             "response_notes":  "DS reached out personally via FazWaz. 1BR 50m2 Floor 21. Foreign quota available. 1.3 ty.",
+                                             "source_url":  "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2132268"
+                                         },
+                     "fazwaz_u2149387":  {
+                                             "listing_title":  "Japanese Apartment Style - Sea View - Nhon Ly Quy Nhon (FazWaz U2149387)",
+                                             "broker_name":  "FazWaz listing (personal outreach)",
+                                             "broker_phone":  "",
+                                             "location":  "quy_nhon",
+                                             "price_vnd":  1700000000,
+                                             "bedrooms":  1,
+                                             "area_sqm":  49,
+                                             "outreach_status":  "sent",
+                                             "outreach_channel":  "fazwaz_personal",
+                                             "outreach_date":  "2026-03-24",
+                                             "response_notes":  "DS reached out personally via FazWaz. 1BR 49m2 Floor 18. Foreign quota available. 1.7 ty.",
+                                             "source_url":  "https://www.fazwaz.vn/property-sales/1-bedroom-apartment-for-sale-in-nhon-ly-binh-dinh-u2149387"
+                                         },
+                     "fazwaz_u2101869":  {
+                                             "listing_title":  "Japanese Style Apartment Long-Term Ownership - Nhon Ly Quy Nhon (FazWaz U2101869)",
+                                             "broker_name":  "FazWaz listing (personal outreach)",
+                                             "broker_phone":  "",
+                                             "location":  "quy_nhon",
+                                             "price_vnd":  1800000000,
+                                             "bedrooms":  1,
+                                             "area_sqm":  49,
+                                             "outreach_status":  "sent",
+                                             "outreach_channel":  "fazwaz_personal",
+                                             "outreach_date":  "2026-03-24",
+                                             "response_notes":  "DS reached out personally via FazWaz. 1BR 49m2 Floor 32. Foreign quota available. 1.8 ty.",
+                                             "source_url":  "https://www.fazwaz.vn/property-sales/1-bedroom-condo-for-sale-in-nhon-ly-binh-dinh-u2101869"
+                                         }
                  },
     "brokers":  {
                     "+842603170101":  {
