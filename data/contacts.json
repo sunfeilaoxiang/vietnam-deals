@@ -128,14 +128,15 @@
       "form_url": null,
       "broker_profile_url": null,
       "contact_method": "phone_masked",
-      "outreach_status": "pending",
+      "outreach_status": "responded",
       "outreach_date": null,
       "outreach_channel": null,
-      "response_date": null,
+      "response_date": "2026-03-24",
       "response_notes": null,
       "follow_up_dates": [],
       "no_cookies": true,
-      "preferred_channel": "zalo"
+      "preferred_channel": "zalo",
+      "response_sentiment": "interested"
     },
     "2517b4b2b40b": {
       "listing_id": "2517b4b2b40b",
