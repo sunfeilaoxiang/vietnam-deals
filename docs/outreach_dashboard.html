@@ -6,10 +6,7 @@
 <title>Vietnam Property Outreach Dashboard</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #0f172a; color: #e2e8f0; padding: 20px;
-}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
 h1 { color: #f8fafc; margin-bottom: 8px; font-size: 24px; }
 .subtitle { color: #94a3b8; margin-bottom: 20px; font-size: 14px; }
 .stats-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
@@ -20,34 +17,20 @@ h1 { color: #f8fafc; margin-bottom: 8px; font-size: 24px; }
 .stat-card .value.blue { color: #3b82f6; }
 .stat-card .value.yellow { color: #f59e0b; }
 .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.filter-btn {
-    background: #1e293b; border: 1px solid #334155; color: #94a3b8;
-    padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px;
-}
+.filter-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
 .filter-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 .filter-btn:hover { border-color: #60a5fa; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-thead th {
-    background: #1e293b; color: #94a3b8; padding: 10px 12px; text-align: left;
-    position: sticky; top: 0; cursor: pointer; user-select: none;
-    border-bottom: 2px solid #334155; font-weight: 600; font-size: 11px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-}
+thead th { background: #1e293b; color: #94a3b8; padding: 10px 12px; text-align: left; position: sticky; top: 0; cursor: pointer; user-select: none; border-bottom: 2px solid #334155; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 thead th:hover { color: #e2e8f0; }
 tbody tr { border-bottom: 1px solid #1e293b; }
 tbody tr:hover { background: #1e293b; }
 td { padding: 10px 12px; vertical-align: middle; }
-.score-badge {
-    display: inline-block; padding: 2px 8px; border-radius: 4px;
-    font-weight: 700; font-size: 13px; min-width: 32px; text-align: center;
-}
+.score-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 13px; min-width: 32px; text-align: center; }
 .score-high { background: #065f46; color: #6ee7b7; }
 .score-mid { background: #854d0e; color: #fde68a; }
 .score-low { background: #7f1d1d; color: #fca5a5; }
-.status-badge {
-    display: inline-block; padding: 3px 10px; border-radius: 12px;
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-}
+.status-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
 .status-pending { background: #374151; color: #9ca3af; }
 .status-contacted { background: #1e3a5f; color: #60a5fa; }
 .status-responded { background: #064e3b; color: #6ee7b7; }
@@ -66,26 +49,15 @@ td { padding: 10px 12px; vertical-align: middle; }
 .phone-full { color: #10b981; }
 .last-updated { color: #475569; font-size: 12px; margin-top: 16px; }
 .search-bar { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; }
-.search-bar input {
-    background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
-    padding: 8px 14px; border-radius: 6px; font-size: 13px; width: 300px;
-}
+.search-bar input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; padding: 8px 14px; border-radius: 6px; font-size: 13px; width: 300px; }
 .search-bar input:focus { outline: none; border-color: #3b82f6; }
 .search-bar .count { color: #64748b; font-size: 13px; }
-.pagination {
-    display: flex; gap: 8px; align-items: center; margin-top: 16px; margin-bottom: 8px;
-}
-.pagination button {
-    background: #1e293b; border: 1px solid #334155; color: #94a3b8;
-    padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
-}
+.pagination { display: flex; gap: 8px; align-items: center; margin-top: 16px; margin-bottom: 8px; }
+.pagination button { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; }
 .pagination button:hover { border-color: #60a5fa; color: #e2e8f0; }
 .pagination button:disabled { opacity: 0.3; cursor: default; }
 .pagination .page-info { color: #64748b; font-size: 13px; }
-.source-badge {
-    display: inline-block; padding: 2px 6px; border-radius: 4px;
-    font-size: 10px; font-weight: 600; text-transform: uppercase;
-}
+.source-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
 .source-scraper { background: #1e3a5f; color: #60a5fa; }
 .source-excel { background: #3b1764; color: #c084fc; }
 .source-manual { background: #064e3b; color: #6ee7b7; }
@@ -94,8 +66,7 @@ td { padding: 10px 12px; vertical-align: middle; }
 </head>
 <body>
 <h1>Vietnam Property Outreach</h1>
-<p class="subtitle">Broker contact tracker &mdash; updated 2026-03-25 12:08 UTC</p>
-
+<p class="subtitle">Broker contact tracker &mdash; updated 2026-03-25 20:13 UTC</p>
 <div class="stats-bar">
     <div class="stat-card"><div class="label">Total Listings</div><div class="value">109</div></div>
     <div class="stat-card"><div class="label">Actionable</div><div class="value blue">31</div></div>
@@ -104,7 +75,6 @@ td { padding: 10px 12px; vertical-align: middle; }
     <div class="stat-card"><div class="label">Meetings</div><div class="value yellow">0</div></div>
     <div class="stat-card"><div class="label">Pending</div><div class="value">82</div></div>
 </div>
-
 <div class="filters">
     <button class="filter-btn active" onclick="filterStatus('all')">All</button>
     <button class="filter-btn" onclick="filterStatus('pending')">Pending</button>
@@ -112,12 +82,10 @@ td { padding: 10px 12px; vertical-align: middle; }
     <button class="filter-btn" onclick="filterStatus('responded')">Responded</button>
     <button class="filter-btn" onclick="filterStatus('meeting')">Meeting</button>
 </div>
-
 <div class="search-bar">
     <input type="text" id="searchBox" placeholder="Search listings, brokers, cities..." oninput="applyFilters()">
     <span class="count" id="visibleCount"></span>
 </div>
-
 <div class="pagination" id="paginationTop">
     <button onclick="changePage(-1)" id="prevBtn">Prev</button>
     <span class="page-info" id="pageInfo">Page 1</span>
@@ -129,7 +97,6 @@ td { padding: 10px 12px; vertical-align: middle; }
         <option value="999">Show all</option>
     </select>
 </div>
-
 <table id="dashboard">
 <thead>
 <tr>
@@ -1787,15 +1754,12 @@ td { padding: 10px 12px; vertical-align: middle; }
 
 </tbody>
 </table>
-
-<p class="last-updated">Data from contacts.json &mdash; 2026-03-25 12:08 UTC</p>
-
+<p class="last-updated">Data from contacts.json &mdash; 2026-03-25 20:13 UTC</p>
 <script>
 let currentPage = 1;
 let pageSize = 25;
 let currentStatus = 'all';
 let searchQuery = '';
-
 function getFilteredRows() {
     const rows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
     return rows.filter(row => {
@@ -1805,13 +1769,11 @@ function getFilteredRows() {
         return statusMatch && searchMatch;
     });
 }
-
 function applyFilters() {
     searchQuery = document.getElementById('searchBox').value;
     currentPage = 1;
     renderPage();
 }
-
 function filterStatus(status) {
     currentStatus = status;
     currentPage = 1;
@@ -1819,35 +1781,22 @@ function filterStatus(status) {
     event.target.classList.add('active');
     renderPage();
 }
-
 function renderPage() {
     const allRows = Array.from(document.querySelectorAll('#dashboard tbody tr'));
     const filtered = getFilteredRows();
     const totalPages = Math.ceil(filtered.length / pageSize) || 1;
     if (currentPage > totalPages) currentPage = totalPages;
-
     allRows.forEach(r => r.style.display = 'none');
     const start = (currentPage - 1) * pageSize;
     const end = start + pageSize;
     filtered.slice(start, end).forEach(r => r.style.display = '');
-
     document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
     document.getElementById('prevBtn').disabled = currentPage <= 1;
     document.getElementById('nextBtn').disabled = currentPage >= totalPages;
     document.getElementById('visibleCount').textContent = `${filtered.length} of ${allRows.length} listings`;
 }
-
-function changePage(delta) {
-    currentPage += delta;
-    renderPage();
-}
-
-function changePageSize(size) {
-    pageSize = parseInt(size);
-    currentPage = 1;
-    renderPage();
-}
-
+function changePage(delta) { currentPage += delta; renderPage(); }
+function changePageSize(size) { pageSize = parseInt(size); currentPage = 1; renderPage(); }
 let sortDir = {};
 function sortTable(col) {
     const tbody = document.querySelector('#dashboard tbody');
@@ -1858,16 +1807,12 @@ function sortTable(col) {
         let bVal = b.cells[col].innerText;
         let aNum = parseFloat(aVal.replace(/[^0-9.-]/g, ''));
         let bNum = parseFloat(bVal.replace(/[^0-9.-]/g, ''));
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-            return sortDir[col] ? aNum - bNum : bNum - aNum;
-        }
+        if (!isNaN(aNum) && !isNaN(bNum)) { return sortDir[col] ? aNum - bNum : bNum - aNum; }
         return sortDir[col] ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
     });
     rows.forEach(r => tbody.appendChild(r));
     renderPage();
 }
-
-// Init
 renderPage();
 </script>
 </body>
