@@ -1,9 +1,9 @@
 name: Daily Property Scan
 
 on:
-  schedule:
-    # Run at 5:00 AM UTC every day (12:00 noon Vietnam time)
-    - cron: '0 5 * * *'
+  # schedule:
+  #   # Run at 5:00 AM UTC every day (12:00 noon Vietnam time)
+  #   - cron: '0 5 * * *'
   workflow_dispatch:  # Allow manual trigger from GitHub UI
 
 permissions:
